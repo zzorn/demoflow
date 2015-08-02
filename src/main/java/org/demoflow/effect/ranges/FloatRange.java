@@ -1,4 +1,4 @@
-package org.demoflow.effects;
+package org.demoflow.effect.ranges;
 
 import org.flowutils.Check;
 import org.flowutils.MathUtils;
@@ -16,6 +16,10 @@ public final class FloatRange implements ParameterRange<Float> {
     private final float defaultValue;
     private final float standardDeviation;
 
+    public static final FloatRange FULL = new FloatRange(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY);
+    public static final FloatRange POSITIVE = new FloatRange(0, Float.POSITIVE_INFINITY);
+    public static final FloatRange ONE_OR_LARGER = new FloatRange(1, Float.POSITIVE_INFINITY);
+    public static final FloatRange NEGATIVE = new FloatRange(Float.NEGATIVE_INFINITY, 0);
     public static final FloatRange ZERO_TO_ONE = new FloatRange(0, 1);
     public static final FloatRange MINUS_ONE_TO_ONE = new FloatRange(-1, 1);
     public static final FloatRange SMALL = new FloatRange(-100, 100);
@@ -44,15 +48,14 @@ public final class FloatRange implements ParameterRange<Float> {
     }
 
     @Override public Float randomValue(RandomSequence randomSequence) {
-        return randomSequence.nextFloat(min, max);
+        return clampToRange(randomSequence.nextFloat(min, max));
     }
 
     @Override public Float mutateValue(Float value, float mutationAmount, RandomSequence randomSequence) {
-        return clampToRange(value + mutationAmount * randomSequence.nextGaussianFloat() * standardDeviation);
-    }
+        return clampToRange(value + mutationAmount * standardDeviation * randomSequence.nextGaussianFloat());    }
 
     @Override public Float getDefaultValue() {
-        return defaultValue;
+        return clampToRange(defaultValue);
     }
 
     @Override public Float copy(Float source) {

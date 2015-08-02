@@ -1,4 +1,4 @@
-package org.demoflow.effects;
+package org.demoflow.effect.ranges;
 
 import org.flowutils.random.RandomSequence;
 
@@ -10,6 +10,7 @@ public interface ParameterRange<T> {
 
     /**
      * @return original value clamped to a valid range for this parameter.
+     * In case of mutable values, the provided value is changed.
      */
     T clampToRange(T originalValue);
 
@@ -20,6 +21,7 @@ public interface ParameterRange<T> {
 
     /**
      * Returns a slightly changed value.
+     * In case of mutable values, the provided value is changed.
      */
     T mutateValue(T value, float mutationAmount, RandomSequence randomSequence);
 

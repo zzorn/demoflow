@@ -9,11 +9,11 @@ import org.flowutils.service.ServiceProvider;
  */
 public class Editor extends ServiceBase {
 
-    private final Viewer viewer;
+    private final View view;
 
-    public Editor(Viewer viewer) {
-        Check.notNull(viewer, "viewer");
-        this.viewer = viewer;
+    public Editor(View view) {
+        Check.notNull(view, "viewer");
+        this.view = view;
     }
 
     @Override protected void doInit(ServiceProvider serviceProvider) {
