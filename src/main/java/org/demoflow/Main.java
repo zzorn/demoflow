@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import org.demoflow.demo.DefaultDemo;
 import org.demoflow.demo.Demo;
+import org.demoflow.parameter.calculator.calculators.NoiseCalculator;
 import org.demoflow.parameter.calculator.calculators.SineCalculator;
 import org.demoflow.parameter.calculator.calculators.Vector3ScaleCalculator;
 import org.demoflow.editor.Editor;
@@ -80,8 +81,8 @@ public class Main {
 
     private static Demo createExampleDemo() {
         Demo demo = new DefaultDemo(20);
-        demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.45, 0.9));
-        demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1, 0.08, 0.94));
+        demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.53, 0.8));
+        demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1, 0.08, 0.9));
         demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2, 0.3, 0.99));
         return demo;
     }
@@ -91,13 +92,13 @@ public class Main {
         // Example effect that just displays a cube
         final CubeEffect cubeEffect = new CubeEffect(color, new Vector3(1, 1, 1), position);
 
-        // Create a sine wave whose frequency is modulated by another sine wave
-        final SineCalculator sineWobble = new SineCalculator(1, 2, 1, phase);
-        sineWobble.waveLength.setCalculator(new SineCalculator(8, 2.5, 2, 0.25));
+        // Create a noise wave whose frequency is modulated by a sine wave
+        final NoiseCalculator wobble = new NoiseCalculator(1, 2, 1, phase);
+        wobble.wavelength.setCalculator(new SineCalculator(8, 3.1, 3, 0.25));
 
         // Scales a vector with the sine wobble
         final Vector3ScaleCalculator scaleCalculator = new Vector3ScaleCalculator();
-        scaleCalculator.scale.setCalculator(sineWobble);
+        scaleCalculator.scale.setCalculator(wobble);
 
         // Scale the cube with the scaled vector
         cubeEffect.scale.setCalculator(scaleCalculator);
