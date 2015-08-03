@@ -23,6 +23,7 @@ import static org.flowutils.Check.notNull;
  */
 public class DefaultDemo extends ParametrizedBase implements Demo {
 
+    public static final double DEFAULT_DURATION_SECONDS = 60.0;
     public final Parameter<Double> timeDilation;
 
     private Array<DemoListener> listeners = new Array<>();
@@ -33,7 +34,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     private boolean paused = false;
     private double speed = 1.0;
-    private double durationSeconds = 60.0;
+    private double durationSeconds = DEFAULT_DURATION_SECONDS;
     private double timeStepsPerSecond = 120;
 
     private long randomSeed;
@@ -47,6 +48,11 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     private boolean initialized = false;
 
     public DefaultDemo() {
+        this(DEFAULT_DURATION_SECONDS);
+    }
+
+    public DefaultDemo(double durationSeconds) {
+        setDurationSeconds(durationSeconds);
         timeDilation = addParameter("timeDilation", 1.0, DoubleRange.POSITIVE);
     }
 

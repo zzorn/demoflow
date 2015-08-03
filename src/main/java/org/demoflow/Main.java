@@ -79,14 +79,14 @@ public class Main {
     }
 
     private static Demo createExampleDemo() {
-        Demo demo = new DefaultDemo();
-        demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0));
-        demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1));
-        demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2));
+        Demo demo = new DefaultDemo(20);
+        demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.45, 0.9));
+        demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1, 0.08, 0.94));
+        demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2, 0.3, 0.99));
         return demo;
     }
 
-    private static CubeEffect createCubeEffect(Color color, Vector3 position, final double phase) {
+    private static CubeEffect createCubeEffect(Color color, Vector3 position, final double phase, final double relativeEntryTime, final double relativeExitTime) {
 
         // Example effect that just displays a cube
         final CubeEffect cubeEffect = new CubeEffect(color, new Vector3(1, 1, 1), position);
@@ -101,6 +101,8 @@ public class Main {
 
         // Scale the cube with the scaled vector
         cubeEffect.scale.setCalculator(scaleCalculator);
+
+        cubeEffect.setEffectTimePeriod(relativeEntryTime, relativeExitTime);
 
         return cubeEffect;
     }
