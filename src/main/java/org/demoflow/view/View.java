@@ -1,4 +1,4 @@
-package org.demoflow;
+package org.demoflow.view;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -7,14 +7,14 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import org.demoflow.Main;
 import org.demoflow.demo.Demo;
 import org.demoflow.effect.DefaultRenderContext;
 import org.flowutils.time.RealTime;
 import org.flowutils.time.Time;
 
 /**
- * Holds opengl context, methods to add objects to the scenegraph?, etc.
- * Also keeps track of the current effects and updates & renders them.
+ * Renders a demo to the screen.
  */
 public final class View extends Game {
 

@@ -1,8 +1,8 @@
-package org.demoflow.calculator.calculators;
+package org.demoflow.parameter.calculator.calculators;
 
 import org.demoflow.parameter.Parameter;
-import org.demoflow.calculator.CalculationContext;
-import org.demoflow.calculator.CalculatorBase;
+import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.parameter.calculator.CalculatorBase;
 
 import static org.flowutils.MathUtils.*;
 

@@ -1,9 +1,9 @@
-package org.demoflow.calculator.calculators;
+package org.demoflow.parameter.calculator.calculators;
 
 import com.badlogic.gdx.math.Vector3;
 import org.demoflow.parameter.Parameter;
-import org.demoflow.calculator.CalculationContext;
-import org.demoflow.calculator.CalculatorBase;
+import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.parameter.calculator.CalculatorBase;
 
 /**
  * Calculates the value of a vector from components.

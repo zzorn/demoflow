@@ -2,12 +2,12 @@ package org.demoflow.demo;
 
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.effect.RenderContext;
-import org.demoflow.View;
+import org.demoflow.view.View;
 import org.demoflow.effect.EffectGroup;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.ParametrizedBase;
-import org.demoflow.calculator.CalculationContext;
-import org.demoflow.calculator.DefaultCalculationContext;
+import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.parameter.calculator.DefaultCalculationContext;
 import org.demoflow.effect.Effect;
 import org.demoflow.parameter.range.ranges.DoubleRange;
 import org.flowutils.Check;

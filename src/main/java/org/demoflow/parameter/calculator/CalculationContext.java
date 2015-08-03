@@ -1,4 +1,4 @@
-package org.demoflow.calculator;
+package org.demoflow.parameter.calculator;
 
 /**
  * Context to pass to parameter calculators.

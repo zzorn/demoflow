@@ -2,7 +2,7 @@ package org.demoflow.demo;
 
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.effect.RenderContext;
-import org.demoflow.View;
+import org.demoflow.view.View;
 import org.demoflow.parameter.Parametrized;
 import org.demoflow.effect.Effect;
 

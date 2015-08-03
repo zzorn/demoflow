@@ -1,7 +1,7 @@
 package org.demoflow.parameter;
 
-import org.demoflow.calculator.CalculationContext;
-import org.demoflow.calculator.Calculator;
+import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.parameter.calculator.Calculator;
 import org.demoflow.parameter.range.ParameterRange;
 import org.flowutils.Symbol;
 

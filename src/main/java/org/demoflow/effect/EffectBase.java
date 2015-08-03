@@ -1,6 +1,6 @@
 package org.demoflow.effect;
 
-import org.demoflow.calculator.CalculationContext;
+import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.Parametrized;
 import org.demoflow.parameter.ParametrizedBase;

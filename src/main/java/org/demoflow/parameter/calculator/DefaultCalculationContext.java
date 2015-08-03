@@ -1,4 +1,4 @@
-package org.demoflow.calculator;
+package org.demoflow.parameter.calculator;
 
 import org.flowutils.Check;
 import org.flowutils.MathUtils;

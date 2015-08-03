@@ -1,7 +1,7 @@
 package org.demoflow.effect;
 
 import com.badlogic.gdx.utils.Array;
-import org.demoflow.calculator.CalculationContext;
+import org.demoflow.parameter.calculator.CalculationContext;
 import org.flowutils.random.RandomSequence;
 
 import static org.flowutils.Check.notNull;

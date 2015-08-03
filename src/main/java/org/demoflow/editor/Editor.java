@@ -1,6 +1,7 @@
-package org.demoflow;
+package org.demoflow.editor;
 
 import net.miginfocom.swing.MigLayout;
+import org.demoflow.view.View;
 import org.demoflow.demo.Demo;
 import org.demoflow.demo.DemoListener;
 import org.flowutils.Check;

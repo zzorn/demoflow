@@ -7,9 +7,11 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import org.demoflow.demo.DefaultDemo;
 import org.demoflow.demo.Demo;
-import org.demoflow.calculator.calculators.SineCalculator;
-import org.demoflow.calculator.calculators.Vector3ScaleCalculator;
+import org.demoflow.parameter.calculator.calculators.SineCalculator;
+import org.demoflow.parameter.calculator.calculators.Vector3ScaleCalculator;
+import org.demoflow.editor.Editor;
 import org.demoflow.effect.effects.CubeEffect;
+import org.demoflow.view.View;
 import org.flowutils.LogUtils;
 
 /**
