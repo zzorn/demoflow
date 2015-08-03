@@ -1,6 +1,7 @@
-package org.demoflow.effect.ranges;
+package org.demoflow.parameter.range.ranges;
 
 import com.badlogic.gdx.graphics.Color;
+import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;
 

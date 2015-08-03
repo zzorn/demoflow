@@ -1,8 +1,8 @@
-package org.demoflow.animation;
+package org.demoflow.parameter;
 
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.calculator.Calculator;
-import org.demoflow.effect.ranges.ParameterRange;
+import org.demoflow.parameter.range.ParameterRange;
 import org.flowutils.Symbol;
 
 import static org.flowutils.Check.notNull;

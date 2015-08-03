@@ -1,5 +1,6 @@
-package org.demoflow.effect.ranges;
+package org.demoflow.parameter.range.ranges;
 
+import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.Check;
 import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;

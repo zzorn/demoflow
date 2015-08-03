@@ -1,13 +1,12 @@
-package org.demoflow.animation;
+package org.demoflow.demo;
 
 import com.badlogic.gdx.utils.Array;
-import org.demoflow.RenderContext;
+import org.demoflow.effect.RenderContext;
 import org.demoflow.View;
+import org.demoflow.parameter.Parametrized;
 import org.demoflow.effect.Effect;
-import org.flowutils.time.Time;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Contains effects with start and stop times spread out over the duration of the Demo.

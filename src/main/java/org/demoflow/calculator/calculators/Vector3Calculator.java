@@ -1,7 +1,7 @@
 package org.demoflow.calculator.calculators;
 
 import com.badlogic.gdx.math.Vector3;
-import org.demoflow.animation.Parameter;
+import org.demoflow.parameter.Parameter;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.calculator.CalculatorBase;
 

@@ -1,6 +1,7 @@
-package org.demoflow;
+package org.demoflow.effect;
 
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import org.demoflow.View;
 
 /**
  * Rendering context passed to Effects.
@@ -8,5 +9,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 public interface RenderContext {
 
     ModelBatch getModelBatch();
+
+    View getView();
 
 }

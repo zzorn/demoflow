@@ -7,7 +7,8 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import org.demoflow.animation.Demo;
+import org.demoflow.demo.Demo;
+import org.demoflow.effect.DefaultRenderContext;
 import org.flowutils.time.RealTime;
 import org.flowutils.time.Time;
 
@@ -82,7 +83,7 @@ public final class View extends Game {
 
         modelBatch = new ModelBatch();
 
-        renderContext = new DefaultRenderContext(modelBatch);
+        renderContext = new DefaultRenderContext(this, modelBatch);
 
         initialized = true;
 

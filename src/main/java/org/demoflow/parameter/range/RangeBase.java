@@ -1,4 +1,4 @@
-package org.demoflow.effect.ranges;
+package org.demoflow.parameter.range;
 
 import org.flowutils.random.RandomSequence;
 

@@ -1,6 +1,6 @@
 package org.demoflow.calculator.calculators;
 
-import org.demoflow.animation.Parameter;
+import org.demoflow.parameter.Parameter;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.calculator.CalculatorBase;
 

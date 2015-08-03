@@ -1,4 +1,4 @@
-package org.demoflow.animation;
+package org.demoflow.demo;
 
 /**
  * Listens to demo state changes.
@@ -13,4 +13,8 @@ public interface DemoListener {
 
     void onShutdown(Demo demo);
 
+    /**
+     * Called when the demo finishes.
+     */
+    void onCompleted();
 }

@@ -1,16 +1,17 @@
-package org.demoflow.animation;
+package org.demoflow.demo;
 
 import com.badlogic.gdx.utils.Array;
-import org.demoflow.RenderContext;
+import org.demoflow.effect.RenderContext;
 import org.demoflow.View;
+import org.demoflow.effect.EffectGroup;
+import org.demoflow.parameter.Parameter;
+import org.demoflow.parameter.ParametrizedBase;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.calculator.DefaultCalculationContext;
 import org.demoflow.effect.Effect;
-import org.demoflow.effect.ranges.DoubleRange;
+import org.demoflow.parameter.range.ranges.DoubleRange;
 import org.flowutils.Check;
 import org.flowutils.Symbol;
-import org.flowutils.random.RandomSequence;
-import org.flowutils.random.XorShift;
 
 import java.io.File;
 
@@ -18,6 +19,7 @@ import static org.flowutils.Check.notNull;
 
 /**
  * Default implementation of Demo.
+ * Add and configure effects to create the demo.
  */
 public class DefaultDemo extends ParametrizedBase implements Demo {
 
@@ -25,7 +27,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     private Array<DemoListener> listeners = new Array<>();
 
-    private final Array<Effect> effects = new Array<>();
+    private final EffectGroup effects = new EffectGroup();
 
     private View view;
 
@@ -49,17 +51,17 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     }
 
     @Override public final Array<Effect> getEffects() {
-        return effects;
+        return effects.getEffects();
     }
 
     @Override public final void addEffect(Effect effect) {
         notNull(effect, "effect");
 
-        effects.add(effect);
+        effects.addEffect(effect);
     }
 
     @Override public final void removeEffect(Effect effect) {
-        effects.removeValue(effect, true);
+        effects.removeEffect(effect);
     }
 
     @Override public final void setPaused(boolean paused) {
@@ -157,7 +159,8 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
             doSetup();
         }
 
-        if (initialized) {
+        // Update if we are initialized and the demo is ongoing
+        if (initialized && calculationContext.getSecondsFromDemoEnd() >= 0) {
             double timeToAdd = deltaTime_s;
 
             if (!paused) {
@@ -172,29 +175,32 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
                     // Update effects
                     calculationContext.update(timeStepSizeSeconds);
-                    for (int i = 0; i < effects.size; i++) {
-                        effects.get(i).update(calculationContext);
-                    }
+                    effects.update(calculationContext);
                 }
 
                 surplusTimeFromLastUpdate = remainingUpdateTime;
             }
 
             // Notify listeners about progress
-            for (DemoListener listener : listeners) {
-                listener.onProgress(this,
-                                    getCurrentDemoTime(),
-                                    getDurationSeconds(),
-                                    getCurrentDemoProgress());
+            for (int i = 0; i < listeners.size; i++) {
+                listeners.get(i).onProgress(this,
+                                            getCurrentDemoTime(),
+                                            getDurationSeconds(),
+                                            getCurrentDemoProgress());
+            }
+
+            // Check if demo finished
+            if (calculationContext.getSecondsFromDemoEnd() < 0) {
+                for (int i = 0; i < listeners.size; i++) {
+                    listeners.get(i).onCompleted();
+                }
             }
         }
     }
 
     private void doShutdown() {
         // Shut down effects
-        for (Effect effect : effects) {
-            effect.shutdown();
-        }
+        effects.shutdown();
 
         initialized = false;
 
@@ -208,10 +214,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
         surplusTimeFromLastUpdate = 0;
         calculationContext.init(durationSeconds);
 
-        RandomSequence randomSequence = new XorShift(randomSeed);
-        for (Effect effect : effects) {
-            effect.setup(view, randomSequence.nextLong());
-        }
+        effects.setup(randomSeed);
         initialized = true;
 
         // Notify listeners about setup
@@ -223,9 +226,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     @Override public void render(RenderContext renderContext) {
         if (initialized) {
             // Render effects
-            for (int i = 0; i < effects.size; i++) {
-                effects.get(i).render(renderContext);
-            }
+            effects.render(renderContext);
         }
     }
 

@@ -1,7 +1,7 @@
 package org.demoflow.calculator;
 
-import org.demoflow.animation.Parameter;
-import org.demoflow.animation.ParametrizedBase;
+import org.demoflow.parameter.Parameter;
+import org.demoflow.parameter.ParametrizedBase;
 import org.flowutils.Symbol;
 
 /**

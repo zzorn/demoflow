@@ -1,9 +1,7 @@
 package org.demoflow.effect;
 
-import org.demoflow.RenderContext;
-import org.demoflow.View;
 import org.demoflow.calculator.CalculationContext;
-import org.demoflow.animation.Parametrized;
+import org.demoflow.parameter.Parametrized;
 
 /**
  * A demo effect.
@@ -12,11 +10,9 @@ public interface Effect extends Parametrized {
 
     /**
      * Load needed resources and do other setup.
-     *
-     * @param view view with opgl context etc.
      */
     // IDEA: Later listener system for progress?
-    void setup(View view, long randomSeed);
+    void setup(long randomSeed);
 
     /**
      * Releases any resources created by this effect in setup.
@@ -94,5 +90,9 @@ public interface Effect extends Parametrized {
      */
     void setEffectTimePeriod(double startTime_s, double endTime_s, double demoDuration_s);
 
+    /**
+     * @param parent the parametrized object (Effect or Demo) that this effect is contained in.
+     */
+    void setParent(Parametrized parent);
 
 }

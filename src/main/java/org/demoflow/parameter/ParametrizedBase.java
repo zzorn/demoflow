@@ -1,11 +1,12 @@
-package org.demoflow.animation;
+package org.demoflow.parameter;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.calculator.Calculator;
-import org.demoflow.effect.ranges.*;
+import org.demoflow.parameter.range.*;
+import org.demoflow.parameter.range.ranges.*;
 import org.flowutils.Symbol;
 
 import static org.flowutils.Check.nonEmptyString;
@@ -38,7 +39,7 @@ public abstract class ParametrizedBase implements Parametrized {
     /**
      * Update the parent of this Parametrized object.
      */
-    protected final void setParent(Parametrized parent) {
+    protected void setParent(Parametrized parent) {
         this.parent = parent;
     }
 

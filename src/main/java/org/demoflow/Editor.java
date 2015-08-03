@@ -1,15 +1,14 @@
 package org.demoflow;
 
 import net.miginfocom.swing.MigLayout;
-import org.demoflow.animation.Demo;
-import org.demoflow.animation.DemoListener;
+import org.demoflow.demo.Demo;
+import org.demoflow.demo.DemoListener;
 import org.flowutils.Check;
 import org.uiflow.desktop.ui.SimpleFrame;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.text.NumberFormatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -41,6 +40,10 @@ public final class Editor {
 
         @Override public void onShutdown(Demo demo) {
             showStatus("Stopped", 0);
+        }
+
+        @Override public void onCompleted() {
+            showStatus("Finished", 1);
         }
     };
 
@@ -99,7 +102,7 @@ public final class Editor {
 
         // Speed
         final int maxSliderSpeed = 10000;
-        final int defaultSliderSpeed = maxSliderSpeed / 2;
+        final int defaultSliderSpeed = maxSliderSpeed / 4;
         final JSlider speedSlider = new JSlider(SwingConstants.HORIZONTAL, 0, maxSliderSpeed, defaultSliderSpeed);
         speedSlider.addChangeListener(new ChangeListener() {
             @Override public void stateChanged(ChangeEvent e) {
@@ -132,7 +135,7 @@ public final class Editor {
         progressBar = new JProgressBar();
         mainPanel.add(progressBar, "width :250:");
 
-        new SimpleFrame("Demo Editor", mainPanel, 1024, 400);
+        new SimpleFrame("Demo Editor", mainPanel, 1024, 400, WindowConstants.HIDE_ON_CLOSE);
     }
 
     private JButton createButton(final String name, final ActionListener listener) {

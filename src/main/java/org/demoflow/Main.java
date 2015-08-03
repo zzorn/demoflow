@@ -5,15 +5,15 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
-import org.demoflow.animation.DefaultDemo;
-import org.demoflow.animation.Demo;
+import org.demoflow.demo.DefaultDemo;
+import org.demoflow.demo.Demo;
 import org.demoflow.calculator.calculators.SineCalculator;
 import org.demoflow.calculator.calculators.Vector3ScaleCalculator;
 import org.demoflow.effect.effects.CubeEffect;
 import org.flowutils.LogUtils;
 
 /**
- *
+ * Creates an example demo and opens it in an editor and in a view.
  */
 public class Main {
     public static final String TITLE = "Demoflow";
@@ -24,9 +24,7 @@ public class Main {
     public static final String TEXTURE_ATLAS_NAME = "TextureAtlas";
     public static final int MAX_TEXTURE_SIZE = 512;
 
-
     private static View view;
-
 
     public static void main(String[] args) {
 

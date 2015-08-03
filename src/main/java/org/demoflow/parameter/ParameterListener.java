@@ -1,4 +1,4 @@
-package org.demoflow.animation;
+package org.demoflow.parameter;
 
 /**
  * Listener that is notified when a parameter changes.

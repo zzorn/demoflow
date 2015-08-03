@@ -1,16 +1,13 @@
 package org.demoflow.effect;
 
-import org.demoflow.RenderContext;
-import org.demoflow.View;
 import org.demoflow.calculator.CalculationContext;
-import org.demoflow.animation.Parameter;
-import org.demoflow.animation.ParametrizedBase;
+import org.demoflow.parameter.Parameter;
+import org.demoflow.parameter.Parametrized;
+import org.demoflow.parameter.ParametrizedBase;
 import org.flowutils.Check;
 import org.flowutils.Symbol;
 import org.flowutils.random.RandomSequence;
 import org.flowutils.random.XorShift;
-
-import static org.flowutils.Check.notNull;
 
 /**
  * Common functionality for effects.
@@ -18,7 +15,6 @@ import static org.flowutils.Check.notNull;
 public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
 
     private RandomSequence randomSequence;
-    private View view;
     private boolean active = false;
     private boolean initialized = false;
 
@@ -28,12 +24,9 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     private double relativeEndTime = 1.0;
 
 
-    @Override public final void setup(View view, long randomSeed) {
+    @Override public final void setup(long randomSeed) {
         if (initialized) throw new IllegalStateException("Setup can not be called if we are already initialized.  Call shutdown first.");
 
-        notNull(view, "view");
-
-        this.view = view;
         this.randomSequence = new XorShift(randomSeed);
 
         // Reset parameter values to initial values
@@ -41,20 +34,21 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
 
         // Pre-calculate if needed
         if (preCalculatedData == null) {
-            preCalculatedData = preCalculate(view, new XorShift(randomSeed % 21983)); // (Avoid passing same random sequence to pre-calculation)
+            preCalculatedData = preCalculate(new XorShift(randomSeed % 21983)); // (Avoid passing same random sequence to pre-calculation)
 
             // Reset parameter values to initial values again in case pre calculation messed with them
             resetParametersToInitialValues();
         }
 
         // Allow subclass to do setup
-        doSetup(view, preCalculatedData, randomSequence);
+        doSetup(preCalculatedData, randomSequence);
 
         initialized = true;
     }
 
-    protected final View getView() {
-        return view;
+    // Make setParent public for effects.
+    @Override public void setParent(Parametrized parent) {
+        super.setParent(parent);
     }
 
     @Override public final double getRelativeStartTime() {
@@ -109,7 +103,7 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
 
         active = true;
 
-        doActivate(view);
+        doActivate();
     }
 
     @Override public final void update(CalculationContext calculationContext) {
@@ -129,21 +123,21 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
 
     @Override public final void render(RenderContext renderContext) {
         if (active) {
-            doRender(view, renderContext);
+            doRender(renderContext);
         }
     }
 
     @Override public final void deactivate() {
         if (active) {
             active = false;
-            doDeactivate(view);
+            doDeactivate();
         }
     }
 
     @Override public final void shutdown() {
         if (initialized) {
             deactivate();
-            doShutdown(view);
+            doShutdown();
             initialized = false;
         }
     }
@@ -164,7 +158,7 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     /**
      * Render the effect here.
      */
-    protected abstract void doRender(View view, RenderContext renderContext);
+    protected abstract void doRender(RenderContext renderContext);
 
     /**
      * Does long running pre-calculations for the effect, that may be serialized and saved to disk.
@@ -172,24 +166,24 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
      * Override if needed.
      * @return precalculated data to pass to setup, or null if no data is precalculated.
      */
-    protected P preCalculate(View view, RandomSequence randomSequence) {
+    protected P preCalculate(RandomSequence randomSequence) {
         return null;
     }
 
     // Override as needed
-    protected void doSetup(View view, P preCalculatedData, RandomSequence randomSequence) {
+    protected void doSetup(P preCalculatedData, RandomSequence randomSequence) {
     }
 
     // Override as needed
-    protected void doActivate(View view) {
+    protected void doActivate() {
     }
 
     // Override as needed
-    protected void doDeactivate(View view) {
+    protected void doDeactivate() {
     }
 
     // Override as needed
-    protected void doShutdown(View view) {
+    protected void doShutdown() {
     }
 
     private void updateEffectActivationState(CalculationContext calculationContext) {
