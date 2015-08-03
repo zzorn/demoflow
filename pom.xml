@@ -101,13 +101,13 @@
             <version>1.48</version>
         </dependency>
 
-        <!-- For network communication -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.0.28.Final</version>
-        </dependency>
 
+        <!-- For editor UI layout -->
+        <dependency>
+            <groupId>com.miglayout</groupId>
+            <artifactId>miglayout-swing</artifactId>
+            <version>5.0</version>
+        </dependency>
 
     </dependencies>
 

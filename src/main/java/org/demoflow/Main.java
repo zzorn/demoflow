@@ -5,6 +5,10 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+import org.demoflow.animation.DefaultDemo;
+import org.demoflow.animation.Demo;
+import org.demoflow.calculator.calculators.SineCalculator;
+import org.demoflow.calculator.calculators.Vector3ScaleCalculator;
 import org.demoflow.effect.effects.CubeEffect;
 import org.flowutils.LogUtils;
 
@@ -41,12 +45,16 @@ public class Main {
         // Create editor
         Editor editor = new Editor(view);
 
-        // Setup effects
-        setupEffects(view.getEffectService());
+        // Create demo
+        Demo demo = createExampleDemo();
 
-        // Start
-        editor.init();
+        // Edit demo (and view it)
+        editor.setDemo(demo);
 
+        /* The editor will already show the demo.
+        // Show demo
+        view.setDemo(demo);
+         */
     }
 
     /**
@@ -70,16 +78,32 @@ public class Main {
         LogUtils.getLogger().debug("Textures updated.");
     }
 
-
-    private static void setupEffects(final EffectService effectService) {
-        // NOTE: This is a temporary test setup, until we implement the editor and loading & saving of demos.
-        final CubeEffect cubeEffect = new CubeEffect();
-        effectService.addEffect(cubeEffect);
-
-        cubeEffect.setParameter(CubeEffect.COLOR, new Color(0.7f, 0f, 0.5f, 1f));
-        cubeEffect.setParameter(CubeEffect.SCALE, new Vector3(10, 5, 1));
-        cubeEffect.setParameter(CubeEffect.POSITION, new Vector3(2, 0, 0));
-
+    private static Demo createExampleDemo() {
+        Demo demo = new DefaultDemo();
+        demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0));
+        demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1));
+        demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2));
+        return demo;
     }
+
+    private static CubeEffect createCubeEffect(Color color, Vector3 position, final double phase) {
+
+        // Example effect that just displays a cube
+        final CubeEffect cubeEffect = new CubeEffect(color, new Vector3(1, 1, 1), position);
+
+        // Create a sine wave whose frequency is modulated by another sine wave
+        final SineCalculator sineWobble = new SineCalculator(1, 2, 1, phase);
+        sineWobble.waveLength.setCalculator(new SineCalculator(8, 2.5, 2, 0.25));
+
+        // Scales a vector with the sine wobble
+        final Vector3ScaleCalculator scaleCalculator = new Vector3ScaleCalculator();
+        scaleCalculator.scale.setCalculator(sineWobble);
+
+        // Scale the cube with the scaled vector
+        cubeEffect.scale.setCalculator(scaleCalculator);
+
+        return cubeEffect;
+    }
+
 
 }

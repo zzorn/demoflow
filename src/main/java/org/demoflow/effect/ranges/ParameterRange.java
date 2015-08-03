@@ -35,6 +35,11 @@ public interface ParameterRange<T> {
      */
     T getDefaultValue();
 
+    /**
+     * @return the type of parameters supported by this ParameterRange.
+     */
+    Class<T> getType();
 
-    // TODO: Serialize / deserialize value from text file, etc.
+
+    // TODO: Serialize / deserialize value from text/xml (or binary)
 }

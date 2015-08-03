@@ -1,208 +1,178 @@
 package org.demoflow.effect;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector3;
+import org.demoflow.RenderContext;
 import org.demoflow.View;
-import org.demoflow.effect.ranges.ParameterRange;
+import org.demoflow.calculator.CalculationContext;
+import org.demoflow.animation.Parameter;
+import org.demoflow.animation.ParametrizedBase;
+import org.flowutils.Check;
 import org.flowutils.Symbol;
 import org.flowutils.random.RandomSequence;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import org.flowutils.random.XorShift;
 
 import static org.flowutils.Check.notNull;
 
 /**
  * Common functionality for effects.
  */
-public abstract class EffectBase<P> implements Effect<P> {
+public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
 
-    private final Map<Symbol, ParameterRange> parameterRanges = new LinkedHashMap<>();
-    private final ConcurrentMap<Symbol, Object> parameters = new ConcurrentHashMap<>();
     private RandomSequence randomSequence;
     private View view;
-    private boolean started = false;
-    private boolean setupCalled = false;
-    private boolean shutdownCalled = false;
+    private boolean active = false;
+    private boolean initialized = false;
 
-    protected final <T> void addParameter(Symbol id, T initialValue, ParameterRange<T> range) {
-        parameterRanges.put(id, range);
-        parameters.put(id, initialValue);
-    }
+    private P preCalculatedData = null;
 
-    @Override public final Map<Symbol, ParameterRange> getParameterRanges() {
-        return parameterRanges;
-    }
+    private double relativeStartTime = 0.0;
+    private double relativeEndTime = 1.0;
 
-    @Override public final Map<Symbol, Object> getParameterValues() {
-        return parameters;
-    }
 
-    @Override public final void updateParameters(Map<Symbol, Object> parametersToUpdate) {
-        for (Map.Entry<Symbol, Object> entry : parametersToUpdate.entrySet()) {
-            setParameter(entry.getKey(), entry.getValue());
-        }
-    }
+    @Override public final void setup(View view, long randomSeed) {
+        if (initialized) throw new IllegalStateException("Setup can not be called if we are already initialized.  Call shutdown first.");
 
-    @Override public final P preCalculate(RandomSequence preCalculationRandomness) {
-        return doPreCalculate(preCalculationRandomness);
-    }
-
-    @Override public final void setup(View view, P preCalculatedData, RandomSequence randomSequence) {
         notNull(view, "view");
-        notNull(randomSequence, "randomSequence");
 
         this.view = view;
-        this.randomSequence = randomSequence;
+        this.randomSequence = new XorShift(randomSeed);
 
+        // Reset parameter values to initial values
+        resetParametersToInitialValues();
+
+        // Pre-calculate if needed
+        if (preCalculatedData == null) {
+            preCalculatedData = preCalculate(view, new XorShift(randomSeed % 21983)); // (Avoid passing same random sequence to pre-calculation)
+
+            // Reset parameter values to initial values again in case pre calculation messed with them
+            resetParametersToInitialValues();
+        }
+
+        // Allow subclass to do setup
         doSetup(view, preCalculatedData, randomSequence);
 
-        setupCalled = true;
-
-        // Notify effect about parameter values
-        for (Map.Entry<Symbol, Object> entry : parameters.entrySet()) {
-            onParameterUpdated(entry.getKey(), null, entry.getValue());
-        }
+        initialized = true;
     }
 
     protected final View getView() {
         return view;
     }
 
+    @Override public final double getRelativeStartTime() {
+        return relativeStartTime;
+    }
+
+    @Override public final double getRelativeEndTime() {
+        return relativeEndTime;
+    }
+
+    @Override public final double getEffectStartTime_s(double demoDuration_s) {
+        return relativeStartTime * demoDuration_s;
+    }
+
+    @Override public final double getEffectEndTime_s(double demoDuration_s) {
+        return relativeEndTime * demoDuration_s;
+    }
+
+    @Override public final void setEffectTimePeriod(double relativeStartTime, double relativeEndTime) {
+        Check.greaterOrEqual(relativeEndTime, "relativeEndTime", relativeStartTime, "relativeStartTime");
+
+        this.relativeStartTime = relativeStartTime;
+        this.relativeEndTime = relativeEndTime;
+    }
+
+    @Override public final void setEffectTimePeriod(double startTime_s,
+                                                    double endTime_s,
+                                                    double demoDuration_s) {
+        Check.positive(demoDuration_s, "demoDuration_s");
+
+        setEffectTimePeriod(startTime_s / demoDuration_s, endTime_s / demoDuration_s);
+    }
+
+
+
     protected final RandomSequence getRandomSequence() {
         return randomSequence;
     }
 
-    @Override public final void start() {
-        if (started) throw new IllegalStateException(this + " is already started");
-        if (!setupCalled) throw new IllegalStateException("Setup should be called before start");
-        if (shutdownCalled) throw new IllegalStateException("Start can not be called after shutdown has been called");
 
-        started = true;
-
-        doStart(view);
+    @Override public final boolean isActive() {
+        return active;
     }
 
-    @Override public final void render(double timeSinceLastCall_seconds, ModelBatch modelBatch) {
-        if (!started) throw new IllegalStateException("Effect should be started to render");
-
-        doUpdate(timeSinceLastCall_seconds);
-
-        doRender(view, modelBatch);
+    @Override public final boolean isInitialized() {
+        return initialized;
     }
 
-    @Override public final void stop() {
-        if (started) {
-            started = false;
-            doStop(view);
+    @Override public final void activate() {
+        if (!initialized) throw new IllegalStateException("Setup should be called before activate");
+        if (active) throw new IllegalStateException(this + " is already started");
+
+        active = true;
+
+        doActivate(view);
+    }
+
+    @Override public final void update(CalculationContext calculationContext) {
+        // Activate effect when effect start time passed, deactivate effect when stop time passed
+        updateEffectActivationState(calculationContext);
+
+        if (active) {
+            calculationContext.setEffectPeriod(relativeStartTime, relativeEndTime);
+
+            // Calculate parameter values for the parameters with calculators
+            recalculateParameters(calculationContext);
+
+            // Update effect
+            doUpdate(calculationContext);
+        }
+    }
+
+    @Override public final void render(RenderContext renderContext) {
+        if (active) {
+            doRender(view, renderContext);
+        }
+    }
+
+    @Override public final void deactivate() {
+        if (active) {
+            active = false;
+            doDeactivate(view);
         }
     }
 
     @Override public final void shutdown() {
-        if (!shutdownCalled) {
-            stop();
+        if (initialized) {
+            deactivate();
             doShutdown(view);
-            shutdownCalled = true;
+            initialized = false;
         }
     }
 
-    @Override public final void setParameter(Symbol id, Object value) {
-        // Ensure the parameter exists:
-        getParameterRange(id);
-
-        // Update it
-        final Object oldValue = parameters.put(id, value);
-
-        // Notify about change
-        if (setupCalled && !shutdownCalled) {
-            onParameterUpdated(id, oldValue, value);
-        }
-    }
-
-    @Override public final <T> T getParameter(Symbol id) {
-        return (T) parameters.get(id);
+    /**
+     * Called when a parameter is updated, can be used to listen to changes.
+     * Automatically called for all parameters after startup has been called, to allow initialization of the effect.
+     * Override if needed.
+     */
+    @Override public void onParameterChanged(Parameter parameter, Symbol id, Object value) {
     }
 
     /**
-     * @return a boolean parameter with the specified id.
+     * Do any logic updates here.
      */
-    protected final boolean getBoolean(Symbol id) {
-        return (Boolean) parameters.get(id);
-    }
+    protected abstract void doUpdate(CalculationContext calculationContext);
 
     /**
-     * @return an integer parameter with the specified id.
+     * Render the effect here.
      */
-    protected final int getInt(Symbol id) {
-        return (Integer) parameters.get(id);
-    }
+    protected abstract void doRender(View view, RenderContext renderContext);
 
     /**
-     * @return a float parameter with the specified id.
+     * Does long running pre-calculations for the effect, that may be serialized and saved to disk.
+     * E.g. texture generation, genetic algorithm running, etc.
+     * Override if needed.
+     * @return precalculated data to pass to setup, or null if no data is precalculated.
      */
-    protected final float getFloat(Symbol id) {
-        return (Float) parameters.get(id);
-    }
-
-    /**
-     * @return a 3d vector parameter with the specified id.
-     */
-    protected final Vector3 getVector(Symbol id) {
-        return (Vector3) parameters.get(id);
-    }
-
-    /**
-     * @return a quaternion parameter with the specified id.
-     */
-    protected final Quaternion getQuaternion(Symbol id) {
-        return (Quaternion) parameters.get(id);
-    }
-
-    /**
-     * @return a color parameter with the specified id.
-     */
-    protected final Color getColor(Symbol id) {
-        return (Color) parameters.get(id);
-    }
-
-    /**
-     * Writes the 3d vector parameter with the specified id to the output vector.
-     */
-    protected final void getVector(Symbol id, Vector3 out) {
-        out.set((Vector3) parameters.get(id));
-    }
-
-    /**
-     * Writes the quaternion parameter with the specified id to the output quaternion.
-     */
-    protected final void getQuaternion(Symbol id, Quaternion out) {
-        out.set((Quaternion) parameters.get(id));
-    }
-
-    /**
-     * Writes the color parameter with the specified id to the output color.
-     */
-    protected final void getColor(Symbol id, Color out) {
-        out.set((Color) parameters.get(id));
-    }
-
-    /**
-     * @return the range of the specified parameter.
-     */
-    @Override public final <T> ParameterRange<T> getParameterRange(Symbol id) {
-        ParameterRange parameterRange = parameterRanges.get(id);
-        if (parameterRange == null) {
-            throw new IllegalArgumentException("No parameter with the id '"+id+"'");
-        }
-        return parameterRange;
-    }
-
-    // Override as needed
-    protected P doPreCalculate(RandomSequence randomSequence) {
+    protected P preCalculate(View view, RandomSequence randomSequence) {
         return null;
     }
 
@@ -210,32 +180,29 @@ public abstract class EffectBase<P> implements Effect<P> {
     protected void doSetup(View view, P preCalculatedData, RandomSequence randomSequence) {
     }
 
-    /**
-     * Called when a parameter is updated, can be used to listen to changes.
-     * Only called for parameter changes after setup has been called.
-     * Automatically called for all parameters after startup has been called, to allow initialization of the effect.
-     */
-    protected void onParameterUpdated(Symbol id, Object oldValue, Object newValue) {
+    // Override as needed
+    protected void doActivate(View view) {
     }
 
     // Override as needed
-    protected void doStart(View view) {
-    }
-
-    /**
-     * Do any logic updates here.
-     * @param timeSinceLastCall_seconds seconds since the last call to doUpdate.
-     */
-    protected abstract void doUpdate(double timeSinceLastCall_seconds);
-
-    protected abstract void doRender(View view, ModelBatch modelBatch);
-
-    // Override as needed
-    protected void doStop(View view) {
+    protected void doDeactivate(View view) {
     }
 
     // Override as needed
     protected void doShutdown(View view) {
+    }
+
+    private void updateEffectActivationState(CalculationContext calculationContext) {
+        final double relativeDemoTime = calculationContext.getRelativeDemoTime();
+        if (relativeDemoTime >= relativeStartTime &&
+            relativeDemoTime < relativeEndTime) {
+            // The effect time is now, we should activate the effect
+            if (!active) activate();
+        }
+        else {
+            // The effect time is not now, we should deactivate the effect
+            if (active) deactivate();
+        }
     }
 
 

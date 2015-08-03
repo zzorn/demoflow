@@ -4,12 +4,10 @@ import com.badlogic.gdx.graphics.Color;
 import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;
 
-import static org.flowutils.Check.notNull;
-
 /**
  * A range for colors.
  */
-public final class ColorRange implements ParameterRange<Color> {
+public final class ColorRange extends RangeBase<Color> {
 
     private final float minR;
     private final float maxR;
@@ -52,6 +50,8 @@ public final class ColorRange implements ParameterRange<Color> {
     }
 
     public ColorRange(float minR, float maxR, float minG, float maxG, float minB, float maxB, float minA, float maxA) {
+        super(Color.class);
+
         this.minR = minR;
         this.maxR = maxR;
         this.minG = minG;
@@ -71,27 +71,26 @@ public final class ColorRange implements ParameterRange<Color> {
         return originalValue;
     }
 
-    @Override public Color randomValue(RandomSequence randomSequence) {
-        final Color color = new Color(randomSequence.nextFloat(minR, maxR),
-                                      randomSequence.nextFloat(minG, maxG),
-                                      randomSequence.nextFloat(minB, maxB),
-                                      randomSequence.nextFloat(minA, maxA));
-        return clampToRange(color);
+    @Override protected Color createRandomValue(RandomSequence randomSequence) {
+        return new Color(randomSequence.nextFloat(minR, maxR),
+                         randomSequence.nextFloat(minG, maxG),
+                         randomSequence.nextFloat(minB, maxB),
+                         randomSequence.nextFloat(minA, maxA));
     }
 
-    @Override public Color mutateValue(Color color, float mutationAmount, RandomSequence randomSequence) {
+    @Override protected Color doMutateValue(Color color, float mutationAmount, RandomSequence randomSequence) {
         color.r += mutationAmount * randomSequence.nextFloat(-1f, 1f);
         color.g += mutationAmount * randomSequence.nextFloat(-1f, 1f);
         color.b += mutationAmount * randomSequence.nextFloat(-1f, 1f);
         color.a += mutationAmount * randomSequence.nextFloat(-1f, 1f);
-        return clampToRange(color);
+        return color;
     }
 
-    @Override public Color copy(Color source) {
+    @Override protected Color createCopy(Color source) {
         return new Color(source);
     }
 
-    @Override public Color getDefaultValue() {
-        return clampToRange(new Color(0.5f, 0.5f, 0.5f, 1f));
+    @Override protected Color createDefaultValue() {
+        return new Color(0.5f, 0.5f, 0.5f, 1f);
     }
 }

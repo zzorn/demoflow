@@ -6,22 +6,23 @@ import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
+import org.demoflow.RenderContext;
 import org.demoflow.View;
+import org.demoflow.calculator.CalculationContext;
+import org.demoflow.animation.Parameter;
 import org.demoflow.effect.EffectBase;
 import org.demoflow.effect.ranges.ColorRange;
 import org.demoflow.effect.ranges.Vector3Range;
-import org.flowutils.Symbol;
 import org.flowutils.random.RandomSequence;
-import org.flowutils.random.XorShift;
 
 /**
  * A simple rotating cube effect.
  */
-public class CubeEffect extends EffectBase<Object> {
+public final class CubeEffect extends EffectBase<Object> {
 
-    public static final Symbol COLOR = Symbol.get("color");
-    public static final Symbol SCALE = Symbol.get("scale");
-    public static final Symbol POSITION = Symbol.get("position");
+    public final Parameter<Color> color;
+    public final Parameter<Vector3> scale;
+    public final Parameter<Vector3> position;
 
     private Model model;
     private ModelInstance modelInstance;
@@ -29,9 +30,13 @@ public class CubeEffect extends EffectBase<Object> {
     private ColorAttribute diffuseColor;
 
     public CubeEffect() {
-        addParameter(COLOR, new Color(0.5f, 0.5f, 0.5f, 1f), ColorRange.FULL);
-        addParameter(SCALE, new Vector3(1, 1, 1), Vector3Range.POSITIVE);
-        addParameter(POSITION, new Vector3(0, 0, 0), Vector3Range.FULL);
+        this(Color.GRAY, new Vector3(1,1,1), Vector3.Zero);
+    }
+
+    public CubeEffect(final Color color, final Vector3 scale, final Vector3 position) {
+        this.color = addParameter("color", color, ColorRange.FULL);
+        this.scale = addParameter("scale", scale, Vector3Range.POSITIVE);
+        this.position = addParameter("position", position, Vector3Range.FULL);
     }
 
     @Override protected void doSetup(View view, Object preCalculatedData, RandomSequence randomSequence) {
@@ -45,20 +50,15 @@ public class CubeEffect extends EffectBase<Object> {
         diffuseColor = (ColorAttribute) modelInstance.materials.get(0).get(ColorAttribute.Diffuse);
     }
 
-    @Override protected void onParameterUpdated(Symbol id, Object oldValue, Object newValue) {
-        if (id == COLOR) {
-            diffuseColor.color.set((Color) newValue);
-        }
-        else if (id == POSITION || id == SCALE) {
-            modelInstance.transform.setToTranslationAndScaling(getVector(POSITION), getVector(SCALE));
-        }
+    @Override protected void doUpdate(CalculationContext calculationContext) {
+        // TODO: Spin it?
     }
 
-    @Override protected void doUpdate(double timeSinceLastCall_seconds) {
-    }
+    @Override protected void doRender(View view, RenderContext renderContext) {
+        diffuseColor.color.set(color.get());
+        modelInstance.transform.setToTranslationAndScaling(position.get(), scale.get());
 
-    @Override protected void doRender(View view, ModelBatch modelBatch) {
-        modelBatch.render(modelInstance);
+        renderContext.getModelBatch().render(modelInstance);
     }
 
     @Override protected void doShutdown(View view) {

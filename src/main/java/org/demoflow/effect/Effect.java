@@ -1,83 +1,98 @@
 package org.demoflow.effect;
 
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import org.demoflow.RenderContext;
 import org.demoflow.View;
-import org.demoflow.effect.ranges.ParameterRange;
-import org.flowutils.Symbol;
-import org.flowutils.random.RandomSequence;
-
-import java.util.Map;
+import org.demoflow.calculator.CalculationContext;
+import org.demoflow.animation.Parametrized;
 
 /**
  * A demo effect.
  */
-public interface Effect<P> {
-
-    /**
-     * Does long running pre-calculations for the effect, that can be serialized and saved to disk.
-     * E.g. texture generation, genetic algorithm running, etc.
-     * @return precalculated data to save and pass to setup, or null if no data is precalculated.
-     */
-    P preCalculate(RandomSequence preCalculationRandomness);
+public interface Effect extends Parametrized {
 
     /**
      * Load needed resources and do other setup.
      *
      * @param view view with opgl context etc.
-     * @param preCalculatedData data calculated by the preCalculate method.
      */
     // IDEA: Later listener system for progress?
-    void setup(View view, P preCalculatedData, RandomSequence randomSequence);
+    void setup(View view, long randomSeed);
 
     /**
-     * Initializes and sets up the effect for display.
-     */
-    void start();
-
-    /**
-     * Hides / removes the effect from display.
-     * Frees temporary resources.
-     * Start can be called again after stop.
-     */
-    void stop();
-
-    /**
-     * Releases any resources held by this effect.  The effect can not be started again after shutdown.
+     * Releases any resources created by this effect in setup.
+     * The effect can be started again with setup after a shutdown.
      */
     void shutdown();
 
     /**
+     * Activates the effect for display.
+     */
+    void activate();
+
+    /**
+     * Deactivates the effect and hides / removes the effect from display.
+     * Frees temporary resources.
+     * activate can be called again after deactivate.
+     */
+    void deactivate();
+
+    /**
+     * @return true if the effect is currently visible.
+     */
+    boolean isActive();
+
+    /**
+     * @return true if the effect is initialized and can be displayed.
+     */
+    boolean isInitialized();
+
+    /**
+     * Updates the effect state based on time.
+     */
+    void update(CalculationContext calculationContext);
+
+    /**
      * Render this effect for a frame.
      */
-    void render(double timeSinceLastCall_seconds, ModelBatch modelBatch);
+    void render(RenderContext renderContext);
+
 
     /**
-     * @return information for the parameters provided by this effect.
+     * @return relative start time of the effect over the duration of the demo.  0 = start of demo, 1 = end of demo.
      */
-    Map<Symbol, ParameterRange> getParameterRanges();
+    double getRelativeStartTime();
 
     /**
-     * @return current values of the parameters used by this effect.
+     * @return relative end time of the effect over the duration of the demo.  0 = start of demo, 1 = end of demo.
      */
-    Map<Symbol, Object> getParameterValues();
+    double getRelativeEndTime();
 
     /**
-     * Update some of the parameters for this effect.
-     * Throws IllegalArgumentException if this effect does not have one of the specified parameters.
+     * @return start time of the effect in seconds since the start of the demo.
      */
-    void updateParameters(Map<Symbol, Object> parametersToUpdate);
+    double getEffectStartTime_s(double demoDuration_s);
 
     /**
-     * Sets a parameter of this effect.
-     * Throws IllegalArgumentException if this effect does not have that parameter.
+     * @return end time of the effect in seconds since the start of the demo.
      */
-    void setParameter(Symbol id, Object value);
+    double getEffectEndTime_s(double demoDuration_s);
 
     /**
-     * @return the specified parameter of this effect.
-     * Throws IllegalArgumentException if this effect does not have that parameter.
+     * Sets the time period of the effect within the demo with relative times.
+     *
+     * @param relativeStartTime effect start time relative to the demo duration, 0 = start of demo, 1 = end of demo.
+     * @param relativeEndTime effect end time relative to the demo duration, 0 = start of demo, 1 = end of demo.
      */
-    <T> T getParameter(Symbol id);
+    void setEffectTimePeriod(double relativeStartTime, double relativeEndTime);
 
-    <T> ParameterRange<T> getParameterRange(Symbol id);
+    /**
+     * Sets the time period of the effect within the demo with absolute times.
+     *
+     * @param startTime_s start time of the effect in seconds after demo start.
+     * @param endTime_s end time of the effect in seconds after demo start.
+     * @param demoDuration_s duration of the demo in seconds.
+     */
+    void setEffectTimePeriod(double startTime_s, double endTime_s, double demoDuration_s);
+
+
 }

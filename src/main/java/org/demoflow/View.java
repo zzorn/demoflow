@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import org.demoflow.animation.Demo;
 import org.flowutils.time.RealTime;
 import org.flowutils.time.Time;
 
@@ -24,18 +25,42 @@ public final class View extends Game {
     private Skin skin;
     private TextureAtlas textureAtlas;
 
-    private EffectService effectService;
     private Time time;
     private PerspectiveCamera camera;
     private ModelBatch modelBatch;
 
+    private Demo demo;
+    public DefaultRenderContext renderContext;
+    private boolean initialized = false;
+
 
     public View() {
-        effectService = new EffectService(this);
+
     }
 
-    public EffectService getEffectService() {
-        return effectService;
+    public Demo getDemo() {
+        return demo;
+    }
+
+    public void setDemo(Demo demo) {
+        if (this.demo != demo) {
+            if (this.demo != null) {
+                if (initialized) {
+                    this.demo.shutdown();
+                }
+                this.demo.setView(null);
+            }
+
+            this.demo = demo;
+
+            if (this.demo != null) {
+                this.demo.setView(this);
+
+                if (initialized) {
+                    this.demo.setup();
+                }
+            }
+        }
     }
 
     public PerspectiveCamera getCamera() {
@@ -48,7 +73,6 @@ public final class View extends Game {
 
         // Init services
         time = new RealTime();
-        effectService.init();
 
         // Load texture atlas
         textureAtlas = new TextureAtlas(DEFAULT_TEXTURE_ATLAS_PATH);
@@ -58,6 +82,13 @@ public final class View extends Game {
 
         modelBatch = new ModelBatch();
 
+        renderContext = new DefaultRenderContext(modelBatch);
+
+        initialized = true;
+
+        if (demo != null) {
+            demo.setup();
+        }
     }
 
     @Override public void render() {
@@ -70,15 +101,26 @@ public final class View extends Game {
 
         modelBatch.begin(camera);
 
-        // Render effects
-        effectService.render(time.getSecondsSinceLastStep(), modelBatch);
+        if (demo != null) {
+            // Update demo
+            demo.update(Gdx.graphics.getRawDeltaTime());
+
+            // Render demo
+            demo.render(renderContext);
+        }
 
         modelBatch.end();
     }
 
 
     @Override public void dispose() {
-        effectService.shutdown();
+
+        initialized = false;
+
+        if (demo != null) {
+            demo.shutdown();
+        }
+
         modelBatch.dispose();
     }
 
@@ -87,7 +129,7 @@ public final class View extends Game {
         camera.position.set(10f, 10f, 10f);
         camera.lookAt(0, 0, 0);
         camera.near = 1f;
-        camera.far = 300f;
+        camera.far = 1000f;
         camera.update();
         return camera;
     }

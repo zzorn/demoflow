@@ -1,16 +1,16 @@
 package org.demoflow.effect.ranges;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;
 
 import static org.flowutils.Check.notNull;
 
+
 /**
  * A range for 3D vectors.
  */
-public final class Vector3Range implements ParameterRange<Vector3> {
+public final class Vector3Range extends RangeBase<Vector3> {
 
     private final float minX;
     private final float maxX;
@@ -77,6 +77,8 @@ public final class Vector3Range implements ParameterRange<Vector3> {
     }
 
     public Vector3Range(float minX, float maxX, float minY, float maxY, float minZ, float maxZ, float standardDeviation) {
+        super(Vector3.class);
+
         this.minX = minX;
         this.maxX = maxX;
         this.minY = minY;
@@ -87,6 +89,7 @@ public final class Vector3Range implements ParameterRange<Vector3> {
     }
 
     @Override public Vector3 clampToRange(Vector3 originalValue) {
+        notNull(originalValue, "originalValue");
         originalValue.x = MathUtils.clampToRange(originalValue.x, minX, maxX);
         originalValue.y = MathUtils.clampToRange(originalValue.y, minY, maxY);
         originalValue.z = MathUtils.clampToRange(originalValue.z, minZ, maxZ);
@@ -94,26 +97,25 @@ public final class Vector3Range implements ParameterRange<Vector3> {
         return originalValue;
     }
 
-    @Override public Vector3 randomValue(RandomSequence randomSequence) {
-        final Vector3 vector = new Vector3(randomCoordinate(randomSequence, minX, maxX),
-                                           randomCoordinate(randomSequence, minY, maxY),
-                                           randomCoordinate(randomSequence, minZ, maxZ));
-        return clampToRange(vector);
+    @Override protected Vector3 createRandomValue(RandomSequence randomSequence) {
+        return new Vector3(randomCoordinate(randomSequence, minX, maxX),
+                           randomCoordinate(randomSequence, minY, maxY),
+                           randomCoordinate(randomSequence, minZ, maxZ));
     }
 
-    @Override public Vector3 mutateValue(Vector3 vector, float mutationAmount, RandomSequence randomSequence) {
+    @Override protected Vector3 doMutateValue(Vector3 vector, float mutationAmount, RandomSequence randomSequence) {
         vector.x += mutationAmount * standardDeviation * randomSequence.nextGaussianFloat();
         vector.y += mutationAmount * standardDeviation * randomSequence.nextGaussianFloat();
         vector.z += mutationAmount * standardDeviation * randomSequence.nextGaussianFloat();
-        return clampToRange(vector);
+        return vector;
     }
 
-    @Override public Vector3 copy(Vector3 source) {
+    @Override protected Vector3 createCopy(Vector3 source) {
         return new Vector3(source);
     }
 
-    @Override public Vector3 getDefaultValue() {
-        return clampToRange(new Vector3());
+    @Override protected Vector3 createDefaultValue() {
+        return new Vector3();
     }
 
     private float randomCoordinate(RandomSequence randomSequence, float min, float max) {
