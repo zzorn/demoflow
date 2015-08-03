@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import org.demoflow.demo.DefaultDemo;
 import org.demoflow.demo.Demo;
+import org.demoflow.parameter.calculator.calculators.ColorCalculator;
 import org.demoflow.parameter.calculator.calculators.NoiseCalculator;
 import org.demoflow.parameter.calculator.calculators.SineCalculator;
 import org.demoflow.parameter.calculator.calculators.Vector3ScaleCalculator;
@@ -81,8 +82,8 @@ public class Main {
 
     private static Demo createExampleDemo() {
         Demo demo = new DefaultDemo(20);
-        demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.53, 0.8));
-        demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1, 0.08, 0.9));
+        demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.53, 0.9));
+        demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1, 0.08, 0.936));
         demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2, 0.3, 0.99));
         return demo;
     }
@@ -103,6 +104,14 @@ public class Main {
         // Scale the cube with the scaled vector
         cubeEffect.scale.setCalculator(scaleCalculator);
 
+        // Tune the color a bit as well
+        final ColorCalculator cubeColor = new ColorCalculator();
+        cubeColor.r.setCalculator(new NoiseCalculator(0.08, color.r-0.1, 0.1));
+        cubeColor.b.setCalculator(new NoiseCalculator(0.13, color.b-0.1, 0.1));
+        cubeEffect.color.setCalculator(cubeColor);
+
+
+        // Set the time that the effect is visible
         cubeEffect.setEffectTimePeriod(relativeEntryTime, relativeExitTime);
 
         return cubeEffect;

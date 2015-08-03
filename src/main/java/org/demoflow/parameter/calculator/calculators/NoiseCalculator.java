@@ -21,7 +21,34 @@ public final class NoiseCalculator extends CalculatorBase<Double> {
      * Generates random noise with a frequency of 1Hz and output values from -1 to 1.
      */
     public NoiseCalculator() {
-        this(1.0, 0.0, 1.0, 0.0);
+        this(1.0);
+    }
+
+    /**
+     * By default generates random noise with a frequency of 1Hz and output values from -1 to 1.
+     * @param wavelength wavelength of the noise in seconds.
+     */
+    public NoiseCalculator(double wavelength) {
+        this(wavelength, 0.0);
+    }
+
+    /**
+     * By default generates random noise with a frequency of 1Hz and output values from -1 to 1.
+     * @param wavelength wavelength of the noise in seconds.
+     * @param offset offset to add to the result
+     */
+    public NoiseCalculator(double wavelength, double offset) {
+        this(wavelength, offset, 1.0);
+    }
+
+    /**
+     * By default generates random noise with a frequency of 1Hz and output values from -1 to 1.
+     * @param wavelength wavelength of the noise in seconds.
+     * @param offset offset to add to the result
+     * @param amplitude scaling to multiply the result with
+     */
+    public NoiseCalculator(double wavelength, double offset, double amplitude) {
+        this(wavelength, offset, amplitude, 0.0);
     }
 
     /**
