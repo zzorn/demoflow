@@ -2,6 +2,9 @@ package org.demoflow.parameter.range;
 
 import org.flowutils.random.RandomSequence;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import static org.flowutils.Check.notNull;
 
 /**
@@ -10,6 +13,8 @@ import static org.flowutils.Check.notNull;
 public abstract class RangeBase<T> implements ParameterRange<T> {
 
     private final Class<T> type;
+
+    private final NumberFormat numberFormat = new DecimalFormat("#0.0###");
 
     public RangeBase(Class<T> type) {
         notNull(type, "type");
@@ -34,6 +39,15 @@ public abstract class RangeBase<T> implements ParameterRange<T> {
 
     @Override public final Class<T> getType() {
         return type;
+    }
+
+    @Override public String valueToString(T value) {
+        if (value == null) return "null";
+        else if (value instanceof Float ||
+                 value instanceof Double) {
+            return numberFormat.format(value);
+        }
+        else return value.toString();
     }
 
     protected abstract T createRandomValue(RandomSequence randomSequence);

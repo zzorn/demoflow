@@ -1,16 +1,26 @@
 package org.demoflow.parameter;
 
+import com.badlogic.gdx.utils.Array;
+import org.demoflow.demo.DemoNode;
+import org.demoflow.demo.DemoNodeBase;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
 import org.demoflow.parameter.range.ParameterRange;
+import org.demoflow.utils.EmptyEnumeration;
+import org.demoflow.utils.SingletonEnumeration;
 import org.flowutils.Symbol;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Collections;
+import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
 
 /**
  * Implementation of Parameter.
  */
-public final class ParameterImpl<T> implements Parameter<T> {
+public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T> {
 
     private final Symbol id;
     private final Parametrized host;
@@ -108,6 +118,7 @@ public final class ParameterImpl<T> implements Parameter<T> {
         // Notify listeners
         host.onParameterChanged(this, id, value);
         if (listener != null) listener.onChanged(this, newValue);
+        notifyNodeUpdated();
     }
 
     @Override public ParameterRange<T> getRange() {
@@ -119,7 +130,17 @@ public final class ParameterImpl<T> implements Parameter<T> {
     }
 
     @Override public void setCalculator(Calculator<T> calculator) {
-        this.calculator = calculator;
+        if (this.calculator != calculator) {
+            if (this.calculator != null) {
+                notifyChildNodeRemoved(this.calculator);
+            }
+
+            this.calculator = calculator;
+
+            if (this.calculator != null) {
+                notifyChildNodeAdded(this.calculator);
+            }
+        }
     }
 
     @Override public boolean isConstant() {
@@ -154,4 +175,23 @@ public final class ParameterImpl<T> implements Parameter<T> {
     public void setListener(ParameterListener<T> listener) {
         this.listener = listener;
     }
+
+    @Override public DemoNode getParent() {
+        return host;
+    }
+
+    @Override public int getChildCount() {
+        return calculator != null ? calculator.getChildCount() : 0;
+    }
+
+    @Override public Enumeration<? extends DemoNode> getChildren() {
+        if (calculator != null) return calculator.getChildren();
+        else return EmptyEnumeration.EMPTY_ENUMERATION;
+    }
+
+    @Override public String toString() {
+        if (calculator != null) return id.toString() + ": " + calculator.toString();
+        else return id.toString() + ": " + range.valueToString(value);
+    }
+
 }

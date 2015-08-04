@@ -1,6 +1,7 @@
 package org.demoflow.editor;
 
 import net.miginfocom.swing.MigLayout;
+import org.demoflow.utils.UiUtils;
 import org.demoflow.view.View;
 import org.demoflow.demo.Demo;
 import org.demoflow.demo.DemoListener;
@@ -10,6 +11,7 @@ import org.uiflow.desktop.ui.SimpleFrame;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -20,6 +22,7 @@ import java.text.DecimalFormat;
 // TODO: Editing UI
 public final class Editor {
 
+    private static final int DEFAULT_EXPAND_DEPTH = 0;
     private final View view;
 
     private Demo demo;
@@ -49,6 +52,7 @@ public final class Editor {
     };
 
     public JProgressBar progressBar;
+    public JTree effectTree;
 
     /**
      * @param view view to show demos on.
@@ -74,6 +78,8 @@ public final class Editor {
         if (demo != this.demo) {
             if (this.demo != null) {
                 this.demo.removeListener(demoListener);
+
+                effectTree.setModel(null);
             }
 
             this.demo = demo;
@@ -81,6 +87,9 @@ public final class Editor {
 
             if (this.demo != null) {
                 this.demo.addListener(demoListener);
+
+                effectTree.setModel(new DefaultTreeModel(new DemoTreeNode(this.demo)));
+                moderateExpandTree();
             }
         }
     }
@@ -88,6 +97,16 @@ public final class Editor {
     private void buildUi() {
 
         final JPanel mainPanel = new JPanel(new MigLayout());
+
+        mainPanel.add(createTopRow(), "wrap");
+
+        mainPanel.add(createEffectView(), "grow, push");
+
+        new SimpleFrame("Demo Editor", mainPanel, 1024, 400, WindowConstants.HIDE_ON_CLOSE);
+    }
+
+    private JPanel createTopRow() {
+        final JPanel topRow = new JPanel(new MigLayout());
 
         // Pause button
         final JToggleButton pause = new JToggleButton("Pause");
@@ -99,9 +118,9 @@ public final class Editor {
                 }
             }
         });
-        mainPanel.add(pause);
+        topRow.add(pause);
 
-        // Speed
+        // Speed slider
         final int maxSliderSpeed = 10000;
         final int defaultSliderSpeed = maxSliderSpeed / 4;
         final JSlider speedSlider = new JSlider(SwingConstants.HORIZONTAL, 0, maxSliderSpeed, defaultSliderSpeed);
@@ -113,9 +132,9 @@ public final class Editor {
                 }
             }
         });
-        mainPanel.add(new JLabel("Speed"));
-        mainPanel.add(speedSlider);
-        mainPanel.add(createButton("1:1", new ActionListener() {
+        topRow.add(new JLabel("Speed"));
+        topRow.add(speedSlider);
+        topRow.add(createButton("1:1", new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 if (demo != null) {
                     speedSlider.setValue(defaultSliderSpeed);
@@ -123,8 +142,12 @@ public final class Editor {
             }
         }));
 
+        // Demo position indicator
+        progressBar = new JProgressBar();
+        topRow.add(progressBar, "width :250:");
+
         // Restart button
-        mainPanel.add(createButton("Restart", new ActionListener() {
+        topRow.add(createButton("Restart", new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 if (demo != null) {
                     demo.reset();
@@ -132,12 +155,43 @@ public final class Editor {
             }
         }));
 
-        // Demo position indicator
-        progressBar = new JProgressBar();
-        mainPanel.add(progressBar, "width :250:");
-
-        new SimpleFrame("Demo Editor", mainPanel, 1024, 400, WindowConstants.HIDE_ON_CLOSE);
+        return topRow;
     }
+
+    private JComponent createEffectView() {
+        // Create the effect tree
+        effectTree = new JTree(demo != null ? new DemoTreeNode(demo) : null);
+        effectTree.setToggleClickCount(1);
+
+        // Panel to place tree and related controls in
+        JPanel treePanel = new JPanel(new MigLayout("fill"));
+
+        // Collapse button
+        treePanel.add(new JButton(new AbstractAction("Collapse") {
+            @Override public void actionPerformed(ActionEvent e) {
+                moderateExpandTree();
+            }
+        }));
+
+        // Expand button
+        treePanel.add(new JButton(new AbstractAction("Expand") {
+            @Override public void actionPerformed(ActionEvent e) {
+                UiUtils.expandAll(Editor.this.effectTree);
+            }
+        }), "pushx");
+
+        // Scroll pane for the tree
+        JScrollPane scrollPane = new JScrollPane(effectTree);
+        treePanel.add(scrollPane, "south, grow, push, gaptop 5");
+
+        return treePanel;
+    }
+
+    private void moderateExpandTree() {
+        UiUtils.collapseAll(effectTree);
+        UiUtils.expand(effectTree, DEFAULT_EXPAND_DEPTH);
+    }
+
 
     private JButton createButton(final String name, final ActionListener listener) {
         final JButton button = new JButton(name);

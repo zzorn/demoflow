@@ -2,6 +2,7 @@ package org.demoflow.parameter.calculator;
 
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.ParametrizedBase;
+import org.flowutils.StringUtils;
 import org.flowutils.Symbol;
 
 /**
@@ -43,4 +44,9 @@ public abstract class CalculatorBase<T> extends ParametrizedBase implements Calc
      * Reset any changing state of this calculator to the starting values.
      */
     protected abstract void doResetState();
+
+    @Override public String toString() {
+        return getClass().getSimpleName().replace("Calculator", "");
+    }
+
 }

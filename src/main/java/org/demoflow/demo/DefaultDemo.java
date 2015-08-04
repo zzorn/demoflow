@@ -32,6 +32,8 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     private View view;
 
+    private String name;
+
     private boolean paused = false;
     private double speed = 1.0;
     private double durationSeconds = DEFAULT_DURATION_SECONDS;
@@ -48,12 +50,26 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     private boolean initialized = false;
 
     public DefaultDemo() {
-        this(DEFAULT_DURATION_SECONDS);
+        this("Demo");
     }
 
-    public DefaultDemo(double durationSeconds) {
+    public DefaultDemo(String name) {
+        this(name, DEFAULT_DURATION_SECONDS);
+    }
+
+    public DefaultDemo(String name, double durationSeconds) {
+        Check.nonEmptyString(name, "name");
         setDurationSeconds(durationSeconds);
         timeDilation = addParameter("timeDilation", 1.0, DoubleRange.POSITIVE);
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override public final Array<Effect> getEffects() {
@@ -257,5 +273,9 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     @Override public final void removeListener(DemoListener listener) {
         listeners.removeValue(listener, true);
+    }
+
+    @Override public String toString() {
+        return name;
     }
 }

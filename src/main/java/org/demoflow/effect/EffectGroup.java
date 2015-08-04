@@ -12,36 +12,31 @@ import static org.flowutils.Check.notNull;
  *
  * The contained effects are not updated or rendered outside the time boundaries of the effect group duration.
  */
-public final class EffectGroup extends EffectBase<Object> {
+public final class EffectGroup extends EffectBase<Object> implements EffectContainer {
 
     private final Array<Effect> effects = new Array<>();
 
-    /**
-     * @param effect effect to add to this group of effects.
-     */
-    public final void addEffect(Effect effect) {
+    @Override public final void addEffect(Effect effect) {
         notNull(effect, "effect");
         if (effects.contains(effect, true)) throw new IllegalArgumentException("The effect "+effect+" has already been added to this effect group");
         if (effect.getParent() != null) throw new IllegalArgumentException("The effect is already added to another parent ("+effect.getParent()+")");
 
         effects.add(effect);
         effect.setParent(this);
+
+        notifyChildNodeAdded(effect);
     }
 
-    /**
-     * @param effect the effect to remove from this group.
-     */
-    public final void removeEffect(Effect effect) {
+    @Override public final void removeEffect(Effect effect) {
         if (effect != null)
         if (effects.removeValue(effect, true)) {
             effect.setParent(null);
+
+            notifyChildNodeRemoved(effect);
         }
     }
 
-    /**
-     * @return the effects in this effect group.
-     */
-    public final Array<Effect> getEffects() {
+    @Override public final Array<Effect> getEffects() {
         return effects;
     }
 

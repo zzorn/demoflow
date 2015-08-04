@@ -3,11 +3,19 @@ package org.demoflow.parameter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import org.demoflow.demo.DemoNode;
+import org.demoflow.demo.DemoNodeBase;
+import org.demoflow.demo.DemoNodeListener;
+import org.demoflow.effect.EffectContainer;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
 import org.demoflow.parameter.range.*;
 import org.demoflow.parameter.range.ranges.*;
+import org.demoflow.utils.ArrayEnumeration;
+import org.demoflow.utils.DualArrayEnumeration;
 import org.flowutils.Symbol;
+
+import java.util.Enumeration;
 
 import static org.flowutils.Check.nonEmptyString;
 import static org.flowutils.Check.notNull;
@@ -15,7 +23,7 @@ import static org.flowutils.Check.notNull;
 /**
  * Common functionality for Parametrized classes.
  */
-public abstract class ParametrizedBase implements Parametrized {
+public abstract class ParametrizedBase extends DemoNodeBase implements Parametrized {
 
     private final Array<Parameter> parameters = new Array<>(8);
 
@@ -160,6 +168,9 @@ public abstract class ParametrizedBase implements Parametrized {
         // Add parameter
         parameters.add(parameter);
 
+        // Notify listeners in UI
+        notifyChildNodeAdded(parameter);
+
         // Return parameter, so that the implementing class can cache it locally if needed.
         return parameter;
     }
@@ -169,7 +180,11 @@ public abstract class ParametrizedBase implements Parametrized {
      * @param parameter parameter to remove.
      */
     protected final void removeParameter(Parameter parameter) {
-        parameters.removeValue(parameter, true);
+        if (parameters.removeValue(parameter, true)) {
+
+            // Notify listeners in UI
+            notifyChildNodeRemoved(parameter);
+        }
     }
 
 
@@ -219,5 +234,25 @@ public abstract class ParametrizedBase implements Parametrized {
             parameter.resetToInitialValue();
         }
     }
+
+    @Override public int getChildCount() {
+        int childCount = getParameters().size;
+
+        if (this instanceof EffectContainer) {
+            childCount += ((EffectContainer)this).getEffects().size;
+        }
+
+        return childCount;
+    }
+
+    @Override public Enumeration<? extends DemoNode> getChildren() {
+        if (this instanceof EffectContainer) {
+            return new DualArrayEnumeration<>(((EffectContainer)this).getEffects(), getParameters());
+        }
+        else {
+            return new ArrayEnumeration<>(getParameters());
+        }
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package org.demoflow.demo;
 
 import com.badlogic.gdx.utils.Array;
+import org.demoflow.effect.EffectContainer;
 import org.demoflow.effect.RenderContext;
 import org.demoflow.view.View;
 import org.demoflow.parameter.Parametrized;
@@ -12,9 +13,7 @@ import java.io.File;
  * Contains effects with start and stop times spread out over the duration of the Demo.
  * Has a duration, effects are forced to stop before the duration ends and start after time 0.
  */
-public interface Demo extends Parametrized {
-
-    Array<Effect> getEffects();
+public interface Demo extends Parametrized, EffectContainer {
 
     /**
      * Adds an effect to this demo.
@@ -25,6 +24,11 @@ public interface Demo extends Parametrized {
      * @param effect effect to remove from the demo.
      */
     void removeEffect(Effect effect);
+
+    /**
+     * @return the effects in this demo.
+     */
+    Array<Effect> getEffects();
 
     /**
      * Pause or unpause the execution of the demo.

@@ -81,7 +81,7 @@ public class Main {
     }
 
     private static Demo createExampleDemo() {
-        Demo demo = new DefaultDemo(20);
+        Demo demo = new DefaultDemo("Example Demo", 20);
         demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.53, 0.9));
         demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1, 0.08, 0.936));
         demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2, 0.3, 0.99));

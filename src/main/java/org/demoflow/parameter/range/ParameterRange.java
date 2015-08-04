@@ -40,6 +40,10 @@ public interface ParameterRange<T> {
      */
     Class<T> getType();
 
+    /**
+     * @return the value as an user readable string.
+     */
+    String valueToString(T value);
 
     // TODO: Serialize / deserialize value from text/xml (or binary)
 }

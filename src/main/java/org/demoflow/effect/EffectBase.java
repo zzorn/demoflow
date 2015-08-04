@@ -199,5 +199,4 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
         }
     }
 
-
 }

@@ -1,5 +1,6 @@
 package org.demoflow.parameter;
 
+import org.demoflow.demo.DemoNode;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
 import org.demoflow.parameter.range.ParameterRange;
@@ -8,7 +9,7 @@ import org.flowutils.Symbol;
 /**
  * Information about a parameter in a Parametrized class.
  */
-public interface Parameter<T> {
+public interface Parameter<T> extends DemoNode {
 
     /**
      * @return unique id of the parameter within the Parametrized class where it is.

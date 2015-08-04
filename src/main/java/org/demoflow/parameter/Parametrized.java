@@ -1,13 +1,14 @@
 package org.demoflow.parameter;
 
 import com.badlogic.gdx.utils.Array;
+import org.demoflow.demo.DemoNode;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.flowutils.Symbol;
 
 /**
  * Something that has parameters that may be calculated over time.
  */
-public interface Parametrized {
+public interface Parametrized extends DemoNode {
 
     /**
      * @return the effect or calculator that this parametrized object is in.
