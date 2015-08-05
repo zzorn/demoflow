@@ -5,6 +5,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+
 import org.demoflow.demo.DefaultDemo;
 import org.demoflow.demo.Demo;
 import org.demoflow.parameter.calculator.calculators.ColorCalculator;
@@ -13,6 +14,7 @@ import org.demoflow.parameter.calculator.calculators.SineCalculator;
 import org.demoflow.parameter.calculator.calculators.Vector3ScaleCalculator;
 import org.demoflow.editor.Editor;
 import org.demoflow.effect.effects.CubeEffect;
+import org.demoflow.effect.effects.Plasma;
 import org.demoflow.view.View;
 import org.flowutils.LogUtils;
 
@@ -81,11 +83,18 @@ public class Main {
     }
 
     private static Demo createExampleDemo() {
-        Demo demo = new DefaultDemo("Example Demo", 20);
+        Demo demo = new DefaultDemo("Example Demo", 200);
         demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.53, 0.9));
         demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1, 0.08, 0.936));
-        demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2, 0.3, 0.99));
+        demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2, 0.3, 0.99));        
+        demo.addEffect(createPlasmaEffect(0, 0.99));
         return demo;
+    }
+    
+    private static Plasma createPlasmaEffect(final double relativeEntryTime, final double relativeExitTime){
+    	final Plasma p = new Plasma();
+    	p.setEffectTimePeriod(relativeEntryTime, relativeExitTime);
+		return p;
     }
 
     private static CubeEffect createCubeEffect(Color color, Vector3 position, final double phase, final double relativeEntryTime, final double relativeExitTime) {
