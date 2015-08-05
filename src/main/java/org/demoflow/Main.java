@@ -104,7 +104,7 @@ public class Main {
         final InterpolatingCalculator<Double> squareAspect = plasma.squareAspect.setCalculator(new InterpolatingCalculator<Double>());
         squareAspect.addPoint(0, 1.0);
         squareAspect.addPoint(0.8, 1.0);
-        squareAspect.addPoint(1, 0.5, CubicInterpolator.IN_OUT);
+        squareAspect.addPoint(0.92, 0.5, CubicInterpolator.IN_OUT);
         final InterpolatingCalculator<Double> gapSize = plasma.gapSize.setCalculator(new InterpolatingCalculator<Double>());
         gapSize.addPoint(0, 10.0);
         gapSize.addPoint(0.2, 0.0, CubicInterpolator.IN_OUT);
