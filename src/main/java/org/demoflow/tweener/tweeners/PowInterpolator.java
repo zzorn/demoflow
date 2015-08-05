@@ -1,22 +1,22 @@
 package org.demoflow.tweener.tweeners;
 
-import org.demoflow.tweener.TweenerBase;
+import org.demoflow.tweener.InterpolatorBase;
 import org.flowutils.Check;
 
 /**
  * Uses the x^exponent function to fade in and out.
  */
-public final class PowTween extends TweenerBase {
+public final class PowInterpolator extends InterpolatorBase {
 
     private final double exponent;
 
-    public PowTween(double exponent) {
+    public PowInterpolator(double exponent) {
         Check.greaterOrEqual(exponent, "exponent", 0, "zero");
 
         this.exponent = exponent;
     }
 
-    @Override public double tween(double t) {
+    @Override public double interpolate(double t) {
         if (t < 0.5) {
             // Move t to 0..1 range.
             t *= 2.0;

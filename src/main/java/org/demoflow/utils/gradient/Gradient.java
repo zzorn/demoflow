@@ -1,11 +1,12 @@
 package org.demoflow.utils.gradient;
 
-import org.demoflow.tweener.Tweener;
+import org.demoflow.tweener.Interpolator;
 
-import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Interpolates between objects placed at specified points, using specified interpolators between each point.
+ * Uses a ValueInterpolator to do the actual mixing between two values.
  */
 public interface Gradient<T> extends DoubleFun<T> {
 
@@ -19,9 +20,9 @@ public interface Gradient<T> extends DoubleFun<T> {
     /**
      * @param pos position to add the point at.
      * @param value value at the point.
-     * @param interpolatorFromPreviousPoint interpolator to use between the previous point and this point.
+     * @param interpolator interpolator to use between the previous point and this point.
      */
-    void addPoint(double pos, T value, Tweener interpolatorFromPreviousPoint);
+    void addPoint(double pos, T value, Interpolator interpolator);
 
     /**
      * @return number of points in this gradient.
@@ -44,9 +45,9 @@ public interface Gradient<T> extends DoubleFun<T> {
     GradientPoint<T> getPointAtIndex(int index);
 
     /**
-     * @return read only collection with the points in this gradient, ordered from smallest to largest position.
+     * @return iterator over the points in this gradient, ordered from smallest to largest position.
      */
-    Collection<GradientPoint<T>> getPoints();
+    Iterator<? extends GradientPoint<T>> getPoints();
 
     /**
      * @param pos position at which the closest point should be removed.
@@ -66,16 +67,44 @@ public interface Gradient<T> extends DoubleFun<T> {
     void clear();
 
     /**
+     * Updates the properties of the point at the specified index.
+     * Note that the index may change as the result of this operation!
+     * @param pointIndex index of the point to change.
+     * @param position new position for the point.
+     * @param value new value at the point.
+     * @param interpolator new interpolator to use for values between the point and the previous one.
+     */
+    void updatePoint(int pointIndex, double position, T value, Interpolator interpolator);
+
+    /**
+     * Update the position of the point at the specified index.
+     * Note that the index may change as the result of this operation!
+     */
+    void setPointPosition(int pointIndex, double position);
+
+    /**
      * Update the value at the specified index.
-     * @param pointIndex
-     * @param newValue
      */
     void setPointValue(int pointIndex, T newValue);
 
     /**
      * Update the interpolator at the specified index.
-     * @param pointIndex
-     * @param newInterpolation
      */
-    void setPointInterpolation(int pointIndex, Tweener newInterpolation);
+    void setPointInterpolation(int pointIndex, Interpolator newInterpolation);
+
+    /**
+     * @return used for interpolating between the values in the gradient.
+     */
+    ValueInterpolator<T> getValueInterpolator();
+
+    /**
+     * @param valueInterpolator used for interpolating between the values in the gradient.
+     *                          Must be specified before values can be calculated.
+     */
+    void setValueInterpolator(ValueInterpolator<T> valueInterpolator);
+
+    /**
+     * @return value at the specified position, using the specified interpolator to interpolate between values of type T.
+     */
+    T getValueAt(double pos, ValueInterpolator<T> valueInterpolator);
 }

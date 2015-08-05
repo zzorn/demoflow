@@ -1,15 +1,15 @@
 package org.demoflow.tweener.tweeners;
 
-import org.demoflow.tweener.TweenerBase;
+import org.demoflow.tweener.InterpolatorBase;
 
 /**
  * Uses the x^5 function to fade in and out.
  */
-public final class QuintTween extends TweenerBase {
+public final class QuintInterpolator extends InterpolatorBase {
 
-    public static final QuintTween DEFAULT = new QuintTween();
+    public static final QuintInterpolator DEFAULT = new QuintInterpolator();
 
-    @Override public double tween(double t) {
+    @Override public double interpolate(double t) {
         if (t < 0.5) {
             // Move t to 0..1 range.
             t *= 2.0;

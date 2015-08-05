@@ -202,8 +202,13 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
                 while (remainingUpdateTime >= timeStepSizeSeconds) {
                     remainingUpdateTime -= timeStepSizeSeconds;
 
-                    // Update effects
+                    // Update time
                     calculationContext.update(timeStepSizeSeconds);
+
+                    // Update parameters in the demo itself
+                    recalculateParameters(calculationContext);
+
+                    // Update effects
                     effects.update(calculationContext);
                 }
 
@@ -224,7 +229,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
                     listeners.get(i).onCompleted();
                 }
 
-                // Restart if autorestart is on
+                // Restart if auto-restart is on
                 if (autoRestart) {
                     reset();
                 }

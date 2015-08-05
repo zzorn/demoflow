@@ -30,7 +30,7 @@ public interface CalculationContext {
     void init(double totalDemoDuration_s);
 
     /**
-     * Updates demo time
+     * Updates demo time and sets current relative effect position to the duration of the demo (0..1).
      */
     void update(double deltaTime_s);
 

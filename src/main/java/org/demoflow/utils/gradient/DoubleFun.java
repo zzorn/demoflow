@@ -6,6 +6,6 @@ package org.demoflow.utils.gradient;
  */
 public interface DoubleFun<T> {
 
-    T calculate(double pos);
+    T getValueAt(double pos);
 
 }

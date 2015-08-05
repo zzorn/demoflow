@@ -1,29 +1,29 @@
 package org.demoflow.tweener.tweeners;
 
-import org.demoflow.tweener.TweenerBase;
+import org.demoflow.tweener.InterpolatorBase;
 import org.flowutils.Check;
 import org.flowutils.MathUtils;
 
 /**
  * Multi-period cosine interpolation.
  */
-public final class WavyTween extends TweenerBase {
+public final class WavyInterpolator extends InterpolatorBase {
 
-    public static final WavyTween DEFAULT = new WavyTween();
+    public static final WavyInterpolator DEFAULT = new WavyInterpolator();
 
     private final int waveCount;
 
-    public WavyTween() {
+    public WavyInterpolator() {
         this(3);
     }
 
-    public WavyTween(int waveCount) {
+    public WavyInterpolator(int waveCount) {
         Check.positiveOrZero(waveCount, "waveCount");
 
         this.waveCount = waveCount;
     }
 
-    @Override public double tween(double t) {
+    @Override public double interpolate(double t) {
         final double baseLine = 0.5 - 0.5 * Math.cos(t * 0.5 * MathUtils.Tau);             // __/~~
         final double waveAmplitude = 0.5 - 0.5 * Math.cos(t * MathUtils.Tau);              // _/~\_
         final double waves = 0.5 - 0.5 * Math.cos((t * (waveCount+0.5) * MathUtils.Tau));  // /\/\/

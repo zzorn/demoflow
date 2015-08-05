@@ -1,15 +1,15 @@
 package org.demoflow.tweener.tweeners;
 
-import org.demoflow.tweener.TweenerBase;
+import org.demoflow.tweener.InterpolatorBase;
 
 /**
  * Uses the x^3 function to fade in and out.
  */
-public final class CubicTween extends TweenerBase {
+public final class CubicInterpolator extends InterpolatorBase {
 
-    public static final CubicTween DEFAULT = new CubicTween();
+    public static final CubicInterpolator DEFAULT = new CubicInterpolator();
 
-    @Override public double tween(double t) {
+    @Override public double interpolate(double t) {
         if (t < 0.5) {
             // Move t to 0..1 range.
             t *= 2.0;

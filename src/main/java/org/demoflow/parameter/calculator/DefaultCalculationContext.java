@@ -29,6 +29,8 @@ public final class DefaultCalculationContext implements CalculationContext {
 
         this.deltaTime_s = deltaTime_s;
         this.currentDemoTime_s += deltaTime_s;
+
+        setEffectPeriod(0, 1);
     }
 
 

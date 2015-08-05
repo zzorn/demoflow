@@ -1,15 +1,15 @@
 package org.demoflow.tweener.tweeners;
 
-import org.demoflow.tweener.TweenerBase;
+import org.demoflow.tweener.InterpolatorBase;
 
 /**
  * Uses the x^2 function to fade in and out.
  */
-public final class QuadraticTween extends TweenerBase {
+public final class QuadraticInterpolator extends InterpolatorBase {
 
-    public static final QuadraticTween DEFAULT = new QuadraticTween();
+    public static final QuadraticInterpolator DEFAULT = new QuadraticInterpolator();
 
-    @Override public double tween(double t) {
+    @Override public double interpolate(double t) {
         if (t < 0.5) {
             // Move t to 0..1 range.
             t *= 2.0;
