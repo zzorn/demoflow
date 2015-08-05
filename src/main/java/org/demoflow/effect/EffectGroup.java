@@ -16,7 +16,7 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
 
     private final Array<Effect> effects = new Array<>();
 
-    @Override public final void addEffect(Effect effect) {
+    @Override public <E extends Effect> E addEffect(E effect) {
         notNull(effect, "effect");
         if (effects.contains(effect, true)) throw new IllegalArgumentException("The effect "+effect+" has already been added to this effect group");
         if (effect.getParent() != null) throw new IllegalArgumentException("The effect is already added to another parent ("+effect.getParent()+")");
@@ -25,6 +25,8 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         effect.setParent(this);
 
         notifyChildNodeAdded(effect);
+
+        return effect;
     }
 
     @Override public final void removeEffect(Effect effect) {

@@ -17,8 +17,11 @@ public interface Demo extends Parametrized, EffectContainer {
 
     /**
      * Adds an effect to this demo.
+     *
+     * @param effect effect to add.
+     * @return the added effect.
      */
-    void addEffect(Effect effect);
+    <E extends Effect> E addEffect(E effect);
 
     /**
      * @param effect effect to remove from the demo.

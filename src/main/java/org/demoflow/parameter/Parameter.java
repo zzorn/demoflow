@@ -52,8 +52,9 @@ public interface Parameter<T> extends DemoNode {
 
     /**
      * @param calculator the calculator used to update the value for the parameter over time, or null if it does not change over time.
+     * @return the provided calculator, for easier chaining of operations.
      */
-    void setCalculator(Calculator<T> calculator);
+    <C extends Calculator<T>> C setCalculator(C calculator);
 
     /**
      * @return if true, the parameter does not change over time.

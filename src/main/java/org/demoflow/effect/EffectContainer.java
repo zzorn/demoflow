@@ -9,8 +9,9 @@ public interface EffectContainer {
 
     /**
      * @param effect effect to add.
+     * @return the added effect.
      */
-    void addEffect(Effect effect);
+    <E extends Effect> E addEffect(E effect);
 
     /**
      * @param effect the effect to remove.

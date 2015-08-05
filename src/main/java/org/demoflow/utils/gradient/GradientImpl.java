@@ -134,13 +134,13 @@ public final class GradientImpl<T> implements Gradient<T> {
         this.valueInterpolator = valueInterpolator;
     }
 
-    @Override public T getValueAt(double pos) {
+    @Override public T getValueAt(final double pos) {
         if (valueInterpolator == null) throw new IllegalStateException("No ValueInterpolator has been specified for the Gradient, can not interpolate values.  Use setValueInterpolator, or the correct constructor to set one.");
 
         return getValueAt(pos, valueInterpolator);
     }
 
-    @Override public T getValueAt(double pos, ValueInterpolator<T> valueInterpolator) {
+    @Override public T getValueAt(final double pos, ValueInterpolator<T> valueInterpolator) {
         notNull(valueInterpolator, "valueInterpolator");
 
         // If we are empty return null, if we only have one point return the value at it
@@ -182,10 +182,12 @@ public final class GradientImpl<T> implements Gradient<T> {
         }
 
         // Use interpolation function to interpolate between the two closest values
-        double t = interpolator.interpolate(pos, prevPos, nextPos);
+        double t = interpolator.interpolate(pos, prevPos, nextPos, 0, 1);
 
         // Interpolate between the two closest values using the calculated interpolation value
-        return valueInterpolator.interpolate(t, prevValue, nextValue);
+        final T result = valueInterpolator.interpolate(t, prevValue, nextValue);
+
+        return result;
     }
 
     private void sortPoints() {

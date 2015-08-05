@@ -78,10 +78,12 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
         return effects.getEffects();
     }
 
-    @Override public final void addEffect(Effect effect) {
+    @Override public <E extends Effect> E addEffect(E effect) {
         notNull(effect, "effect");
 
         effects.addEffect(effect);
+
+        return effect;
     }
 
     @Override public final void removeEffect(Effect effect) {

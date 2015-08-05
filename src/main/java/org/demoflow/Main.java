@@ -9,10 +9,8 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import org.demoflow.demo.DefaultDemo;
 import org.demoflow.demo.Demo;
 import org.demoflow.effect.effects.XMPlayerEffect;
-import org.demoflow.parameter.calculator.calculators.ColorCalculator;
-import org.demoflow.parameter.calculator.calculators.NoiseCalculator;
-import org.demoflow.parameter.calculator.calculators.SineCalculator;
-import org.demoflow.parameter.calculator.calculators.Vector3ScaleCalculator;
+import org.demoflow.interpolator.interpolators.*;
+import org.demoflow.parameter.calculator.calculators.*;
 import org.demoflow.editor.Editor;
 import org.demoflow.effect.effects.CubeEffect;
 import org.demoflow.effect.effects.Plasma;
@@ -89,7 +87,7 @@ public class Main {
 
     private static Demo createExampleDemo() {
 
-        Demo demo = new DefaultDemo("Example Demo", 200);
+        Demo demo = new DefaultDemo("Example Demo", 60);
 
         // Create some cubes, yay!
         demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.53, 0.9));
@@ -97,7 +95,19 @@ public class Main {
         demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2, 0.3, 0.99));
 
         // Add some plasma
-        demo.addEffect(createPlasmaEffect(0, 0.99));
+        final Plasma plasma = demo.addEffect(createPlasmaEffect(0, 0.99));
+        final InterpolatingCalculator<Double> squareSize = plasma.squareSize.setCalculator(new InterpolatingCalculator<Double>());
+        squareSize.addPoint(0, 0.0);
+        squareSize.addPoint(0.1, 0.01, CosineInterpolator.IN_OUT);
+        squareSize.addPoint(0.8, 0.01);
+        squareSize.addPoint(1.0, 1.0, QuadraticInterpolator.IN_OUT);
+        final InterpolatingCalculator<Double> squareAspect = plasma.squareAspect.setCalculator(new InterpolatingCalculator<Double>());
+        squareAspect.addPoint(0, 1.0);
+        squareAspect.addPoint(0.8, 1.0);
+        squareAspect.addPoint(1, 0.5, CubicInterpolator.IN_OUT);
+        final InterpolatingCalculator<Double> gapSize = plasma.gapSize.setCalculator(new InterpolatingCalculator<Double>());
+        gapSize.addPoint(0, 10.0);
+        gapSize.addPoint(0.2, 0.0, CubicInterpolator.IN_OUT);
 
         // Add music.
         // NOTE: For now, XM playback doesn't support pausing or speed changes, so the editor is paused or speed changed, the music will go out of sync until demo is restarted

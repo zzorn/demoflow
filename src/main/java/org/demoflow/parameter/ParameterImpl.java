@@ -129,7 +129,7 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
         return calculator;
     }
 
-    @Override public void setCalculator(Calculator<T> calculator) {
+    @Override public <C extends Calculator<T>> C setCalculator(C calculator) {
         if (this.calculator != calculator) {
             if (this.calculator != null) {
                 notifyChildNodeRemoved(this.calculator);
@@ -141,6 +141,8 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
                 notifyChildNodeAdded(this.calculator);
             }
         }
+
+        return calculator;
     }
 
     @Override public boolean isConstant() {

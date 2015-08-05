@@ -7,7 +7,7 @@ import org.demoflow.interpolator.InterpolatorBase;
  */
 public final class QuadraticInterpolator extends InterpolatorBase {
 
-    public static final QuadraticInterpolator DEFAULT = new QuadraticInterpolator();
+    public static final QuadraticInterpolator IN_OUT = new QuadraticInterpolator();
 
     @Override public double interpolate(double t) {
         if (t < 0.5) {

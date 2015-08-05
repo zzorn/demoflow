@@ -9,7 +9,7 @@ import org.flowutils.MathUtils;
  */
 public final class WavyInterpolator extends InterpolatorBase {
 
-    public static final WavyInterpolator DEFAULT = new WavyInterpolator();
+    public static final WavyInterpolator IN_OUT = new WavyInterpolator();
 
     private final int waveCount;
 

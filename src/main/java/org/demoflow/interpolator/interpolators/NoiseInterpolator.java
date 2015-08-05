@@ -14,7 +14,7 @@ public final class NoiseInterpolator extends InterpolatorBase {
 
     private static final RandomSequence RANDOM_SEQUENCE = new XorShift();
 
-    public static final NoiseInterpolator DEFAULT = new NoiseInterpolator();
+    public static final NoiseInterpolator IN_OUT = new NoiseInterpolator();
 
     private final double frequency;
     private final double offset;

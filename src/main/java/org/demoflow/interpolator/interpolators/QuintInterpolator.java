@@ -7,7 +7,7 @@ import org.demoflow.interpolator.InterpolatorBase;
  */
 public final class QuintInterpolator extends InterpolatorBase {
 
-    public static final QuintInterpolator DEFAULT = new QuintInterpolator();
+    public static final QuintInterpolator IN_OUT = new QuintInterpolator();
 
     @Override public double interpolate(double t) {
         if (t < 0.5) {

@@ -7,7 +7,7 @@ import org.demoflow.interpolator.InterpolatorBase;
  */
 public final class CubicInterpolator extends InterpolatorBase {
 
-    public static final CubicInterpolator DEFAULT = new CubicInterpolator();
+    public static final CubicInterpolator IN_OUT = new CubicInterpolator();
 
     @Override public double interpolate(double t) {
         if (t < 0.5) {
