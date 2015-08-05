@@ -1,5 +1,6 @@
 package org.demoflow.parameter;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -113,6 +114,16 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
      */
     protected final Parameter<Vector3> addParameter(String id, Vector3 initialValue) {
         return addParameter(id, initialValue, Vector3Range.FULL);
+    }
+
+    /**
+     * Convenience method to create a constant file handle parameter.
+     * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
+     * @param initialValue initial value for the parameter.
+     * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
+     */
+    protected final Parameter<FileHandle> addParameter(String id, FileHandle initialValue) {
+        return addParameter(id, initialValue, FileHandleRange.FULL, true);
     }
 
     /**

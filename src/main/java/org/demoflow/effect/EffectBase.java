@@ -199,4 +199,9 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
         }
     }
 
+
+    @Override public String toString() {
+        return getClass().getSimpleName().replace("Effect", "");
+    }
+
 }
