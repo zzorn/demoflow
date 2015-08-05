@@ -154,4 +154,14 @@ public interface Demo extends Parametrized, EffectContainer {
      * @param listener listener to remove.
      */
     void removeListener(DemoListener listener);
+
+    /**
+     * @return if true the demo will automatically restart when finished.
+     */
+    boolean isAutoRestart();
+
+    /**
+     * @param autoRestart if true the demo will automatically restart when finished.
+     */
+    void setAutoRestart(boolean autoRestart);
 }

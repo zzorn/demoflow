@@ -3,6 +3,7 @@ package org.demoflow.tweener;
 /**
  * Something that interpolates between two values in some way (fills in values in between)
  */
+// TODO: Add bounce and overshooting tweeners.
 public interface Tweener {
 
     /**

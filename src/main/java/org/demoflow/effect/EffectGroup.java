@@ -82,4 +82,9 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         }
     }
 
+    @Override public void setPaused(boolean paused) {
+        for (Effect effect : effects) {
+            effect.setPaused(paused);
+        }
+    }
 }

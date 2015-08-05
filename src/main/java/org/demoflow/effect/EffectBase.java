@@ -204,4 +204,9 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
         return getClass().getSimpleName().replace("Effect", "");
     }
 
+
+    // Override if the effect needs to pause some ongoing thread or similar (e.g. music)
+    @Override public void setPaused(boolean paused) {
+        // Ignored for most effects
+    }
 }

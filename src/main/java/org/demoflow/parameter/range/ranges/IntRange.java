@@ -52,7 +52,7 @@ public final class IntRange extends RangeBase<Integer> {
     }
 
     @Override protected Integer createRandomValue(RandomSequence randomSequence) {
-        return randomSequence.nextInt(min, max+1);
+        return randomSequence.nextInt(min, max + 1);
     }
 
     @Override protected Integer doMutateValue(Integer value, float mutationAmount, RandomSequence randomSequence) {
@@ -78,4 +78,9 @@ public final class IntRange extends RangeBase<Integer> {
     public float getStandardDeviation() {
         return standardDeviation;
     }
+
+    @Override public Integer interpolate(double t, Integer a, Integer b, Integer out) {
+        return (int) (1.0*a + t * (1.0*b - 1.0*a));
+    }
+
 }

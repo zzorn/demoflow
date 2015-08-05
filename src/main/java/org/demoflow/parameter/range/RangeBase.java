@@ -50,8 +50,14 @@ public abstract class RangeBase<T> implements ParameterRange<T> {
         else return value.toString();
     }
 
+    @Override public final T interpolate(double t, T a, T b) {
+        return interpolate(t, a, b, createDefaultValue());
+    }
+
     protected abstract T createRandomValue(RandomSequence randomSequence);
     protected abstract T doMutateValue(T value, float mutationAmount, RandomSequence randomSequence);
     protected abstract T createCopy(T source);
     protected abstract T createDefaultValue();
+
+
 }

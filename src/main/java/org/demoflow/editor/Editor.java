@@ -12,6 +12,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -22,7 +24,7 @@ import java.text.DecimalFormat;
 // TODO: Editing UI
 public final class Editor {
 
-    private static final int DEFAULT_EXPAND_DEPTH = 0;
+    private static final int DEFAULT_EXPAND_DEPTH = 2;
     private final View view;
 
     private Demo demo;
@@ -128,6 +130,10 @@ public final class Editor {
             @Override public void stateChanged(ChangeEvent e) {
                 if (demo != null) {
                     double speed = 1.0 * speedSlider.getValue() / defaultSliderSpeed;
+
+                    // Square speed to allow for faster and slower playing
+                    speed *= speed;
+
                     demo.setSpeed(speed);
                 }
             }
@@ -142,10 +148,6 @@ public final class Editor {
             }
         }));
 
-        // Demo position indicator
-        progressBar = new JProgressBar();
-        topRow.add(progressBar, "width :250:");
-
         // Restart button
         topRow.add(createButton("Restart", new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -155,6 +157,17 @@ public final class Editor {
             }
         }));
 
+        // Auto-restart checkbox
+        topRow.add(new JCheckBox(new AbstractAction("Autorestart") {
+            @Override public void actionPerformed(ActionEvent e) {
+                demo.setAutoRestart(((JCheckBox)e.getSource()).isSelected());
+            }
+        }));
+
+        // Demo position indicator
+        progressBar = new JProgressBar();
+        topRow.add(progressBar, "width :250:");
+
         return topRow;
     }
 
@@ -162,6 +175,7 @@ public final class Editor {
         // Create the effect tree
         effectTree = new JTree(demo != null ? new DemoTreeNode(demo) : null);
         effectTree.setToggleClickCount(1);
+        //effectTree.setCellRenderer(new EditorTreeCellRenderer());
 
         // Panel to place tree and related controls in
         JPanel treePanel = new JPanel(new MigLayout("fill"));

@@ -78,4 +78,9 @@ public final class FloatRange extends RangeBase<Float> {
     public float getStandardDeviation() {
         return standardDeviation;
     }
+
+    @Override public Float interpolate(double t, Float a, Float  b, Float  out) {
+        return (float) (a + t * (b - a));
+    }
+
 }

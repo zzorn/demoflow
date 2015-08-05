@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 
 /**
- * A simple rotating cube effect.
+ * A simple plasma.
  */
 public final class Plasma extends EffectBase<Object> {
 

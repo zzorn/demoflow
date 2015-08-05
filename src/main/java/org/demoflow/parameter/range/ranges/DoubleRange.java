@@ -79,4 +79,8 @@ public final class DoubleRange extends RangeBase<Double> {
     public double getStandardDeviation() {
         return standardDeviation;
     }
+
+    @Override public Double interpolate(double t, Double a, Double b, Double out) {
+        return a + t * (b - a);
+    }
 }

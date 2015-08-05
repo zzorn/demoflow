@@ -94,4 +94,11 @@ public final class ColorRange extends RangeBase<Color> {
     @Override protected Color createDefaultValue() {
         return new Color(0.5f, 0.5f, 0.5f, 1f);
     }
+
+    @Override public Color interpolate(double t, Color a, Color b, Color out) {
+        // LATER: Change to Hue Sat Lum interpolation, for more pleasing transitions
+        out.set(a);
+        out.lerp(b, (float) t);
+        return out;
+    }
 }

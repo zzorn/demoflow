@@ -42,4 +42,8 @@ public final class FileHandleRange extends RangeBase<FileHandle> {
         return originalValue;
     }
 
+
+    @Override public FileHandle interpolate(double t, FileHandle a, FileHandle b, FileHandle out) {
+        return t < 0.5 ? a : b;
+    }
 }

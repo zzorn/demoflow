@@ -39,6 +39,8 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     private double durationSeconds = DEFAULT_DURATION_SECONDS;
     private double timeStepsPerSecond = 120;
 
+    private boolean autoRestart = false;
+
     private long randomSeed;
 
     private double surplusTimeFromLastUpdate = 0;
@@ -87,11 +89,16 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     }
 
     @Override public final void setPaused(boolean paused) {
-        this.paused = paused;
+        if (this.paused != paused) {
+            this.paused = paused;
 
-        // Notify listeners
-        for (DemoListener listener : listeners) {
-            listener.onPauseChanged(this, this.paused);
+            // Notify effects
+            effects.setPaused(paused);
+
+            // Notify listeners
+            for (DemoListener listener : listeners) {
+                listener.onPauseChanged(this, this.paused);
+            }
         }
     }
 
@@ -216,6 +223,11 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
                 for (int i = 0; i < listeners.size; i++) {
                     listeners.get(i).onCompleted();
                 }
+
+                // Restart if autorestart is on
+                if (autoRestart) {
+                    reset();
+                }
             }
         }
     }
@@ -277,5 +289,13 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     @Override public String toString() {
         return name;
+    }
+
+    @Override public boolean isAutoRestart() {
+        return autoRestart;
+    }
+
+    @Override public void setAutoRestart(boolean autoRestart) {
+        this.autoRestart = autoRestart;
     }
 }

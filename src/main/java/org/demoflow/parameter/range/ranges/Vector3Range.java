@@ -127,4 +127,10 @@ public final class Vector3Range extends RangeBase<Vector3> {
             return randomSequence.nextFloat(min, max);
         }
     }
+
+    @Override public Vector3 interpolate(double t, Vector3 a, Vector3 b, Vector3 out) {
+        out.set(a);
+        out.lerp(b, (float) t);
+        return out;
+    }
 }

@@ -14,6 +14,7 @@ import org.flowutils.random.RandomSequence;
  * Plays XM tracker files.
  */
 // IDEA: Support for multiple songs in sequence?  The player has some crossfade support.
+// LATER: Add support for playback speed setting to the XM player, this allows use of the time dilation effect and editor speed settings.
 public final class XMPlayerEffect extends EffectBase {
 
     public static final String DEFAULT_SONG_PATH = "assets/music/";
@@ -86,5 +87,10 @@ public final class XMPlayerEffect extends EffectBase {
         }
     }
 
-
+    @Override public void setPaused(boolean paused) {
+        if (player != null) {
+            if (paused) player.pause();
+            else player.resume();
+        }
+    }
 }

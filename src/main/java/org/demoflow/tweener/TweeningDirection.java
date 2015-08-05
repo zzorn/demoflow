@@ -1,7 +1,10 @@
 package org.demoflow.tweener;
 
 /**
- *
+ * IN_OUT = normal tweener range,                                                     __/^^
+ * IN = use first half of normal tweener range and scale it to full range,            ____/
+ * OUT = use second half of normal tweener range and scale it to full range,          /^^^^
+ * OUT_IN = first use second half of tweener and then first half of the tweener.      ,---'
  */
 public enum TweeningDirection {
 

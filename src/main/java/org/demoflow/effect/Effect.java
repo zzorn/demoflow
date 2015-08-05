@@ -95,4 +95,10 @@ public interface Effect extends Parametrized {
      */
     void setParent(Parametrized parent);
 
+
+    /**
+     * @param paused if true the demo is paused, and any background threads (e.g. music) should be paused,
+     *               until it is resumed by calleding setPause(false).
+     */
+    void setPaused(boolean paused);
 }

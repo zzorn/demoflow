@@ -65,4 +65,8 @@ public final class BooleanRange extends RangeBase<Boolean> {
         notNull(originalValue, "originalValue");
         return originalValue;
     }
+
+    @Override public Boolean interpolate(double t, Boolean a, Boolean b, Boolean out) {
+        return t < 0.5 ? a : b;
+    }
 }
