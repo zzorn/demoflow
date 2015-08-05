@@ -7,6 +7,8 @@ import org.demoflow.tweener.TweenerBase;
  */
 public final class LinearTween extends TweenerBase {
 
+    public static final LinearTween DEFAULT = new LinearTween();
+
     @Override public double tween(double t) {
         return t;
     }

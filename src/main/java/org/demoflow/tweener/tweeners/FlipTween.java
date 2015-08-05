@@ -8,6 +8,8 @@ import org.flowutils.Check;
  */
 public final class FlipTween extends TweenerBase {
 
+    public static final FlipTween DEFAULT = new FlipTween();
+
     private final double threshold;
 
     public FlipTween() {

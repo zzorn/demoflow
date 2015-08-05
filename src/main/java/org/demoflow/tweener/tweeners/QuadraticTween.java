@@ -3,9 +3,11 @@ package org.demoflow.tweener.tweeners;
 import org.demoflow.tweener.TweenerBase;
 
 /**
- *
+ * Uses the x^2 function to fade in and out.
  */
 public final class QuadraticTween extends TweenerBase {
+
+    public static final QuadraticTween DEFAULT = new QuadraticTween();
 
     @Override public double tween(double t) {
         if (t < 0.5) {

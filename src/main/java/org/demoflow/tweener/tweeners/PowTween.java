@@ -4,7 +4,7 @@ import org.demoflow.tweener.TweenerBase;
 import org.flowutils.Check;
 
 /**
- *
+ * Uses the x^exponent function to fade in and out.
  */
 public final class PowTween extends TweenerBase {
 

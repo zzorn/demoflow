@@ -9,6 +9,8 @@ import org.flowutils.MathUtils;
  */
 public final class WavyTween extends TweenerBase {
 
+    public static final WavyTween DEFAULT = new WavyTween();
+
     private final int waveCount;
 
     public WavyTween() {
