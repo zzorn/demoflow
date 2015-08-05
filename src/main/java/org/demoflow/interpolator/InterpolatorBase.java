@@ -1,4 +1,4 @@
-package org.demoflow.tweener;
+package org.demoflow.interpolator;
 
 /**
  * Common functionality for Tweeners.

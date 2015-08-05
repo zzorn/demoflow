@@ -1,6 +1,6 @@
-package org.demoflow.tweener.tweeners;
+package org.demoflow.interpolator.interpolators;
 
-import org.demoflow.tweener.InterpolatorBase;
+import org.demoflow.interpolator.InterpolatorBase;
 
 /**
  * Uses the x^3 function to fade in and out.

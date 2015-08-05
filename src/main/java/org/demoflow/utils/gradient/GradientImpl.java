@@ -1,8 +1,8 @@
 package org.demoflow.utils.gradient;
 
 import com.badlogic.gdx.utils.Array;
-import org.demoflow.tweener.Interpolator;
-import org.demoflow.tweener.tweeners.LinearInterpolator;
+import org.demoflow.interpolator.Interpolator;
+import org.demoflow.interpolator.interpolators.LinearInterpolator;
 
 import java.util.Comparator;
 import java.util.Iterator;

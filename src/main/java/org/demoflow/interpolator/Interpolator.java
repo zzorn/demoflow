@@ -1,4 +1,4 @@
-package org.demoflow.tweener;
+package org.demoflow.interpolator;
 
 /**
  * Something that interpolates between two values in some way (fills in values in between)
@@ -11,7 +11,7 @@ public interface Interpolator {
      * Same as interpolate(t, 0, 1, false).
      *
      * @param t relative value indicating the tweening position, goes from 0 to 1.
-     *          May go beyond 0 or 1 as well, but the result may vary depending on the tweener used.
+     *          May go beyond 0 or 1 as well, but the result may vary depending on the interpolator used.
      * @return a value between 0 and 1 (may exceed that range as well), at point t.
      */
     double interpolate(double t);
@@ -21,7 +21,7 @@ public interface Interpolator {
      * Same as interpolate(t, 0, 1, false).
      *
      * @param t relative value indicating the tweening position, goes from 0 to 1.
-     *          May go beyond 0 or 1 as well, but the result may vary depending on the tweener used.
+     *          May go beyond 0 or 1 as well, but the result may vary depending on the interpolator used.
      * @param interpolationDirection determines what portion of the tweening curve to use.
      * @return a value between 0 and 1 (may exceed that range as well), at point t.
      */
@@ -53,7 +53,7 @@ public interface Interpolator {
      * Same as interpolate(t, a, b, false).
      *
      * @param t relative value indicating mix between a and b, goes from 0 to 1.
-     *          May go beyond 0 or 1 as well, but the result may vary depending on the tweener used.
+     *          May go beyond 0 or 1 as well, but the result may vary depending on the interpolator used.
      * @param a value when t = 0.0
      * @param b value when t = 1.0
      * @return the value between a and b (may exceed that range as well), at point t.

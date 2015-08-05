@@ -1,6 +1,6 @@
 package org.demoflow.utils.gradient;
 
-import org.demoflow.tweener.Interpolator;
+import org.demoflow.interpolator.Interpolator;
 
 /**
  * A point in a Gradient.

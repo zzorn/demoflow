@@ -1,7 +1,7 @@
-package org.demoflow.tweener.tweeners;
+package org.demoflow.interpolator.interpolators;
 
-import org.demoflow.tweener.Interpolator;
-import org.demoflow.tweener.InterpolatorBase;
+import org.demoflow.interpolator.Interpolator;
+import org.demoflow.interpolator.InterpolatorBase;
 import org.flowutils.Check;
 import org.flowutils.MathUtils;
 
@@ -9,7 +9,7 @@ import static org.flowutils.Check.notNull;
 
 /**
  * Interpolates in a specific number of discrete steps.
- * Uses an underlying tweener to determine the function to sample (defaults to linear).
+ * Uses an underlying interpolator to determine the function to sample (defaults to linear).
  */
 public final class SteppingInterpolator extends InterpolatorBase {
 

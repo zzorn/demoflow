@@ -1,6 +1,6 @@
 package org.demoflow.utils.gradient;
 
-import org.demoflow.tweener.Interpolator;
+import org.demoflow.interpolator.Interpolator;
 
 import java.util.Iterator;
 

@@ -1,14 +1,14 @@
-package org.demoflow.tweener.tweeners;
+package org.demoflow.interpolator.interpolators;
 
-import org.demoflow.tweener.Interpolator;
-import org.demoflow.tweener.InterpolatorBase;
-import org.demoflow.tweener.InterpolationDirection;
+import org.demoflow.interpolator.Interpolator;
+import org.demoflow.interpolator.InterpolatorBase;
+import org.demoflow.interpolator.InterpolationDirection;
 import org.flowutils.Check;
 
 import static org.flowutils.Check.notNull;
 
 /**
- * Uses one tweener for the start of the slope and another for the end of the slope.
+ * Uses one interpolator for the start of the slope and another for the end of the slope.
  */
 public final class CombinedInterpolator extends InterpolatorBase {
 
@@ -19,16 +19,16 @@ public final class CombinedInterpolator extends InterpolatorBase {
     private final double transitionPoint;
 
     /**
-     * @param startInterpolator tweener to use below 0.5 t.
-     * @param endInterpolator tweener to use at and above 0.5 t.
+     * @param startInterpolator interpolator to use below 0.5 t.
+     * @param endInterpolator interpolator to use at and above 0.5 t.
      */
     public CombinedInterpolator(Interpolator startInterpolator, Interpolator endInterpolator) {
         this(startInterpolator, endInterpolator, 0.5);
     }
 
     /**
-     * @param startInterpolator tweener to use below the transition point.
-     * @param endInterpolator tweener to use at and above the transition point.
+     * @param startInterpolator interpolator to use below the transition point.
+     * @param endInterpolator interpolator to use at and above the transition point.
      * @param transitionPoint point along the 0..1 interval where we should switch from startTweener to endTweener.
      */
     public CombinedInterpolator(Interpolator startInterpolator, Interpolator endInterpolator, double transitionPoint) {
@@ -36,11 +36,11 @@ public final class CombinedInterpolator extends InterpolatorBase {
     }
 
     /**
-     * @param startInterpolator tweener to use below the transition point.
-     * @param endInterpolator tweener to use at and above the transition point.
+     * @param startInterpolator interpolator to use below the transition point.
+     * @param endInterpolator interpolator to use at and above the transition point.
      * @param transitionPoint point along the 0..1 interval where we should switch from startTweener to endTweener.
-     * @param startDirection tweening type to use from the first tweener.  IN by default.
-     * @param endDirection tweening type to use from the second tweener.  OUT by default.
+     * @param startDirection tweening type to use from the first interpolator.  IN by default.
+     * @param endDirection tweening type to use from the second interpolator.  OUT by default.
      */
     public CombinedInterpolator(Interpolator startInterpolator,
                                 Interpolator endInterpolator,

@@ -1,6 +1,6 @@
-package org.demoflow.tweener.tweeners;
+package org.demoflow.interpolator.interpolators;
 
-import org.demoflow.tweener.InterpolatorBase;
+import org.demoflow.interpolator.InterpolatorBase;
 import org.flowutils.Check;
 
 /**

@@ -1,4 +1,4 @@
-package org.demoflow.tweener;
+package org.demoflow.interpolator;
 
 /**
  * IN_OUT = normal interpolator range,                                                     __/^^

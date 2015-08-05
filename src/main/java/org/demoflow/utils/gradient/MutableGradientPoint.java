@@ -1,6 +1,6 @@
 package org.demoflow.utils.gradient;
 
-import org.demoflow.tweener.Interpolator;
+import org.demoflow.interpolator.Interpolator;
 import org.flowutils.Check;
 
 import static org.flowutils.Check.notNull;
