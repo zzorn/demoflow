@@ -1,18 +1,13 @@
 package org.demoflow.parameter;
 
-import com.badlogic.gdx.utils.Array;
-import org.demoflow.demo.DemoNode;
-import org.demoflow.demo.DemoNodeBase;
+import org.demoflow.node.DemoNode;
+import org.demoflow.node.DemoNodeBase;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
 import org.demoflow.parameter.range.ParameterRange;
 import org.demoflow.utils.EmptyEnumeration;
-import org.demoflow.utils.SingletonEnumeration;
 import org.flowutils.Symbol;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Collections;
 import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
@@ -23,7 +18,6 @@ import static org.flowutils.Check.notNull;
 public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T> {
 
     private final Symbol id;
-    private final Parametrized host;
     private final boolean constant;
     private ParameterRange<T> range;
     private T value;
@@ -77,12 +71,13 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
                          boolean constant,
                          Calculator<T> calculator,
                          ParameterListener<T> listener) {
+        super(host);
+
         notNull(id, "id");
         notNull(host, "host");
         notNull(range, "range");
 
         this.id = id;
-        this.host = host;
         this.constant = constant;
         this.range = range;
         this.value = range.copy(value);
@@ -96,7 +91,7 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
     }
 
     @Override public Parametrized getHost() {
-        return host;
+        return (Parametrized) getParent();
     }
 
     @Override public T get() {
@@ -116,7 +111,7 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
         }
 
         // Notify listeners
-        host.onParameterChanged(this, id, value);
+        getHost().onParameterChanged(this, id, value);
         if (listener != null) listener.onChanged(this, newValue);
         notifyNodeUpdated();
     }
@@ -132,12 +127,14 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
     @Override public <C extends Calculator<T>> C setCalculator(C calculator) {
         if (this.calculator != calculator) {
             if (this.calculator != null) {
+                this.calculator.setParent(null);
                 notifyChildNodeRemoved(this.calculator);
             }
 
             this.calculator = calculator;
 
             if (this.calculator != null) {
+                this.calculator.setParent(this);
                 notifyChildNodeAdded(this.calculator);
             }
         }
@@ -176,10 +173,6 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
 
     public void setListener(ParameterListener<T> listener) {
         this.listener = listener;
-    }
-
-    @Override public DemoNode getParent() {
-        return host;
     }
 
     @Override public int getChildCount() {

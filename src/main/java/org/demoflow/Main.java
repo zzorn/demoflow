@@ -29,8 +29,6 @@ public class Main {
     public static final String TEXTURE_ATLAS_NAME = "TextureAtlas";
     public static final int MAX_TEXTURE_SIZE = 512;
 
-    private static View view;
-
     public static void main(String[] args) {
 
         // Pack textures
@@ -46,11 +44,15 @@ public class Main {
         configuration.audioDeviceBufferSize = 4*2048;
         configuration.audioDeviceBufferCount = 6;
 
-        view = new View();
+        // Create asset managers
+        DemoComponentManager demoComponentManager = new DemoComponentManager();
+
+        // Create view
+        View view = new View();
         new LwjglApplication(view, configuration);
 
         // Create editor
-        Editor editor = new Editor(view);
+        Editor editor = new Editor(view, demoComponentManager);
 
         // Create demo
         Demo demo = createExampleDemo();

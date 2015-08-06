@@ -13,6 +13,7 @@ import org.demoflow.utils.gradient.GradientImpl;
  */
 public final class InterpolatingCalculator<T> extends CalculatorBase<T> {
 
+
     private final Gradient<T> gradient = new GradientImpl<>();
 
     /**
@@ -48,5 +49,9 @@ public final class InterpolatingCalculator<T> extends CalculatorBase<T> {
 
     @Override protected void doResetState() {
         // No changing state
+    }
+
+    @Override public Class<T> getReturnType() {
+        return null;
     }
 }

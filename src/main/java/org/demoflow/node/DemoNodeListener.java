@@ -1,4 +1,4 @@
-package org.demoflow.demo;
+package org.demoflow.node;
 
 /**
  * Listens to children being added or removed to a demo node.

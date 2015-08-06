@@ -109,6 +109,15 @@
             <version>5.0</version>
         </dependency>
 
+        <!-- For getting available effects and calculators with reflection -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.9-RC1</version>
+        </dependency>
+
+
+
     </dependencies>
 
 

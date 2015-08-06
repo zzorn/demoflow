@@ -1,7 +1,7 @@
 package org.demoflow.parameter;
 
 import com.badlogic.gdx.utils.Array;
-import org.demoflow.demo.DemoNode;
+import org.demoflow.node.DemoNode;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.flowutils.Symbol;
 
@@ -11,10 +11,15 @@ import org.flowutils.Symbol;
 public interface Parametrized extends DemoNode {
 
     /**
-     * @return the effect or calculator that this parametrized object is in.
+     * @return the effect or calculator or parameter that this parametrized object is in.
      *         Can be used to get parameters visible in the current context.
      */
-    Parametrized getParent();
+    DemoNode getParent();
+
+    /**
+     * Update the parent of this node.
+     */
+    void setParent(DemoNode parent);
 
     /**
      * @return the parameters available in this Parametrized class.

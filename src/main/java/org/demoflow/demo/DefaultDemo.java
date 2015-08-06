@@ -2,6 +2,9 @@ package org.demoflow.demo;
 
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.effect.RenderContext;
+import org.demoflow.node.DemoNode;
+import org.demoflow.utils.ArrayEnumEnumeration;
+import org.demoflow.utils.DualArrayEnumeration;
 import org.demoflow.view.View;
 import org.demoflow.effect.EffectGroup;
 import org.demoflow.parameter.Parameter;
@@ -14,6 +17,7 @@ import org.flowutils.Check;
 import org.flowutils.Symbol;
 
 import java.io.File;
+import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
 
@@ -28,7 +32,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     private Array<DemoListener> listeners = new Array<>();
 
-    private final EffectGroup effects = new EffectGroup();
+    private final EffectGroup effects;
 
     private View view;
 
@@ -61,9 +65,14 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     public DefaultDemo(String name, double durationSeconds) {
         Check.nonEmptyString(name, "name");
+
+        this.name = name;
+
+        effects = new EffectGroup();
+        effects.setParent(this);
+
         setDurationSeconds(durationSeconds);
         timeDilation = addParameter("timeDilation", 1.0, DoubleRange.POSITIVE);
-        this.name = name;
     }
 
     public String getName() {
@@ -305,4 +314,14 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     @Override public void setAutoRestart(boolean autoRestart) {
         this.autoRestart = autoRestart;
     }
+
+    @Override public int getChildCount() {
+        return getParameters().size + effects.getChildCount();
+    }
+
+    @Override public Enumeration<? extends DemoNode> getChildren() {
+        return new ArrayEnumEnumeration<>(getParameters(), effects.getChildren());
+    }
+
+
 }

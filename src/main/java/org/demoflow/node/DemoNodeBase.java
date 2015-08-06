@@ -1,7 +1,8 @@
-package org.demoflow.demo;
+package org.demoflow.node;
 
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.utils.ArrayEnumeration;
+import org.demoflow.utils.EmptyEnumeration;
 
 import java.util.Enumeration;
 
@@ -14,21 +15,23 @@ public abstract class DemoNodeBase implements DemoNode {
 
     private transient Array<DemoNodeListener> nodeListeners = null;
 
-    @Override public int getChildCount() {
-        final Array<? extends DemoNode> childArray = getChildArray();
-        return childArray == null ? 0 : childArray.size;
+    private DemoNode parent = null;
+    private int maxDepth = 0;
+
+    public DemoNodeBase() {
+        this(null);
     }
 
-    @Override public Enumeration<? extends DemoNode> getChildren() {
-        return new ArrayEnumeration<>(getChildArray());
+    public DemoNodeBase(DemoNode parent) {
+        setParent(parent);
     }
 
-    /**
-     * Can be implemented instead of the getChildCount and getChildren methods.
-     * @return array with children, or null if no children.
-     */
-    protected Array<? extends DemoNode> getChildArray() {
-        return null;
+    @Override public final DemoNode getParent() {
+        return parent;
+    }
+
+    @Override public final void setParent(DemoNode parent) {
+        this.parent = parent;
     }
 
     @Override public final void addNodeListener(DemoNodeListener nodeListener) {
@@ -49,10 +52,38 @@ public abstract class DemoNodeBase implements DemoNode {
         return true;
     }
 
+    @Override public int getDepth() {
+        final DemoNode parent = getParent();
+        return parent == null ? 0 : parent.getDepth() + 1;
+    }
+
+    @Override public final int getMaxDepth() {
+        return maxDepth;
+    }
+
+    @Override public final void updateMaxDepth() {
+        int oldMaxDepth = maxDepth;
+        maxDepth = 0;
+
+        // Set maxDepth to maximum child maxDepth + 1
+        final Enumeration<? extends DemoNode> childEnumerator = getChildren();
+        while (childEnumerator.hasMoreElements()) {
+            maxDepth = Math.max(maxDepth, childEnumerator.nextElement().getMaxDepth() + 1);
+        }
+
+        if (oldMaxDepth != maxDepth) {
+            // Notify parent as well of the change so they can update
+            if (parent != null) parent.updateMaxDepth();
+        }
+    }
+
     /**
      * Notify node listeners that a new child node was added to this node.
      */
     protected final void notifyChildNodeAdded(DemoNode childNode) {
+        // Max depth may have changed.
+        updateMaxDepth();
+
         if (nodeListeners != null) {
             for (int i = 0; i < nodeListeners.size; i++) {
                 nodeListeners.get(i).onChildAdded(this, childNode);
@@ -64,6 +95,9 @@ public abstract class DemoNodeBase implements DemoNode {
      * Notify node listeners that a child node was removed from this node.
      */
     protected final void notifyChildNodeRemoved(DemoNode childNode) {
+        // Max depth may have changed.
+        updateMaxDepth();
+
         if (nodeListeners != null) {
             for (int i = 0; i < nodeListeners.size; i++) {
                 nodeListeners.get(i).onChildRemoved(this, childNode);

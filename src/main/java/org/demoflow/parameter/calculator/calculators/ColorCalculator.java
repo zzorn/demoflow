@@ -54,4 +54,8 @@ public final class ColorCalculator extends CalculatorBase<Color> {
     @Override protected void doResetState() {
         // No changing state to reset.
     }
+
+    @Override public Class<Color> getReturnType() {
+        return Color.class;
+    }
 }

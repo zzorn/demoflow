@@ -53,4 +53,8 @@ public final class SineCalculator extends CalculatorBase<Double> {
         // Reset current phase
         currentPhase = 0;
     }
+
+    @Override public Class<Double> getReturnType() {
+        return Double.class;
+    }
 }

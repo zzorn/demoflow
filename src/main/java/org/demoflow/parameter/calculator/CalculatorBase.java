@@ -1,5 +1,6 @@
 package org.demoflow.parameter.calculator;
 
+import org.demoflow.node.DemoNode;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.ParametrizedBase;
 import org.flowutils.StringUtils;
@@ -47,6 +48,12 @@ public abstract class CalculatorBase<T> extends ParametrizedBase implements Calc
 
     @Override public String toString() {
         return getClass().getSimpleName().replace("Calculator", "");
+    }
+
+    @Override public int getDepth() {
+        // Calculators are shown on the same conceptual level as the parameters that they calculate values for, so do not add any depth.
+        final DemoNode parent = getParent();
+        return parent == null ? 0 : parent.getDepth();
     }
 
 }

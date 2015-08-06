@@ -1,6 +1,7 @@
 package org.demoflow.utils;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -62,7 +63,16 @@ public final class UiUtils {
     }
 
 
-    private UiUtils() {
+    public static void setJTreeIndent(JTree tree, final int indentAmountPixels) {
+        BasicTreeUI basicTreeUI = (BasicTreeUI) tree.getUI();
+        basicTreeUI.setRightChildIndent(indentAmountPixels);
     }
 
+    public static int getJTreeIndent(JTree tree) {
+        BasicTreeUI basicTreeUI = (BasicTreeUI) tree.getUI();
+        return basicTreeUI.getRightChildIndent() + basicTreeUI.getLeftChildIndent();
+    }
+
+    private UiUtils() {
+    }
 }

@@ -84,4 +84,8 @@ public final class NoiseCalculator extends CalculatorBase<Double> {
     @Override protected void doResetState() {
         currentPhase = 0;
     }
+
+    @Override public Class<Double> getReturnType() {
+        return Double.class;
+    }
 }

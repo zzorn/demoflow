@@ -41,4 +41,8 @@ public final class Vector3Calculator extends CalculatorBase<Vector3> {
     @Override protected void doResetState() {
         // No changing state to reset.
     }
+
+    @Override public Class<Vector3> getReturnType() {
+        return Vector3.class;
+    }
 }

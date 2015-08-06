@@ -1,6 +1,6 @@
 package org.demoflow.parameter;
 
-import org.demoflow.demo.DemoNode;
+import org.demoflow.node.DemoNode;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
 import org.demoflow.parameter.range.ParameterRange;

@@ -1,8 +1,8 @@
 package org.demoflow.editor;
 
 import com.badlogic.gdx.utils.Array;
-import org.demoflow.demo.DemoNode;
-import org.demoflow.demo.DemoNodeListener;
+import org.demoflow.node.DemoNode;
+import org.demoflow.node.DemoNodeListener;
 import org.demoflow.utils.ArrayEnumeration;
 
 import javax.swing.tree.TreeNode;

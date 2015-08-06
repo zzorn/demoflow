@@ -40,4 +40,7 @@ public final class Vector3ScaleCalculator extends CalculatorBase<Vector3> {
         // No changing state to reset.
     }
 
+    @Override public Class<Vector3> getReturnType() {
+        return Vector3.class;
+    }
 }

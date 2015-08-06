@@ -1,22 +1,22 @@
 package org.demoflow.editor;
 
 import net.miginfocom.swing.MigLayout;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.utils.UiUtils;
 import org.demoflow.view.View;
 import org.demoflow.demo.Demo;
 import org.demoflow.demo.DemoListener;
-import org.flowutils.Check;
 import org.uiflow.desktop.ui.SimpleFrame;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeCellRenderer;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+
+import static org.flowutils.Check.notNull;
 
 /**
  *
@@ -24,8 +24,11 @@ import java.text.DecimalFormat;
 // TODO: Editing UI
 public final class Editor {
 
-    private static final int DEFAULT_EXPAND_DEPTH = 2;
+    private static final int DEFAULT_COLLAPSE_DEPTH = 0;
     private final View view;
+    private final DemoComponentManager demoComponentManager;
+
+
 
     private Demo demo;
 
@@ -55,13 +58,18 @@ public final class Editor {
 
     public JProgressBar progressBar;
     public JTree effectTree;
+    private SimpleFrame rootFrame;
 
     /**
      * @param view view to show demos on.
+     * @param demoComponentManager
      */
-    public Editor(View view) {
-        Check.notNull(view, "viewer");
+    public Editor(View view, DemoComponentManager demoComponentManager) {
+        notNull(view, "viewer");
+        notNull(demoComponentManager, "demoComponentManager");
+
         this.view = view;
+        this.demoComponentManager = demoComponentManager;
 
         buildUi();
     }
@@ -80,8 +88,6 @@ public final class Editor {
         if (demo != this.demo) {
             if (this.demo != null) {
                 this.demo.removeListener(demoListener);
-
-                effectTree.setModel(null);
             }
 
             this.demo = demo;
@@ -89,10 +95,9 @@ public final class Editor {
 
             if (this.demo != null) {
                 this.demo.addListener(demoListener);
-
-                effectTree.setModel(new DefaultTreeModel(new DemoTreeNode(this.demo)));
-                moderateExpandTree();
             }
+
+            setDemoToView(this.demo);
         }
     }
 
@@ -104,7 +109,7 @@ public final class Editor {
 
         mainPanel.add(createEffectView(), "grow, push");
 
-        new SimpleFrame("Demo Editor", mainPanel, 1024, 400, WindowConstants.HIDE_ON_CLOSE);
+        rootFrame = new SimpleFrame("Demo Editor", mainPanel, 1024, 800, WindowConstants.HIDE_ON_CLOSE);
     }
 
     private JPanel createTopRow() {
@@ -160,7 +165,7 @@ public final class Editor {
         // Auto-restart checkbox
         topRow.add(new JCheckBox(new AbstractAction("Autorestart") {
             @Override public void actionPerformed(ActionEvent e) {
-                demo.setAutoRestart(((JCheckBox)e.getSource()).isSelected());
+                demo.setAutoRestart(((JCheckBox) e.getSource()).isSelected());
             }
         }));
 
@@ -173,9 +178,18 @@ public final class Editor {
 
     private JComponent createEffectView() {
         // Create the effect tree
-        effectTree = new JTree(demo != null ? new DemoTreeNode(demo) : null);
+        effectTree = new JTree();
+        //effectTree.setRootVisible(false);
         effectTree.setToggleClickCount(1);
-        //effectTree.setCellRenderer(new EditorTreeCellRenderer());
+        effectTree.setEditable(true);
+        //effectTree.setLargeModel(true); // Causes more refreshes
+        //UiUtils.setJTreeIndent(effectTree, 0);
+
+        // Scroll pane for the tree
+        JScrollPane scrollPane = new JScrollPane(effectTree);
+
+        // Make tree cells cover the full width
+//        effectTree.setUI(new FullWidthJTreeUI(scrollPane));
 
         // Panel to place tree and related controls in
         JPanel treePanel = new JPanel(new MigLayout("fill"));
@@ -194,16 +208,30 @@ public final class Editor {
             }
         }), "pushx");
 
-        // Scroll pane for the tree
-        JScrollPane scrollPane = new JScrollPane(effectTree);
         treePanel.add(scrollPane, "south, grow, push, gaptop 5");
+
+        setDemoToView(getDemo());
 
         return treePanel;
     }
 
+    private void setDemoToView(Demo demo) {
+        if (demo != null) {
+            effectTree.setModel(new DefaultTreeModel(new DemoTreeNode(demo)));
+            effectTree.setCellRenderer(new DemoTreeCellEditorRenderer(demo, demoComponentManager, rootFrame));
+            effectTree.setCellEditor(new DemoTreeCellEditorRenderer(demo, demoComponentManager, rootFrame));
+            moderateExpandTree();
+        }
+        else {
+            effectTree.setModel(null);
+            effectTree.setCellRenderer(null);
+            effectTree.setCellEditor(null);
+        }
+    }
+
     private void moderateExpandTree() {
         UiUtils.collapseAll(effectTree);
-        UiUtils.expand(effectTree, DEFAULT_EXPAND_DEPTH);
+        UiUtils.expand(effectTree, DEFAULT_COLLAPSE_DEPTH);
     }
 
 
@@ -233,6 +261,8 @@ public final class Editor {
             progressBar.setValue((int) (1000 * progress));
         }
     }
+
+
 
 
 }

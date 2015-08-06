@@ -4,9 +4,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import org.demoflow.demo.DemoNode;
-import org.demoflow.demo.DemoNodeBase;
-import org.demoflow.demo.DemoNodeListener;
+import org.demoflow.node.DemoNode;
+import org.demoflow.node.DemoNodeBase;
 import org.demoflow.effect.EffectContainer;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
@@ -28,8 +27,6 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
 
     private final Array<Parameter> parameters = new Array<>(8);
 
-    private Parametrized parent;
-
     protected ParametrizedBase() {
         this(null);
     }
@@ -38,18 +35,7 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
      * @param parent parent Parametrized object, or null if no parent.
      */
     protected ParametrizedBase(Parametrized parent) {
-        this.parent = parent;
-    }
-
-    @Override public final Parametrized getParent() {
-        return parent;
-    }
-
-    /**
-     * Update the parent of this Parametrized object.
-     */
-    protected void setParent(Parametrized parent) {
-        this.parent = parent;
+        super(parent);
     }
 
     @Override public final Array<Parameter> getParameters() {
@@ -226,8 +212,9 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
         if (parameter != null) return parameter;
 
         // Try to get from parent if available
-        if (parent != null) {
-            return parent.getParameterOrNullRecursively(id);
+        final DemoNode parent = getParent();
+        if (parent != null && parent instanceof  Parametrized) {
+            return ((Parametrized)parent).getParameterOrNullRecursively(id);
         } else {
             return null;
         }
@@ -247,22 +234,11 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
     }
 
     @Override public int getChildCount() {
-        int childCount = getParameters().size;
-
-        if (this instanceof EffectContainer) {
-            childCount += ((EffectContainer)this).getEffects().size;
-        }
-
-        return childCount;
+        return getParameters().size;
     }
 
     @Override public Enumeration<? extends DemoNode> getChildren() {
-        if (this instanceof EffectContainer) {
-            return new DualArrayEnumeration<>(((EffectContainer)this).getEffects(), getParameters());
-        }
-        else {
-            return new ArrayEnumeration<>(getParameters());
-        }
+        return new ArrayEnumeration<>(getParameters());
     }
 
 

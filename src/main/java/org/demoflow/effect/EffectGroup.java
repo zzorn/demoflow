@@ -1,8 +1,14 @@
 package org.demoflow.effect;
 
 import com.badlogic.gdx.utils.Array;
+import org.demoflow.demo.Demo;
+import org.demoflow.node.DemoNode;
 import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.utils.ArrayEnumeration;
+import org.demoflow.utils.DualArrayEnumeration;
 import org.flowutils.random.RandomSequence;
+
+import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
 
@@ -40,6 +46,14 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
 
     @Override public final Array<Effect> getEffects() {
         return effects;
+    }
+
+    @Override public int getChildCount() {
+        return getEffects().size + getParameters().size;
+    }
+
+    @Override public Enumeration<? extends DemoNode> getChildren() {
+        return new DualArrayEnumeration<>(getEffects(), getParameters());
     }
 
     @Override protected void doSetup(Object preCalculatedData, RandomSequence randomSequence) {
@@ -88,5 +102,15 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         for (Effect effect : effects) {
             effect.setPaused(paused);
         }
+    }
+
+    @Override public int getDepth() {
+        final DemoNode parent = getParent();
+
+        // Kludge for the effect group that is directly contained in a demo, to get the depth right.
+        if (parent != null && parent instanceof Demo) {
+            return parent.getDepth();
+        }
+        else return super.getDepth();
     }
 }

@@ -25,4 +25,9 @@ public interface Calculator<T> extends Parametrized {
      */
     T calculate(CalculationContext calculationContext, T currentValue, Parameter<T> parameter);
 
+    /**
+     * @return the type of value that this calculator produces, or null if the type of the value is not determined (e.g. interpolating calculator).
+     */
+    Class<T> getReturnType();
+
 }
