@@ -3,8 +3,7 @@ package org.demoflow.demo;
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.effect.RenderContext;
 import org.demoflow.node.DemoNode;
-import org.demoflow.utils.ArrayEnumEnumeration;
-import org.demoflow.utils.DualArrayEnumeration;
+import org.demoflow.utils.ArrayUtils;
 import org.demoflow.view.View;
 import org.demoflow.effect.EffectGroup;
 import org.demoflow.parameter.Parameter;
@@ -17,7 +16,6 @@ import org.flowutils.Check;
 import org.flowutils.Symbol;
 
 import java.io.File;
-import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
 
@@ -303,10 +301,6 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
         listeners.removeValue(listener, true);
     }
 
-    @Override public String toString() {
-        return name;
-    }
-
     @Override public boolean isAutoRestart() {
         return autoRestart;
     }
@@ -319,9 +313,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
         return getParameters().size + effects.getChildCount();
     }
 
-    @Override public Enumeration<? extends DemoNode> getChildren() {
-        return new ArrayEnumEnumeration<>(getParameters(), effects.getChildren());
+    @Override public Array<? extends DemoNode> getChildren() {
+        return ArrayUtils.combineArrays(getParameters(), getEffects());
     }
-
-
 }

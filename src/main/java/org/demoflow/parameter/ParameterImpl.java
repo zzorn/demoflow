@@ -1,13 +1,17 @@
 package org.demoflow.parameter;
 
+import com.badlogic.gdx.utils.Array;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeBase;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
 import org.demoflow.parameter.range.ParameterRange;
+import org.demoflow.utils.ArrayUtils;
+import org.demoflow.utils.EmptyArray;
 import org.demoflow.utils.EmptyEnumeration;
 import org.flowutils.Symbol;
 
+import java.util.Arrays;
 import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
@@ -90,6 +94,10 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
         return id;
     }
 
+    @Override public String getName() {
+        return id.getString();
+    }
+
     @Override public Parametrized getHost() {
         return (Parametrized) getParent();
     }
@@ -137,6 +145,12 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
                 this.calculator.setParent(this);
                 notifyChildNodeAdded(this.calculator);
             }
+            else {
+                // Revert to previously manually set value when a calculator is removed
+                set(initialValue, false);
+            }
+
+            notifyNodeUpdated();
         }
 
         return calculator;
@@ -179,14 +193,13 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
         return calculator != null ? calculator.getChildCount() : 0;
     }
 
-    @Override public Enumeration<? extends DemoNode> getChildren() {
+    @Override public Array<? extends DemoNode> getChildren() {
         if (calculator != null) return calculator.getChildren();
-        else return EmptyEnumeration.EMPTY_ENUMERATION;
+        else return EmptyArray.EMPTY_ARRAY;
     }
 
-    @Override public String toString() {
-        if (calculator != null) return id.toString() + ": " + calculator.toString();
-        else return id.toString() + ": " + range.valueToString(value);
+    @Override public int getTotalNumberOfDescendants() {
+        if (calculator != null) return  calculator.getTotalNumberOfDescendants();
+        else return 0;
     }
-
 }

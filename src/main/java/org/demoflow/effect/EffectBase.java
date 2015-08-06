@@ -51,6 +51,10 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
         super.setParent(parent);
     }
 
+    @Override public String getName() {
+        return getClass().getSimpleName().replace("Effect", "");
+    }
+
     @Override public final double getRelativeStartTime() {
         return relativeStartTime;
     }
@@ -197,11 +201,6 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
             // The effect time is not now, we should deactivate the effect
             if (active) deactivate();
         }
-    }
-
-
-    @Override public String toString() {
-        return getClass().getSimpleName().replace("Effect", "");
     }
 
 

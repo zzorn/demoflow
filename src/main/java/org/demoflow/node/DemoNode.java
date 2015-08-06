@@ -1,5 +1,7 @@
 package org.demoflow.node;
 
+import com.badlogic.gdx.utils.Array;
+
 import java.util.Enumeration;
 
 /**
@@ -19,15 +21,19 @@ public interface DemoNode {
     void setParent(DemoNode parent);
 
     /**
+     * @return some kind of user readable name for the node.
+     */
+    String getName();
+
+    /**
      * @return current number of child nodes.
      */
     int getChildCount();
 
     /**
-     * @return enumeration with all the current children.
-     * NOTE: Implementations create new enumeration objects on each call, so this should not be used for tight inner loops in rendering, rather it is designed for UI use.
+     * @return child nodes, or an empty array if this node has no children.
      */
-    Enumeration<? extends DemoNode> getChildren();
+    Array<? extends DemoNode> getChildren();
 
     /**
      * @param nodeListener listener that is notified about added and removed children, and general UI updates.
@@ -38,8 +44,6 @@ public interface DemoNode {
      * @param nodeListener DemoNodeListener to remove.
      */
     void removeNodeListener(DemoNodeListener nodeListener);
-
-    boolean allowsChildNodes();
 
     /**
      * @return depth level of this node.  0 for the root (a demo), increases with 1 for each generation down.
@@ -53,6 +57,14 @@ public interface DemoNode {
 
     /**
      * Prompts this node to update its stored max depth.
+     * Called automatically as needed.
      */
     void updateMaxDepth();
+
+    /**
+     * The parent node that has no parent.
+     */
+    DemoNode getRootNode();
+
+    int getTotalNumberOfDescendants();
 }

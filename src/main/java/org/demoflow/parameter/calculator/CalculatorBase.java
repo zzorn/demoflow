@@ -46,7 +46,7 @@ public abstract class CalculatorBase<T> extends ParametrizedBase implements Calc
      */
     protected abstract void doResetState();
 
-    @Override public String toString() {
+    @Override public String getName() {
         return getClass().getSimpleName().replace("Calculator", "");
     }
 

@@ -2,7 +2,7 @@ package org.demoflow.editor;
 
 import net.miginfocom.swing.MigLayout;
 import org.demoflow.DemoComponentManager;
-import org.demoflow.utils.UiUtils;
+import org.demoflow.editor.nodeeditor.DemoNodeEditor;
 import org.demoflow.view.View;
 import org.demoflow.demo.Demo;
 import org.demoflow.demo.DemoListener;
@@ -11,7 +11,6 @@ import org.uiflow.desktop.ui.SimpleFrame;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -24,15 +23,19 @@ import static org.flowutils.Check.notNull;
 // TODO: Editing UI
 public final class Editor {
 
-    private static final int DEFAULT_COLLAPSE_DEPTH = 0;
+    private static final int DEFAULT_EXPAND_DEPTH = 1;
+
+    private static final DecimalFormat numberFormat = new DecimalFormat("#.00");
+
     private final View view;
     private final DemoComponentManager demoComponentManager;
 
-
-
     private Demo demo;
 
-    public final DecimalFormat numberFormat = new DecimalFormat("#.00");
+    private JProgressBar progressBar;
+    private SimpleFrame rootFrame;
+    private DemoNodeEditor demoNodeEditor;
+    private JPanel treePanel;
 
     private final DemoListener demoListener = new DemoListener() {
         @Override
@@ -55,16 +58,22 @@ public final class Editor {
             showStatus("Finished", 1);
         }
     };
-
-    public JProgressBar progressBar;
-    public JTree effectTree;
-    private SimpleFrame rootFrame;
+    private JPanel demoViewPanel;
 
     /**
      * @param view view to show demos on.
-     * @param demoComponentManager
+     * @param demoComponentManager used to access the available effects, calculators, etc.
      */
     public Editor(View view, DemoComponentManager demoComponentManager) {
+        this(view, demoComponentManager, null);
+    }
+
+    /**
+     * @param view view to show demos on.
+     * @param demoComponentManager used to access the available effects, calculators, etc.
+     * @param demo demo to edit, or null if it is specified later.
+     */
+    public Editor(View view, DemoComponentManager demoComponentManager, Demo demo) {
         notNull(view, "viewer");
         notNull(demoComponentManager, "demoComponentManager");
 
@@ -72,6 +81,8 @@ public final class Editor {
         this.demoComponentManager = demoComponentManager;
 
         buildUi();
+
+        setDemo(demo);
     }
 
     /**
@@ -177,63 +188,65 @@ public final class Editor {
     }
 
     private JComponent createEffectView() {
-        // Create the effect tree
-        effectTree = new JTree();
-        //effectTree.setRootVisible(false);
-        effectTree.setToggleClickCount(1);
-        effectTree.setEditable(true);
-        //effectTree.setLargeModel(true); // Causes more refreshes
-        //UiUtils.setJTreeIndent(effectTree, 0);
-
-        // Scroll pane for the tree
-        JScrollPane scrollPane = new JScrollPane(effectTree);
-
-        // Make tree cells cover the full width
-//        effectTree.setUI(new FullWidthJTreeUI(scrollPane));
-
         // Panel to place tree and related controls in
-        JPanel treePanel = new JPanel(new MigLayout("fill"));
+        this.treePanel = new JPanel(new MigLayout("fill"));
 
         // Collapse button
-        treePanel.add(new JButton(new AbstractAction("Collapse") {
+        this.treePanel.add(new JButton(new AbstractAction("Collapse") {
             @Override public void actionPerformed(ActionEvent e) {
                 moderateExpandTree();
             }
         }));
 
         // Expand button
-        treePanel.add(new JButton(new AbstractAction("Expand") {
+        this.treePanel.add(new JButton(new AbstractAction("Expand") {
             @Override public void actionPerformed(ActionEvent e) {
-                UiUtils.expandAll(Editor.this.effectTree);
+                expandAll();
             }
         }), "pushx");
 
-        treePanel.add(scrollPane, "south, grow, push, gaptop 5");
+        // Scroll pane for the tree
+        demoViewPanel = new JPanel(new MigLayout("fill"));
+        JScrollPane scrollPane = new JScrollPane(demoViewPanel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(24); // Fix slow scrolling
 
-        setDemoToView(getDemo());
+        this.treePanel.add(scrollPane, "south, grow, push, gaptop 5");
 
-        return treePanel;
+        return this.treePanel;
     }
 
     private void setDemoToView(Demo demo) {
         if (demo != null) {
-            effectTree.setModel(new DefaultTreeModel(new DemoTreeNode(demo)));
-            effectTree.setCellRenderer(new DemoTreeCellEditorRenderer(demo, demoComponentManager, rootFrame));
-            effectTree.setCellEditor(new DemoTreeCellEditorRenderer(demo, demoComponentManager, rootFrame));
+            if( demoNodeEditor != null) {
+                demoViewPanel.remove(demoNodeEditor);
+            }
+            demoNodeEditor = new DemoNodeEditor(demo, this);
+            demoViewPanel.add(demoNodeEditor, "grow");
+
             moderateExpandTree();
+
+            demoViewPanel.revalidate();
+            demoViewPanel.repaint();
         }
         else {
-            effectTree.setModel(null);
-            effectTree.setCellRenderer(null);
-            effectTree.setCellEditor(null);
+            if( demoNodeEditor != null) {
+                demoViewPanel.remove(demoNodeEditor);
+            }
+            demoNodeEditor = null;
         }
     }
 
     private void moderateExpandTree() {
-        UiUtils.collapseAll(effectTree);
-        UiUtils.expand(effectTree, DEFAULT_COLLAPSE_DEPTH);
+        if (demoNodeEditor != null) {
+            demoNodeEditor.expandToDepth(DEFAULT_EXPAND_DEPTH);
+        }
     }
 
+    private void expandAll() {
+        if (demoNodeEditor != null) {
+            demoNodeEditor.expandAll();
+        }
+    }
 
     private JButton createButton(final String name, final ActionListener listener) {
         final JButton button = new JButton(name);
@@ -263,6 +276,11 @@ public final class Editor {
     }
 
 
+    public DemoComponentManager getComponentManager() {
+        return demoComponentManager;
+    }
 
-
+    public SimpleFrame getRootFrame() {
+        return rootFrame;
+    }
 }

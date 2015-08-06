@@ -237,8 +237,9 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
         return getParameters().size;
     }
 
-    @Override public Enumeration<? extends DemoNode> getChildren() {
-        return new ArrayEnumeration<>(getParameters());
+
+    @Override public Array<? extends DemoNode> getChildren() {
+        return parameters;
     }
 
 

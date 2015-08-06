@@ -58,4 +58,5 @@ public final class ColorCalculator extends CalculatorBase<Color> {
     @Override public Class<Color> getReturnType() {
         return Color.class;
     }
+
 }

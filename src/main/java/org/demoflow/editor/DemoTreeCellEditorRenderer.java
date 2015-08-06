@@ -25,6 +25,8 @@ import static org.flowutils.Check.notNull;
 
 /**
  *
+ *
+ * @deprecated not using trees any more
  */
 public class DemoTreeCellEditorRenderer extends JPanel implements TreeCellRenderer, TreeCellEditor {
 

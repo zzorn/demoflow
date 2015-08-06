@@ -4,11 +4,8 @@ import com.badlogic.gdx.utils.Array;
 import org.demoflow.demo.Demo;
 import org.demoflow.node.DemoNode;
 import org.demoflow.parameter.calculator.CalculationContext;
-import org.demoflow.utils.ArrayEnumeration;
-import org.demoflow.utils.DualArrayEnumeration;
+import org.demoflow.utils.ArrayUtils;
 import org.flowutils.random.RandomSequence;
-
-import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
 
@@ -52,8 +49,8 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         return getEffects().size + getParameters().size;
     }
 
-    @Override public Enumeration<? extends DemoNode> getChildren() {
-        return new DualArrayEnumeration<>(getEffects(), getParameters());
+    @Override public Array<? extends DemoNode> getChildren() {
+        return ArrayUtils.combineArrays(getParameters(), getEffects());
     }
 
     @Override protected void doSetup(Object preCalculatedData, RandomSequence randomSequence) {
@@ -113,4 +110,6 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         }
         else return super.getDepth();
     }
+
+
 }

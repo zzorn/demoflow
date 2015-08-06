@@ -12,6 +12,8 @@ import static org.flowutils.Check.notNull;
 
 /**
  * TreeNode used for JTree UI component to show the structure of the Demo.
+ *
+ * @deprecated not using trees any more
  */
 public final class DemoTreeNode implements TreeNode {
 
@@ -44,9 +46,8 @@ public final class DemoTreeNode implements TreeNode {
         this.demoNode = demoNode;
 
         // Add tree nodes for current children
-        final Enumeration<? extends DemoNode> childIterator = demoNode.getChildren();
-        while (childIterator.hasMoreElements()) {
-            addChildNode(childIterator.nextElement());
+        for (DemoNode node : demoNode.getChildren()) {
+            addChildNode(node);
         }
 
         // Listen to demoNode changes.
@@ -74,7 +75,7 @@ public final class DemoTreeNode implements TreeNode {
     }
 
     @Override public boolean getAllowsChildren() {
-        return demoNode.allowsChildNodes();
+        return true;
     }
 
     @Override public boolean isLeaf() {

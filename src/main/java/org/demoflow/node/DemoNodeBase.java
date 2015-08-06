@@ -48,10 +48,6 @@ public abstract class DemoNodeBase implements DemoNode {
         }
     }
 
-    @Override public boolean allowsChildNodes() {
-        return true;
-    }
-
     @Override public int getDepth() {
         final DemoNode parent = getParent();
         return parent == null ? 0 : parent.getDepth() + 1;
@@ -66,14 +62,30 @@ public abstract class DemoNodeBase implements DemoNode {
         maxDepth = 0;
 
         // Set maxDepth to maximum child maxDepth + 1
-        final Enumeration<? extends DemoNode> childEnumerator = getChildren();
-        while (childEnumerator.hasMoreElements()) {
-            maxDepth = Math.max(maxDepth, childEnumerator.nextElement().getMaxDepth() + 1);
+        for (DemoNode childNode : getChildren()) {
+            maxDepth = Math.max(maxDepth, childNode.getMaxDepth() + 1);
         }
 
         if (oldMaxDepth != maxDepth) {
             // Notify parent as well of the change so they can update
             if (parent != null) parent.updateMaxDepth();
+        }
+    }
+
+    @Override public DemoNode getRootNode() {
+        if (parent == null) return this;
+        else return (parent.getRootNode());
+    }
+
+    @Override public int getTotalNumberOfDescendants() {
+        if (getChildCount() <= 0) return 0;
+        else {
+            int sum = 0;
+            final Array<? extends DemoNode> children = getChildren();
+            for (int i = 0; i < children.size; i++) {
+                sum += children.get(i).getTotalNumberOfDescendants() + 1;
+            }
+            return sum;
         }
     }
 
@@ -117,7 +129,8 @@ public abstract class DemoNodeBase implements DemoNode {
     }
 
     @Override public String toString() {
-        return getClass().getSimpleName();
+        return getName();
     }
+
 
 }

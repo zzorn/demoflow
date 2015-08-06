@@ -51,14 +51,16 @@ public class Main {
         View view = new View();
         new LwjglApplication(view, configuration);
 
-        // Create editor
-        Editor editor = new Editor(view, demoComponentManager);
-
         // Create demo
         Demo demo = createExampleDemo();
 
+        // Create editor (and show it)
+        Editor editor = new Editor(view, demoComponentManager, demo);
+
+        /*
         // Edit demo (and view it)
         editor.setDemo(demo);
+        */
 
         /* The editor will already show the demo.
         // Show demo
