@@ -28,6 +28,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     public static final double DEFAULT_DURATION_SECONDS = 60.0;
     public final Parameter<Double> timeDilation;
 
+
     private Array<DemoListener> listeners = new Array<>();
 
     private final EffectGroup effects;
@@ -48,6 +49,8 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     private double surplusTimeFromLastUpdate = 0;
 
     private final CalculationContext calculationContext = new DefaultCalculationContext();
+
+    private final DefaultCalculationContext undilatedTime = new DefaultCalculationContext();
 
     private boolean effectSetupRequested = false;
     private boolean effectShutdownRequested = false;
@@ -202,6 +205,10 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
             double timeToAdd = deltaTime_s;
 
             if (!paused) {
+                // Update undilated time, to allow calculation of time dilation value
+                undilatedTime.update(deltaTime_s);
+                timeDilation.recalculateParameter(undilatedTime);
+
                 timeToAdd *= speed * timeDilation.get();
 
                 double remainingUpdateTime = surplusTimeFromLastUpdate + timeToAdd;
@@ -261,6 +268,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     private void doSetup() {
         surplusTimeFromLastUpdate = 0;
         calculationContext.init(durationSeconds);
+        undilatedTime.init(durationSeconds);
 
         effects.setup(randomSeed);
         initialized = true;
