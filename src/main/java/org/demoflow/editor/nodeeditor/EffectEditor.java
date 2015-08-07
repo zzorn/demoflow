@@ -33,7 +33,7 @@ public class EffectEditor<T extends DemoNode> extends NodeEditorBase<Effect> {
     }
 
     @Override protected double getEditorColorMixStrength() {
-        return 0.1;
+        return 0.2;
     }
 
 }

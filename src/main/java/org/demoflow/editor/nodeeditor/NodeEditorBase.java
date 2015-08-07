@@ -102,16 +102,18 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         JPanel topBar = new JPanel(new MigLayout("insets 0"));
         add(topBar, "north, pushx");
 
-        // Tune background
-        final Color editorColor = getEditorColor();
-        if (editorColor != null) {
-            topBar.setBackground(ColorUtils.mixColors(getEditorColorMixStrength(), topBar.getBackground(), editorColor));
-        }
-
         // Add indenter
         indenter = new JPanel(new MigLayout("insets 0"));
         topBar.add(indenter, "align left");
         debugBorderize(indenter, Color.blue);
+
+        // Tune background
+        final Color editorColor = getEditorColor();
+        if (editorColor != null) {
+            final Color color = ColorUtils.mixColors(getEditorColorMixStrength(), topBar.getBackground(), editorColor);
+            topBar.setBackground(color);
+            indenter.setBackground(color);
+        }
 
         // Expand collapse button
         expandToggle = new JLabel(expanded ? arrowDownIcon : arrowRightIcon);

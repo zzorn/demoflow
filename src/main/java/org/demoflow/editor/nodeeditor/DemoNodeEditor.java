@@ -32,7 +32,7 @@ public class DemoNodeEditor extends NodeEditorBase<Demo> {
     }
 
     @Override protected double getEditorColorMixStrength() {
-        return 0.2;
+        return 0.3;
     }
 
 }

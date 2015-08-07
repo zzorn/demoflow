@@ -130,6 +130,6 @@ public final class ParameterEditor<T extends DemoNode> extends NodeEditorBase<Pa
     }
 
     @Override protected double getEditorColorMixStrength() {
-        return 0.0;
+        return (getNode().getDepth() % 2) == 0 ? 0.0 : 0.07;
     }
 }
