@@ -2,6 +2,7 @@ package org.demoflow.editor.valueeditor.valueeditors;
 
 import org.demoflow.editor.valueeditor.ValueEditorBase;
 import org.demoflow.parameter.range.Range;
+import org.uiflow.desktop.ColorUtils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -13,19 +14,24 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.text.DecimalFormat;
 
+import static org.flowutils.Check.notNull;
+
 /**
  *
  */
 public final class DoubleEditor extends ValueEditorBase<Double> {
 
     private static final DecimalFormat FORMAT = new DecimalFormat("#0.0###");
+    public static final Color DEFAULT_ERROR = new Color(255, 0, 0);
+    public static final Color DEFAULT_WARNING = new Color(255,190,0);
+    public static final Color DEFAULT_EDITED = new Color(255,255,0);
     private JFormattedTextField numberField;
     private Color defaultColor;
     private double originalValue;
 
-    private static final Color ERROR_COLOR = new Color(255, 200, 200);
-    private static final Color WARNING_COLOR = new Color(255,230,200);
-    private static final Color EDITED_COLOR = new Color(255,255,200);
+    private Color errorColor;
+    private Color warningColor;
+    private Color editedColor;
 
     public DoubleEditor(Range<Double> range) {
         super(range);
@@ -34,7 +40,14 @@ public final class DoubleEditor extends ValueEditorBase<Double> {
     @Override protected JComponent buildEditorUi(JPanel editorPanel, Range<Double> range, Double initialValue) {
         numberField = new JFormattedTextField(FORMAT);
         numberField.setPreferredSize(new Dimension(100, 24));
-        defaultColor = numberField.getBackground();
+
+        defaultColor = editorPanel.getBackground();
+        notNull(defaultColor, "defaultColor");
+
+        errorColor = ColorUtils.mixColors(0.3, defaultColor, DEFAULT_ERROR);
+        warningColor = ColorUtils.mixColors(0.3, defaultColor, DEFAULT_WARNING);
+        editedColor = ColorUtils.mixColors(0.1, defaultColor, DEFAULT_EDITED);
+
         originalValue = initialValue;
 
         numberField.getDocument().addDocumentListener(new DocumentListener() {
@@ -80,9 +93,9 @@ public final class DoubleEditor extends ValueEditorBase<Double> {
 
     private void updateHighlightColor() {
         final Double value = parseValue();
-        if (value == null) setHighlightColor(ERROR_COLOR);
-        else if (outOfRange(value)) setHighlightColor(WARNING_COLOR);
-        else if (originalValue != value) setHighlightColor(EDITED_COLOR);
+        if (value == null) setHighlightColor(errorColor);
+        else if (outOfRange(value)) setHighlightColor(warningColor);
+        else if (originalValue != value) setHighlightColor(editedColor);
         else setHighlightColor(defaultColor);
     }
 

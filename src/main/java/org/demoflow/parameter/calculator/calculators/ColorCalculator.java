@@ -28,10 +28,10 @@ public final class ColorCalculator extends CalculatorBase<Color> {
     }
 
     public ColorCalculator(double red, double green, double blue, double alpha) {
-        r = addParameter("r", red);
-        g = addParameter("g", green);
-        b = addParameter("b", blue);
-        a = addParameter("a", alpha);
+        r = addParameter("red", red);
+        g = addParameter("green", green);
+        b = addParameter("blue", blue);
+        a = addParameter("alpha", alpha);
     }
 
     @Override

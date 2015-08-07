@@ -5,9 +5,7 @@ import org.demoflow.editor.DemoEditor;
 import org.demoflow.editor.valueeditor.ValueEditor;
 import org.demoflow.editor.valueeditor.ValueEditorListener;
 import org.demoflow.node.DemoNode;
-import org.demoflow.node.DemoNodeListener;
 import org.demoflow.parameter.Parameter;
-import org.demoflow.parameter.ParameterListener;
 import org.demoflow.parameter.ParameterListenerAdapter;
 import org.demoflow.parameter.calculator.Calculator;
 
@@ -25,6 +23,8 @@ public final class ParameterEditor<T extends DemoNode> extends NodeEditorBase<Pa
     private static final int SELECTOR_WIDTH = 150;
 
     private static final boolean ASK_PERMISSION_BEFORE_CALCULATOR_CHANGE = false;
+
+    private static final Color EDITOR_COLOR = new Color(255, 213, 0);
 
     private JComboBox<Class<? extends Calculator>> calculatorSelector;
 
@@ -123,5 +123,13 @@ public final class ParameterEditor<T extends DemoNode> extends NodeEditorBase<Pa
         currentCalculatorType = selectedType;
 
         getNode().setCalculator(getDemoEditor().getComponentManager().createCalculator(selectedType));
+    }
+
+    @Override protected Color getEditorColor() {
+        return EDITOR_COLOR;
+    }
+
+    @Override protected double getEditorColorMixStrength() {
+        return 0.0;
     }
 }

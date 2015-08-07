@@ -4,11 +4,14 @@ import org.demoflow.demo.Demo;
 import org.demoflow.editor.DemoEditor;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  *
  */
 public class DemoNodeEditor extends NodeEditorBase<Demo> {
+
+    private static final Color EDITOR_COLOR = new Color(255, 184, 0);
 
     public DemoNodeEditor(Demo node, DemoEditor demoEditor) {
         super(node, demoEditor);
@@ -23,4 +26,13 @@ public class DemoNodeEditor extends NodeEditorBase<Demo> {
         // IMPLEMENT: Implement doUpdateNodeUi
 
     }
+
+    @Override protected Color getEditorColor() {
+        return EDITOR_COLOR;
+    }
+
+    @Override protected double getEditorColorMixStrength() {
+        return 0.2;
+    }
+
 }

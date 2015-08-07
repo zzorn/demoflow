@@ -9,6 +9,8 @@ import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeListener;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.calculator.Calculator;
+import org.flowutils.StringUtils;
+import org.uiflow.desktop.ColorUtils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -99,6 +101,12 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     private void buildBasicUi() {
         JPanel topBar = new JPanel(new MigLayout("insets 0"));
         add(topBar, "north, pushx");
+
+        // Tune background
+        final Color editorColor = getEditorColor();
+        if (editorColor != null) {
+            topBar.setBackground(ColorUtils.mixColors(getEditorColorMixStrength(), topBar.getBackground(), editorColor));
+        }
 
         // Add indenter
         indenter = new JPanel(new MigLayout("insets 0"));
@@ -238,7 +246,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     }
 
     private void updateNodeUi() {
-        nameLabel.setText(node.getName());
+        nameLabel.setText(StringUtils.capitalize(node.getName()));
         updateIndent();
         expandToggle.setVisible(node.getChildCount() > 0);
         doUpdateNodeUi(node);
@@ -293,5 +301,13 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
 
     protected final DemoEditor getDemoEditor() {
         return demoEditor;
+    }
+
+    protected Color getEditorColor() {
+        return null;
+    }
+
+    protected double getEditorColorMixStrength() {
+        return 0.1;
     }
 }
