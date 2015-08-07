@@ -116,8 +116,14 @@
             <version>0.9.9-RC1</version>
         </dependency>
 
-
-
+        <!-- Dark look and feel -->
+        <dependency>
+            <groupId>darcula</groupId>
+            <artifactId>darcula</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/darcula_look_and_feel/darcula.jar</systemPath>
+        </dependency>
     </dependencies>
 
 

@@ -1,11 +1,13 @@
 package org.demoflow.editor;
 
+import com.bulenkov.darcula.DarculaLaf;
 import net.miginfocom.swing.MigLayout;
 import org.demoflow.DemoComponentManager;
 import org.demoflow.editor.nodeeditor.DemoNodeEditor;
 import org.demoflow.view.View;
 import org.demoflow.demo.Demo;
 import org.demoflow.demo.DemoListener;
+import org.flowutils.LogUtils;
 import org.uiflow.desktop.ui.SimpleFrame;
 
 import javax.swing.*;
@@ -84,6 +86,8 @@ public final class DemoEditor {
         this.view = view;
         this.demoComponentManager = demoComponentManager;
         this.editorManager = editorManager;
+
+        setDarkLookAndFeel();
 
         buildUi();
 
@@ -284,12 +288,20 @@ public final class DemoEditor {
         }
     }
 
-
     public DemoComponentManager getComponentManager() {
         return demoComponentManager;
     }
 
+
     public SimpleFrame getRootFrame() {
         return rootFrame;
+    }
+
+    private void setDarkLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(new DarculaLaf());
+        } catch (UnsupportedLookAndFeelException e) {
+            LogUtils.getLogger().error("Could not set the dark Darcula look and feel: " + e.getMessage(), e);
+        }
     }
 }
