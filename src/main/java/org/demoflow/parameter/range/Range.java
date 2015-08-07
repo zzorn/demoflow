@@ -7,7 +7,7 @@ import org.flowutils.random.RandomSequence;
  * Represents a range for a parameter.
  * Used to get min, max values and to clamp the parameter.
  */
-public interface ParameterRange<T> extends ValueInterpolator<T> {
+public interface Range<T> extends ValueInterpolator<T> {
 
     /**
      * @return original value clamped to a valid range for this parameter.

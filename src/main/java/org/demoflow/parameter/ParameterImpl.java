@@ -5,14 +5,11 @@ import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeBase;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
-import org.demoflow.parameter.range.ParameterRange;
-import org.demoflow.utils.ArrayUtils;
+import org.demoflow.parameter.range.Range;
 import org.demoflow.utils.EmptyArray;
-import org.demoflow.utils.EmptyEnumeration;
 import org.flowutils.Symbol;
 
-import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.ArrayList;
 
 import static org.flowutils.Check.notNull;
 
@@ -23,18 +20,19 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
 
     private final Symbol id;
     private final boolean constant;
-    private ParameterRange<T> range;
+    private Range<T> range;
     private T value;
-    private T initialValue;
+    private T defaultValue;
     private Calculator<T> calculator;
-    private ParameterListener<T> listener;
+    private ArrayList<ParameterListener<T>> listeners = null;
+
 
     /**
      * @param id unique id for the parameter within the Parametrized class where it is.
      * @param host the Parametrized class that this parameter belongs to.
      * @param range allowed range for the parameter.
      */
-    public ParameterImpl(Symbol id, Parametrized host, ParameterRange<T> range) {
+    public ParameterImpl(Symbol id, Parametrized host, Range<T> range) {
         this(id, host, range, range.getDefaultValue());
     }
 
@@ -44,7 +42,7 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
      * @param range allowed range for the parameter.
      * @param value initial value of the parameter.
      */
-    public ParameterImpl(Symbol id, Parametrized host, ParameterRange<T> range, T value) {
+    public ParameterImpl(Symbol id, Parametrized host, Range<T> range, T value) {
         this(id, host, range, value, false);
     }
 
@@ -55,7 +53,7 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
      * @param value initial value of the parameter.
      * @param constant if true, the parameter can not be changed over time.
      */
-    public ParameterImpl(Symbol id, Parametrized host, ParameterRange<T> range, T value, boolean constant) {
+    public ParameterImpl(Symbol id, Parametrized host, Range<T> range, T value, boolean constant) {
         this(id, host, range, value, constant, null, null);
     }
 
@@ -70,7 +68,7 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
      */
     public ParameterImpl(Symbol id,
                          Parametrized host,
-                         ParameterRange<T> range,
+                         Range<T> range,
                          T value,
                          boolean constant,
                          Calculator<T> calculator,
@@ -85,9 +83,12 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
         this.constant = constant;
         this.range = range;
         this.value = range.copy(value);
-        this.initialValue = range.copy(value);
-        this.listener = listener;
+        this.defaultValue = range.copy(value);
         this.calculator = calculator;
+
+        if (listener != null) {
+            addParameterListener(listener);
+        }
     }
 
     @Override public Symbol getId() {
@@ -115,16 +116,17 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
 
         // Update initial value as well if requested
         if (alsoSetInitialValue) {
-            initialValue = range.copy(value);
+            defaultValue = range.copy(value);
         }
 
         // Notify listeners
         getHost().onParameterChanged(this, id, value);
-        if (listener != null) listener.onChanged(this, newValue);
+        notifyValueChanged(newValue);
+        if (alsoSetInitialValue) notifyDefaultValueChanged(newValue);
         notifyNodeUpdated();
     }
 
-    @Override public ParameterRange<T> getRange() {
+    @Override public Range<T> getRange() {
         return range;
     }
 
@@ -147,10 +149,11 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
             }
             else {
                 // Revert to previously manually set value when a calculator is removed
-                set(initialValue, false);
+                set(defaultValue, false);
             }
 
             notifyNodeUpdated();
+            notifyCalculatorChanged(this.calculator);
         }
 
         return calculator;
@@ -173,20 +176,12 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
 
     @Override public void resetToInitialValue() {
         // Revert to initial value (or manually specified value)
-        set(range.copy(initialValue), false);
+        set(range.copy(defaultValue), false);
 
         // Reset calculator state as well
         if (calculator != null) {
             calculator.resetState();
         }
-    }
-
-    public ParameterListener<T> getListener() {
-        return listener;
-    }
-
-    public void setListener(ParameterListener<T> listener) {
-        this.listener = listener;
     }
 
     @Override public int getChildCount() {
@@ -202,4 +197,58 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
         if (calculator != null) return  calculator.getTotalNumberOfDescendants();
         else return 0;
     }
+
+    @Override public T getDefaultValue() {
+        return defaultValue;
+    }
+
+    @Override public final void addParameterListener(ParameterListener<T> listener) {
+        notNull(listener, "listener");
+        if (listeners != null && listeners.contains(listener))
+            throw new IllegalArgumentException(
+                    "The ParameterListener<T> has already been added as a listener, can't add it twice");
+
+        if (listeners == null) {
+            listeners = new ArrayList<ParameterListener<T>>(4);
+        }
+
+        listeners.add(listener);
+    }
+
+    @Override public final void removeParameterListener(ParameterListener<T> listener) {
+        if (listeners != null) {
+            listeners.remove(listener);
+        }
+    }
+
+    /**
+     * Notifies about value change.
+     */
+    private void notifyValueChanged(T newValue) {
+        if (listeners != null) {
+            for (ParameterListener<T> listener : listeners) {
+                listener.onChanged(this, newValue);
+            }
+        }
+    }
+
+    /**
+     * Notifies about default value change.
+     */
+    private void notifyDefaultValueChanged(T newValue) {
+        if (listeners != null) {
+            for (ParameterListener<T> listener : listeners) {
+                listener.onDefaultValueChanged(this, newValue);
+            }
+        }
+    }
+
+    private void notifyCalculatorChanged(Calculator<T> newValue) {
+        if (listeners != null) {
+            for (ParameterListener<T> listener : listeners) {
+                listener.onCalculatorChanged(this, newValue);
+            }
+        }
+    }
+
 }

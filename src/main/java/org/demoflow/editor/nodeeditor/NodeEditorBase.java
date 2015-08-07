@@ -3,7 +3,7 @@ package org.demoflow.editor.nodeeditor;
 import com.badlogic.gdx.utils.Array;
 import net.miginfocom.swing.MigLayout;
 import org.demoflow.demo.Demo;
-import org.demoflow.editor.Editor;
+import org.demoflow.editor.DemoEditor;
 import org.demoflow.effect.Effect;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeListener;
@@ -40,7 +40,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
 
     private final Map<DemoNode, NodeEditorBase> childUis = new LinkedHashMap<>();
     private final T node;
-    private final Editor editor;
+    private final DemoEditor demoEditor;
 
     private int barHeight = 24;
     private int indentWidth = 20;
@@ -68,14 +68,14 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     /**
      * Creates editor for the specified node.
      */
-    public NodeEditorBase(T node, Editor editor) {
+    public NodeEditorBase(T node, DemoEditor demoEditor) {
         super(new MigLayout("insets 0, gapy 0"));
 
         notNull(node, "node");
-        notNull(editor, "editor");
+        notNull(demoEditor, "editor");
 
         this.node = node;
-        this.editor = editor;
+        this.demoEditor = demoEditor;
 
         buildBasicUi();
 
@@ -192,9 +192,9 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         notNull(child, "child");
 
         final NodeEditorBase childUi;
-        if (child instanceof Demo) childUi = new DemoNodeEditor((Demo) child, editor);
-        else if (child instanceof Effect) childUi = new EffectEditor((Effect) child, editor);
-        else if (child instanceof Parameter) childUi = new ParameterEditor((Parameter) child, editor);
+        if (child instanceof Demo) childUi = new DemoNodeEditor((Demo) child, demoEditor);
+        else if (child instanceof Effect) childUi = new EffectEditor((Effect) child, demoEditor);
+        else if (child instanceof Parameter) childUi = new ParameterEditor((Parameter) child, demoEditor);
         else if (child instanceof Calculator) {
             // For calculators, just add the child parameters of the calculator instead of the calculation node
             childUi = null;
@@ -291,7 +291,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         }
     }
 
-    protected final Editor getEditor() {
-        return editor;
+    protected final DemoEditor getDemoEditor() {
+        return demoEditor;
     }
 }

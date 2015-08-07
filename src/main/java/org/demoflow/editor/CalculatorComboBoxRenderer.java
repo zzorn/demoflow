@@ -24,7 +24,7 @@ public final class CalculatorComboBoxRenderer extends BasicComboBoxRenderer impl
                                                                          cellHasFocus);
 
         // Set a readable text
-        final String text = value == null ? "None" : ((Class) value).getSimpleName().replace("Calculator", "");
+        final String text = value == null ? "Constant" : ((Class) value).getSimpleName().replace("Calculator", "");
         setText(text);
 
         return superResult;

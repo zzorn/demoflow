@@ -21,7 +21,7 @@ import static org.flowutils.Check.notNull;
  *
  */
 // TODO: Editing UI
-public final class Editor {
+public final class DemoEditor {
 
     private static final int DEFAULT_EXPAND_DEPTH = 1;
 
@@ -29,6 +29,7 @@ public final class Editor {
 
     private final View view;
     private final DemoComponentManager demoComponentManager;
+    private final EditorManager editorManager;
 
     private Demo demo;
 
@@ -63,22 +64,26 @@ public final class Editor {
     /**
      * @param view view to show demos on.
      * @param demoComponentManager used to access the available effects, calculators, etc.
+     * @param editorManager provides value editors.
      */
-    public Editor(View view, DemoComponentManager demoComponentManager) {
-        this(view, demoComponentManager, null);
+    public DemoEditor(View view, DemoComponentManager demoComponentManager, EditorManager editorManager) {
+        this(view, demoComponentManager, editorManager, null);
     }
 
     /**
      * @param view view to show demos on.
      * @param demoComponentManager used to access the available effects, calculators, etc.
+     * @param editorManager provides value editors.
      * @param demo demo to edit, or null if it is specified later.
      */
-    public Editor(View view, DemoComponentManager demoComponentManager, Demo demo) {
+    public DemoEditor(View view, DemoComponentManager demoComponentManager, EditorManager editorManager, Demo demo) {
         notNull(view, "viewer");
         notNull(demoComponentManager, "demoComponentManager");
+        notNull(editorManager, "editorManager");
 
         this.view = view;
         this.demoComponentManager = demoComponentManager;
+        this.editorManager = editorManager;
 
         buildUi();
 
@@ -110,6 +115,10 @@ public final class Editor {
 
             setDemoToView(this.demo);
         }
+    }
+
+    public final EditorManager getEditorManager() {
+        return editorManager;
     }
 
     private void buildUi() {

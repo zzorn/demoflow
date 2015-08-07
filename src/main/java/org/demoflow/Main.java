@@ -8,10 +8,11 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 
 import org.demoflow.demo.DefaultDemo;
 import org.demoflow.demo.Demo;
+import org.demoflow.editor.DefaultEditorManager;
 import org.demoflow.effect.effects.XMPlayerEffect;
 import org.demoflow.interpolator.interpolators.*;
 import org.demoflow.parameter.calculator.calculators.*;
-import org.demoflow.editor.Editor;
+import org.demoflow.editor.DemoEditor;
 import org.demoflow.effect.effects.CubeEffect;
 import org.demoflow.effect.effects.Plasma;
 import org.demoflow.view.View;
@@ -46,6 +47,7 @@ public class Main {
 
         // Create asset managers
         DemoComponentManager demoComponentManager = new DemoComponentManager();
+        DefaultEditorManager editorManager = new DefaultEditorManager();
 
         // Create view
         View view = new View();
@@ -55,7 +57,7 @@ public class Main {
         Demo demo = createExampleDemo();
 
         // Create editor (and show it)
-        Editor editor = new Editor(view, demoComponentManager, demo);
+        DemoEditor demoEditor = new DemoEditor(view, demoComponentManager, editorManager, demo);
 
         /*
         // Edit demo (and view it)

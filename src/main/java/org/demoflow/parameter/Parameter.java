@@ -3,7 +3,7 @@ package org.demoflow.parameter;
 import org.demoflow.node.DemoNode;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
-import org.demoflow.parameter.range.ParameterRange;
+import org.demoflow.parameter.range.Range;
 import org.flowutils.Symbol;
 
 /**
@@ -43,7 +43,7 @@ public interface Parameter<T> extends DemoNode {
     /**
      * @return the allowed range for this parameter.
      */
-    ParameterRange<T> getRange();
+    Range<T> getRange();
 
     /**
      * @return the calculator used to update the value for the parameter over time, or null if it does not change over time.
@@ -78,4 +78,19 @@ public interface Parameter<T> extends DemoNode {
      * Also resets any dynamic state in the calculator.
      */
     void resetToInitialValue();
+
+    /**
+     * @return the manually edited value.
+     */
+    T getDefaultValue();
+
+    /**
+     * @param listener listener to notify about changes to parameter value.
+     */
+    void addParameterListener(ParameterListener<T> listener);
+
+    /**
+     * @param listener listener to remove.
+     */
+    void removeParameterListener(ParameterListener<T> listener);
 }

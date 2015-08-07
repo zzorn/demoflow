@@ -1,7 +1,6 @@
 package org.demoflow.editor.nodeeditor;
 
-import org.demoflow.DemoComponentManager;
-import org.demoflow.editor.Editor;
+import org.demoflow.editor.DemoEditor;
 import org.demoflow.node.DemoNode;
 import org.demoflow.parameter.calculator.Calculator;
 
@@ -12,8 +11,8 @@ import javax.swing.*;
  */
 public class CalculatorEditor<T extends DemoNode> extends NodeEditorBase<Calculator> {
 
-    public CalculatorEditor(Calculator node, Editor editor) {
-        super(node, editor);
+    public CalculatorEditor(Calculator node, DemoEditor demoEditor) {
+        super(node, demoEditor);
     }
 
     @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel timeEditorPanel, Calculator node) {

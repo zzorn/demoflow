@@ -10,7 +10,7 @@ import static org.flowutils.Check.notNull;
 /**
  * Common functionality for Ranges.
  */
-public abstract class RangeBase<T> implements ParameterRange<T> {
+public abstract class RangeBase<T> implements Range<T> {
 
     private final Class<T> type;
 

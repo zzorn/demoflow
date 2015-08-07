@@ -6,16 +6,11 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeBase;
-import org.demoflow.effect.EffectContainer;
 import org.demoflow.parameter.calculator.CalculationContext;
 import org.demoflow.parameter.calculator.Calculator;
 import org.demoflow.parameter.range.*;
 import org.demoflow.parameter.range.ranges.*;
-import org.demoflow.utils.ArrayEnumeration;
-import org.demoflow.utils.DualArrayEnumeration;
 import org.flowutils.Symbol;
-
-import java.util.Enumeration;
 
 import static org.flowutils.Check.nonEmptyString;
 import static org.flowutils.Check.notNull;
@@ -120,7 +115,7 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
      * @param range range of the parameter.
      * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
      */
-    protected final <T> Parameter<T> addParameter(String id, T initialValue, ParameterRange<T> range) {
+    protected final <T> Parameter<T> addParameter(String id, T initialValue, Range<T> range) {
         return addParameter(id, initialValue, range, false);
     }
 
@@ -133,7 +128,7 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
      * @param constant if true, the parameter will be constant and not changeable over time.
      * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
      */
-    protected final <T> Parameter<T> addParameter(String id, T initialValue, ParameterRange<T> range, boolean constant) {
+    protected final <T> Parameter<T> addParameter(String id, T initialValue, Range<T> range, boolean constant) {
         return addParameter(id, initialValue, range, constant, null);
     }
 
@@ -147,7 +142,7 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
      * @param calculator calculator to use to calculate the value of the parameter.
      * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
      */
-    protected final <T> Parameter<T> addParameter(String id, T initialValue, ParameterRange<T> range, boolean constant, Calculator<T> calculator) {
+    protected final <T> Parameter<T> addParameter(String id, T initialValue, Range<T> range, boolean constant, Calculator<T> calculator) {
         nonEmptyString(id, "id");
         notNull(range, "range");
 
