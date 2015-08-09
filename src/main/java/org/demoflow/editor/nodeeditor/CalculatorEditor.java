@@ -15,7 +15,7 @@ public class CalculatorEditor<T extends DemoNode> extends NodeEditorBase<Calcula
         super(node, demoEditor);
     }
 
-    @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel timeEditorPanel, Calculator node) {
+    @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel valueEditorPanel, Calculator node) {
         // IMPLEMENT: Implement buildUi
 
     }

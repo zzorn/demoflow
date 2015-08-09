@@ -12,13 +12,13 @@ import java.awt.*;
  */
 public class EffectEditor<T extends DemoNode> extends NodeEditorBase<Effect> {
 
-    private static final Color EDITOR_COLOR = new Color(255, 166, 0);
+    private static final Color EDITOR_COLOR = new Color(255, 97, 0);
 
     public EffectEditor(Effect node, DemoEditor demoEditor) {
         super(node, demoEditor);
     }
 
-    @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel timeEditorPanel, Effect node) {
+    @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel valueEditorPanel, Effect node) {
         // IMPLEMENT: Implement buildUi
 
     }
@@ -33,7 +33,7 @@ public class EffectEditor<T extends DemoNode> extends NodeEditorBase<Effect> {
     }
 
     @Override protected double getEditorColorMixStrength() {
-        return 0.2;
+        return 0.4;
     }
 
 }

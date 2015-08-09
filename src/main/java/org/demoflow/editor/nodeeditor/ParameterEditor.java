@@ -24,7 +24,7 @@ public final class ParameterEditor<T extends DemoNode> extends NodeEditorBase<Pa
 
     private static final boolean ASK_PERMISSION_BEFORE_CALCULATOR_CHANGE = false;
 
-    private static final Color EDITOR_COLOR = new Color(255, 213, 0);
+    private static final Color EDITOR_COLOR = new Color(255, 193, 0);
 
     private JComboBox<Class<? extends Calculator>> calculatorSelector;
 
@@ -36,7 +36,7 @@ public final class ParameterEditor<T extends DemoNode> extends NodeEditorBase<Pa
         super(node, demoEditor);
     }
 
-    @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel timeEditorPanel, final Parameter node) {
+    @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel valueEditorPanel, final Parameter node) {
         final Calculator calculator = node.getCalculator();
         currentCalculatorType = calculator == null ? null : calculator.getClass();
 
@@ -45,6 +45,7 @@ public final class ParameterEditor<T extends DemoNode> extends NodeEditorBase<Pa
         calculatorSelector = new JComboBox<>(new Vector<>(calculatorTypes));
         calculatorSelector.setRenderer(new CalculatorComboBoxRenderer());
         calculatorSelector.setEnabled(true);
+        calculatorSelector.setFocusable(false);
         calculatorSelector.setPreferredSize(new Dimension(SELECTOR_WIDTH, calculatorSelector.getHeight()));
         calculatorSelector.setSelectedItem(currentCalculatorType);
         calculatorSelector.addActionListener(new ActionListener() {
@@ -79,7 +80,7 @@ public final class ParameterEditor<T extends DemoNode> extends NodeEditorBase<Pa
         if (parameterValueEditor != null) {
 
             // Add to bar
-            otherTopBarContentPanel.add(parameterValueEditor.getEditorUi());
+            valueEditorPanel.add(parameterValueEditor.getEditorUi());
 
             // Update parameter from editor
             parameterValueEditor.addListener(new ValueEditorListener() {
@@ -130,6 +131,14 @@ public final class ParameterEditor<T extends DemoNode> extends NodeEditorBase<Pa
     }
 
     @Override protected double getEditorColorMixStrength() {
-        return (getNode().getDepth() % 2) == 0 ? 0.0 : 0.07;
+        return 1.0 / (1.5 + 0.5 * getNode().getDepth());
+    }
+
+    @Override protected void setTopBarColor(Color color) {
+        super.setTopBarColor(color);
+
+        if (parameterValueEditor != null) {
+            parameterValueEditor.getEditorUi().setBackground(color);
+        }
     }
 }

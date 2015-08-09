@@ -26,4 +26,10 @@ public interface DemoNodeListener {
      */
     void onNodeUpdated(DemoNode node);
 
+    /**
+     * Called when the maximum depth of the node changes (= number of generations under it).
+     * @param node node we are listening to.
+     */
+    void onNodeMaxDepthChanged(DemoNode node, int newMaxDepth);
+
 }

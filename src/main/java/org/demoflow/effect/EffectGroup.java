@@ -111,5 +111,4 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         else return super.getDepth();
     }
 
-
 }

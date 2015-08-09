@@ -8,11 +8,13 @@ import org.demoflow.view.View;
 import org.demoflow.demo.Demo;
 import org.demoflow.demo.DemoListener;
 import org.flowutils.LogUtils;
+import org.uiflow.desktop.ColorUtils;
 import org.uiflow.desktop.ui.SimpleFrame;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -39,6 +41,8 @@ public final class DemoEditor {
     private SimpleFrame rootFrame;
     private DemoNodeEditor demoNodeEditor;
     private JPanel treePanel;
+
+    private Color defaultBackgroundColor;
 
     private final DemoListener demoListener = new DemoListener() {
         @Override
@@ -129,6 +133,8 @@ public final class DemoEditor {
 
         final JPanel mainPanel = new JPanel(new MigLayout());
 
+        defaultBackgroundColor = mainPanel.getBackground();
+
         mainPanel.add(createTopRow(), "wrap");
 
         mainPanel.add(createEffectView(), "grow, push");
@@ -218,10 +224,13 @@ public final class DemoEditor {
             }
         }), "pushx");
 
-        // Scroll pane for the tree
+        // Scroll pane for tree
         demoViewPanel = new JPanel(new MigLayout("fill"));
+
+        // Scroll pane for the tree
         JScrollPane scrollPane = new JScrollPane(demoViewPanel);
         scrollPane.getVerticalScrollBar().setUnitIncrement(24); // Fix slow scrolling
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(24); // Fix slow scrolling
 
         this.treePanel.add(scrollPane, "south, grow, push, gaptop 5");
 
@@ -229,10 +238,12 @@ public final class DemoEditor {
     }
 
     private void setDemoToView(Demo demo) {
+        if( demoNodeEditor != null) {
+            demoViewPanel.remove(demoNodeEditor);
+            demoNodeEditor = null;
+        }
+
         if (demo != null) {
-            if( demoNodeEditor != null) {
-                demoViewPanel.remove(demoNodeEditor);
-            }
             demoNodeEditor = new DemoNodeEditor(demo, this);
             demoViewPanel.add(demoNodeEditor, "grow");
 
@@ -240,12 +251,6 @@ public final class DemoEditor {
 
             demoViewPanel.revalidate();
             demoViewPanel.repaint();
-        }
-        else {
-            if( demoNodeEditor != null) {
-                demoViewPanel.remove(demoNodeEditor);
-            }
-            demoNodeEditor = null;
         }
     }
 
@@ -303,5 +308,9 @@ public final class DemoEditor {
         } catch (UnsupportedLookAndFeelException e) {
             LogUtils.getLogger().error("Could not set the dark Darcula look and feel: " + e.getMessage(), e);
         }
+    }
+
+    public Color getTintedBackgroundColor(double tintAmount, Color tintColor) {
+        return ColorUtils.mixColors(tintAmount, defaultBackgroundColor, tintColor);
     }
 }

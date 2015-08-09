@@ -69,6 +69,9 @@ public abstract class DemoNodeBase implements DemoNode {
         if (oldMaxDepth != maxDepth) {
             // Notify parent as well of the change so they can update
             if (parent != null) parent.updateMaxDepth();
+
+            // Notify listeners
+            notifyMaxDepthChanged(maxDepth);
         }
     }
 
@@ -124,6 +127,17 @@ public abstract class DemoNodeBase implements DemoNode {
         if (nodeListeners != null) {
             for (int i = 0; i < nodeListeners.size; i++) {
                 nodeListeners.get(i).onNodeUpdated(this);
+            }
+        }
+    }
+
+    /**
+     * Notify NodeListeners that the max depth of this node changed.
+     */
+    protected final void notifyMaxDepthChanged(int newMaxDepth) {
+        if (nodeListeners != null) {
+            for (int i = 0; i < nodeListeners.size; i++) {
+                nodeListeners.get(i).onNodeMaxDepthChanged(this, newMaxDepth);
             }
         }
     }

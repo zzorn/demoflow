@@ -44,9 +44,9 @@ public final class DoubleEditor extends ValueEditorBase<Double> {
         defaultColor = editorPanel.getBackground();
         notNull(defaultColor, "defaultColor");
 
-        errorColor = ColorUtils.mixColors(0.3, defaultColor, DEFAULT_ERROR);
-        warningColor = ColorUtils.mixColors(0.3, defaultColor, DEFAULT_WARNING);
-        editedColor = ColorUtils.mixColors(0.1, defaultColor, DEFAULT_EDITED);
+        errorColor = ColorUtils.mixColors(0.4, defaultColor, DEFAULT_ERROR);
+        warningColor = ColorUtils.mixColors(0.4, defaultColor, DEFAULT_WARNING);
+        editedColor = ColorUtils.mixColors(0.2, defaultColor, DEFAULT_EDITED);
 
         originalValue = initialValue;
 

@@ -7,13 +7,14 @@ import org.demoflow.editor.DemoEditor;
 import org.demoflow.effect.Effect;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeListener;
+import org.demoflow.node.DemoNodeListenerAdapter;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.calculator.Calculator;
 import org.flowutils.StringUtils;
-import org.uiflow.desktop.ColorUtils;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.MouseInputAdapter;
 
 import java.awt.*;
@@ -32,10 +33,12 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     private static final boolean DRAW_DEBUG_BORDERS = false;
 
     private static final int LABEL_WIDTH = 100;
+    private static final int OTHER_TOPBAR_WIDTH = 150;
 
     private static final Image ARROW_RIGHT = Toolkit.getDefaultToolkit().getImage("assets/icons/arrow_right.png");
     private static final Image ARROW_DOWN = Toolkit.getDefaultToolkit().getImage("assets/icons/arrow_down.png");
-    private static final String CHILD_UI_LAYOUT_SETTINGS = "newline, left";
+    private static final String CHILD_UI_LAYOUT_SETTINGS = "newline, left, growx, pushx";
+    private static final Dimension ZERO_SIZE = new Dimension(0, 0);
 
     private final ImageIcon arrowRightIcon = new ImageIcon(ARROW_RIGHT);
     private final ImageIcon arrowDownIcon = new ImageIcon(ARROW_DOWN);
@@ -48,12 +51,12 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     private int indentWidth = 20;
     private JLabel expandToggle;
     private JLabel nameLabel;
-    private JPanel timeEditorPanel;
+    private JPanel timeEditorBar;
     private JPanel childPanel;
     private JPanel indenter;
     private boolean expanded = true;
 
-    private final DemoNodeListener nodeListener = new DemoNodeListener() {
+    private final DemoNodeListener nodeListener = new DemoNodeListenerAdapter() {
         @Override public void onChildAdded(DemoNode parent, DemoNode child) {
             addChildUi(child);
         }
@@ -67,11 +70,20 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         }
     };
 
+    private final DemoNodeListener rootNodeListener = new DemoNodeListenerAdapter() {
+        @Override public void onNodeMaxDepthChanged(DemoNode node, int newMaxDepth) {
+            // Recalculate the indent
+            updateIndent();
+        }
+    };
+    private JPanel otherTopBarContentPanel;
+    private JPanel topBar;
+
     /**
      * Creates editor for the specified node.
      */
     public NodeEditorBase(T node, DemoEditor demoEditor) {
-        super(new MigLayout("insets 0, gapy 0"));
+        super(new MigLayout("insets 0, gapy 0, fillx"));
 
         notNull(node, "node");
         notNull(demoEditor, "editor");
@@ -82,6 +94,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         buildBasicUi();
 
         node.addNodeListener(nodeListener);
+        node.getRootNode().addNodeListener(rootNodeListener);
     }
 
     /**
@@ -91,35 +104,21 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         return node;
     }
 
-    /**
-     * @return panel with time based editor.  Should be scrolled separately from the rest of the node ui.
-     */
-    public JPanel getTimeEditorPanel() {
-        return timeEditorPanel;
-    }
-
     private void buildBasicUi() {
-        JPanel topBar = new JPanel(new MigLayout("insets 0"));
-        add(topBar, "north, pushx");
-
         // Add indenter
         indenter = new JPanel(new MigLayout("insets 0"));
-        topBar.add(indenter, "align left");
+        add(indenter, "align left");
+        forceHeight(indenter, barHeight);
         debugBorderize(indenter, Color.blue);
 
-        // Tune background
-        final Color editorColor = getEditorColor();
-        if (editorColor != null) {
-            final Color color = ColorUtils.mixColors(getEditorColorMixStrength(), topBar.getBackground(), editorColor);
-            topBar.setBackground(color);
-            indenter.setBackground(color);
-        }
+        topBar = new JPanel(new MigLayout("insets 0, gap 0"));
+        add(topBar);
 
         // Expand collapse button
         expandToggle = new JLabel(expanded ? arrowDownIcon : arrowRightIcon);
-        setSize(expandToggle, barHeight, barHeight);
-        indenter.add(expandToggle, "push, align right");
-        indenter.addMouseListener(new MouseInputAdapter() {
+        forceSize(expandToggle, barHeight, barHeight);
+        topBar.add(expandToggle, "align left");
+        topBar.addMouseListener(new MouseInputAdapter() {
             @Override public void mousePressed(MouseEvent e) {
                 setExpanded(!expanded);
             }
@@ -131,15 +130,26 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         debugBorderize(nameLabel, Color.green);
 
         // Space for other things in top bar
-        JPanel otherTopBarContentPanel = new JPanel(new MigLayout("insets 0"));
-        topBar.add(otherTopBarContentPanel);
+        otherTopBarContentPanel = new JPanel(new MigLayout("insets 0"));
+        topBar.add(otherTopBarContentPanel, "");
+        forceSize(otherTopBarContentPanel, OTHER_TOPBAR_WIDTH, barHeight);
+        debugBorderize(otherTopBarContentPanel, Color.YELLOW);
 
         // Time editor bar
-        timeEditorPanel = new JPanel(new MigLayout("insets 0"));
+        timeEditorBar = new JPanel(new MigLayout("left, insets 0, gapy 0, fillx"));
+        add(timeEditorBar, "growx, pushx, height " + barHeight);
+
+        debugBorderize(timeEditorBar, Color.CYAN);
+
+        // Tune background
+        updateColors();
 
         // Space for children
-        childPanel = new JPanel(new MigLayout("insets 0, gapy 0"));
-        add(childPanel, "south, grow");
+        childPanel = new JPanel(new MigLayout("insets 0, gapy 0, fillx"));
+        /*
+        childPanel.setBorder(new MatteBorder(0, 0, 2, 0, (Color) null));
+         */
+        add(childPanel, "south, grow, push");
 
         // Add UIs for current children
         final Array<? extends DemoNode> children = node.getChildren();
@@ -148,12 +158,14 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         }
 
         // Do implementation specific ui building
-        buildUi(otherTopBarContentPanel, timeEditorPanel, node);
+        buildUi(otherTopBarContentPanel, timeEditorBar, node);
 
         debugBorderize(NodeEditorBase.this, Color.RED);
 
         updateNodeUi();
     }
+
+
 
     private void setExpanded(boolean expanded) {
         if (this.expanded != expanded) {
@@ -166,15 +178,10 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
             // Update child visibility
             childPanel.setVisible(expanded);
             if (expanded) {
-                childPanel.setMaximumSize(null);
-                childPanel.setMinimumSize(null);
-                childPanel.setPreferredSize(null);
+                setSizes(childPanel, null);
             }
             else {
-                final Dimension collapsedSize = new Dimension(childPanel.getWidth(), 0);
-                childPanel.setMaximumSize(collapsedSize);
-                childPanel.setMinimumSize(collapsedSize);
-                childPanel.setPreferredSize(collapsedSize);
+                setSizes(childPanel, ZERO_SIZE);
             }
 
             // Refresh
@@ -182,17 +189,32 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         }
     }
 
-    private void updateIndent() {
-        final int maxIndent = indentWidth * (1 + node.getRootNode().getMaxDepth());
-        final int ownIndent = (1 + node.getDepth()) * indentWidth;
-        final int surplusIndent = maxIndent - ownIndent;
-
-        setSize(indenter, ownIndent, barHeight);
-        setSize(nameLabel, LABEL_WIDTH + surplusIndent, barHeight);
+    private void setSizes(final JPanel component, Dimension collapsedSize) {
+        component.setMaximumSize(collapsedSize);
+        component.setMinimumSize(collapsedSize);
+        component.setPreferredSize(collapsedSize);
     }
 
-    private void setSize(final JComponent component, int width, final int height) {
+    private void updateIndent() {
+        final int maxIndent = indentWidth * (node.getRootNode().getMaxDepth());
+        final int ownIndent = (node.getDepth()) * indentWidth;
+        final int surplusIndent = maxIndent - ownIndent;
+
+        forceSize(indenter, ownIndent, barHeight);
+        forceSize(nameLabel, LABEL_WIDTH + surplusIndent, barHeight);
+
+        refreshLayout();
+    }
+
+    private void forceSize(final JComponent component, int width, final int height) {
         final Dimension size = new Dimension(width, height);
+        component.setMaximumSize(size);
+        component.setPreferredSize(size);
+        component.setMinimumSize(size);
+    }
+
+    private void forceHeight(final JComponent component, final int height) {
+        final Dimension size = new Dimension(component.getWidth(), height);
         component.setMaximumSize(size);
         component.setPreferredSize(size);
         component.setMinimumSize(size);
@@ -221,6 +243,9 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
 
             updateIndent();
 
+            // If this was the first added child, expand this panel
+            if (childUis.size() == 1) expandAll();
+
             refreshLayout();
         }
     }
@@ -242,6 +267,9 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
 
                 updateIndent();
 
+                // If this was the last removed child, collapse this panel
+                if (childUis.size() == 0) collapseAll();
+
                 refreshLayout();
             }
         }
@@ -261,9 +289,9 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     /**
      * Create node type specific UIs.
      * @param otherTopBarContentPanel
-     * @param timeEditorPanel
+     * @param valueEditorPanel
      */
-    protected abstract void buildUi(JPanel otherTopBarContentPanel, JPanel timeEditorPanel, T node);
+    protected abstract void buildUi(JPanel otherTopBarContentPanel, JPanel valueEditorPanel, T node);
 
     private void debugBorderize(final JComponent component, final Color color) {
         // DEBUG: border
@@ -305,6 +333,19 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         return demoEditor;
     }
 
+    private void updateColors() {
+        final Color color = calculateTintedBackgroundColor();
+        if (!color.equals(topBar.getBackground())) {
+            setTopBarColor(color);
+        }
+    }
+
+    protected void setTopBarColor(Color color) {
+        topBar.setBackground(color);
+        otherTopBarContentPanel.setBackground(color);
+        topBar.setBorder(new MatteBorder(2, 0, 0, 0, color.darker()));
+    }
+
     protected Color getEditorColor() {
         return null;
     }
@@ -312,4 +353,10 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     protected double getEditorColorMixStrength() {
         return 0.1;
     }
+
+    protected Color calculateTintedBackgroundColor() {
+        final Color editorColor = getEditorColor();
+        return demoEditor.getTintedBackgroundColor(editorColor == null ? 0 : getEditorColorMixStrength(), editorColor);
+    }
+
 }

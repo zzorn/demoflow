@@ -26,7 +26,7 @@ public abstract class ValueEditorBase<T> extends JPanel implements ValueEditor<T
     }
 
     public ValueEditorBase(Range<T> range, T initialValue) {
-        super(new MigLayout());
+        super(new MigLayout("gap 0, insets 0"));
 
         notNull(range, "range");
 
