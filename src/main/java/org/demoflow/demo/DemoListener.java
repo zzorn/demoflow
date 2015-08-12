@@ -14,6 +14,11 @@ public interface DemoListener {
     void onShutdown(Demo demo);
 
     /**
+     * Called when the demo is restarted from the beginning.
+     */
+    void onRestart(Demo demo);
+
+    /**
      * Called when the demo finishes.
      */
     void onCompleted();

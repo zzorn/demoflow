@@ -51,6 +51,10 @@ public final class CubeEffect extends EffectBase<Object> {
         diffuseColor = (ColorAttribute) modelInstance.materials.get(0).get(ColorAttribute.Diffuse);
     }
 
+    @Override protected void doReset(long randomSeed) {
+        // Nothing to reset
+    }
+
     @Override protected void doUpdate(CalculationContext calculationContext) {
         // Nothing to update
     }

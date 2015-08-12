@@ -120,7 +120,7 @@ public interface Demo extends Parametrized, EffectContainer {
     void shutdown();
 
     /**
-     * Shuts down the demo and initializes it to the start state.
+     * Shuts resets the demo to the start state.
      */
     void reset();
 

@@ -71,6 +71,12 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         }
     }
 
+    @Override protected void doReset(long randomSeed) {
+        for (int i = 0; i < effects.size; i++) {
+            effects.get(i).reset(randomSeed);
+        }
+    }
+
     @Override protected void doShutdown() {
         for (int i = 0; i < effects.size; i++) {
             effects.get(i).shutdown();

@@ -37,10 +37,12 @@ public final class Plasma extends EffectBase<Object> {
 	}
 
     @Override protected void doSetup(Object preCalculatedData, RandomSequence randomSequence) {
-
     }
 
-    @Override protected void doUpdate(CalculationContext calculationContext) {
+	@Override protected void doReset(long randomSeed) {
+	}
+
+	@Override protected void doUpdate(CalculationContext calculationContext) {
         time = calculationContext.getSecondsFromDemoStart();
     }
 

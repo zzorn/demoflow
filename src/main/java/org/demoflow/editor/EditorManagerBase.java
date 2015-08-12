@@ -17,6 +17,18 @@ public abstract class EditorManagerBase implements EditorManager {
     private final Map<Class, Class<? extends ValueEditor>> registeredValueEditorTypes = new ConcurrentHashMap<>();
 
 
+    @Override public final <T> ValueEditor<T> createValueEditor(Range<T> range, T initialValue) {
+        // Create editor
+        final ValueEditor<T> valueEditor = createValueEditor(range);
+        if (valueEditor != null) {
+            // Set initial edited value
+            valueEditor.setValue(initialValue);
+            return valueEditor;
+        } else {
+            return null;
+        }
+    }
+
     @Override public final <T> ValueEditor<T> createValueEditor(Range<T> range) {
         notNull(range, "range");
 
@@ -29,16 +41,18 @@ public abstract class EditorManagerBase implements EditorManager {
         }
     }
 
-    @Override public final <T> ValueEditor<T> createValueEditor(Range<T> range, T initialValue) {
-        final ValueEditor<T> valueEditor = createValueEditor(range);
-        if (valueEditor != null) {
-            valueEditor.setValue(initialValue);
-            return valueEditor;
-        } else {
-            return null;
-        }
-    }
 
+    /**
+     * Register a value editor.  Determines the type it edits automatically by creating an instance of it and querying it.
+     */
+    public final <T> void registerValueEditor(Class<? extends ValueEditor<T>> valueEditorType) {
+        notNull(valueEditorType, "valueEditorType");
+
+        // Determine type by creating an instance and querying it
+        final Class<T> editedType = createInstance(valueEditorType, null).getEditedType();
+
+        registerValueEditor(editedType, valueEditorType);
+    }
 
     /**
      * Register a value editor type for the specified type.
@@ -55,10 +69,10 @@ public abstract class EditorManagerBase implements EditorManager {
         return (Class<ValueEditor<T>>) registeredValueEditorTypes.get(valueType);
     }
 
-    private <T> ValueEditor<T> createInstance(Class<ValueEditor<T>> valueEditorType, Range<T> range) {
+    protected <T> ValueEditor<T> createInstance(Class<? extends ValueEditor<T>> valueEditorType, Range<T> range) {
         try {
             // Get constructor that takes one Range object
-            final Constructor<ValueEditor<T>> constructor = valueEditorType.getConstructor(Range.class);
+            final Constructor<? extends ValueEditor<T>> constructor = valueEditorType.getConstructor(Range.class);
 
             // Create instance
             return constructor.newInstance(range);

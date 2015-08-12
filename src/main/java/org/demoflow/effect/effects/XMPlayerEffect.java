@@ -26,7 +26,7 @@ public final class XMPlayerEffect extends EffectBase {
     private Player player;
 
     private double prevVolume = 0;
-    private int moduleId;
+    private int moduleId = -1;
 
     public XMPlayerEffect() {
         this("song.xm", 1.0, false);
@@ -39,13 +39,21 @@ public final class XMPlayerEffect extends EffectBase {
     }
 
     @Override protected void doSetup(Object preCalculatedData, RandomSequence randomSequence) {
+        // Create player
+        player = new Player(44100, Player.INTERPOLATION_MODE_NONE);
+        updateVolume(true);
+
+    }
+
+    @Override protected void doReset(long randomSeed) {
+        // Remove old song, if any
+        if (moduleId >= 0) {
+            player.removeXM(moduleId);
+        }
+
+        // Reload the song (so we can edit and update it without relaunching the demo)
         final FileHandle songFile = this.songFile.get();
         if (songFile != null) {
-            // Create player
-            player = new Player(44100, Player.INTERPOLATION_MODE_NONE);
-            updateVolume(true);
-
-            // Load song
             moduleId = player.loadXM(songFile.readBytes(), -1);
         }
     }

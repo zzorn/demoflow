@@ -1,9 +1,10 @@
-package org.demoflow.functions;
+package org.demoflow.field;
 
 /**
  * Applies the b function on the coordinates passed to the a function.
+ @deprecated Replace with Function1, 2, 3, etc and FunctionField & FieldFunction etc
  */
-public final class WarpFunction2 extends Function2TwoFunctionBase {
+public final class WarpField extends FieldWithTwoBaseFields {
 
     private static final double DEFAULT_X_OFFSET = 34987.2341;
     private static final double DEFAULT_Y_OFFSET = 90714.8371;
@@ -13,27 +14,27 @@ public final class WarpFunction2 extends Function2TwoFunctionBase {
     private double inputXScale = 1;
     private double inputYScale = 1;
 
-    public WarpFunction2() {
+    public WarpField() {
         this(null, null);
     }
 
-    public WarpFunction2(Function2 a, Function2 b) {
+    public WarpField(Field a, Field b) {
         this(DEFAULT_X_OFFSET, DEFAULT_Y_OFFSET, a, b);
     }
 
-    public WarpFunction2(double inputXOffset,
-                         double inputYOffset,
-                         Function2 a,
-                         Function2 b) {
+    public WarpField(double inputXOffset,
+                     double inputYOffset,
+                     Field a,
+                     Field b) {
         this(inputXOffset, inputYOffset, 1, 1, a, b);
     }
 
-    public WarpFunction2(double inputXOffset,
-                         double inputYOffset,
-                         double inputXScale,
-                         double inputYScale,
-                         Function2 a,
-                         Function2 b) {
+    public WarpField(double inputXOffset,
+                     double inputYOffset,
+                     double inputXScale,
+                     double inputYScale,
+                     Field a,
+                     Field b) {
         super(a, b);
         this.inputXOffset = inputXOffset;
         this.inputYOffset = inputYOffset;
@@ -73,7 +74,7 @@ public final class WarpFunction2 extends Function2TwoFunctionBase {
         this.inputYOffset = inputYOffset;
     }
 
-    @Override protected double combine(Function2 a, Function2 b, double x, double y) {
+    @Override protected double calculate(Field a, Field b, double x, double y) {
         final double bx = b.get(x * inputXScale + inputXOffset, y * inputXScale + inputXOffset);
         final double by = b.get(x * inputYScale + inputYOffset, y * inputYScale + inputYOffset);
         return a.get(bx, by);

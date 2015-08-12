@@ -22,21 +22,23 @@ public abstract class ValueEditorBase<T> extends JPanel implements ValueEditor<T
     private boolean listenToUiUpdates = true;
 
     public ValueEditorBase(Range<T> range) {
-        this(range, range.getDefaultValue());
+        this(range, range != null ? range.getDefaultValue() : null);
     }
 
     public ValueEditorBase(Range<T> range, T initialValue) {
         super(new MigLayout("gap 0, insets 0"));
 
-        notNull(range, "range");
-
+        // We need to be able to initialize value editors with a null range so we can check the type they edit.
+        // So as a kludge we allow such an initialization, but do not create the ui in that case.
         this.range = range;
-        this.value = range.clampToRange(initialValue);
+        if (range != null) {
+            this.value = range.clampToRange(initialValue);
 
-        // Build the UI
-        final JComponent editorComponent = buildEditorUi(this, this.range, this.value);
-        if (editorComponent != null) {
-            add(editorComponent);
+            // Build the UI
+            final JComponent editorComponent = buildEditorUi(this, this.range, this.value);
+            if (editorComponent != null) {
+                add(editorComponent);
+            }
         }
     }
 

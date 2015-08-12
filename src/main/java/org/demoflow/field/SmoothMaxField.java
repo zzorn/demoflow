@@ -1,4 +1,4 @@
-package org.demoflow.functions;
+package org.demoflow.field;
 
 import org.demoflow.interpolator.Interpolator;
 import org.demoflow.interpolator.interpolators.CosineInterpolator;
@@ -8,20 +8,21 @@ import static org.flowutils.Check.notNull;
 
 /**
  * Mixes between the return value of a and b, depending on which one is larger, using a specified interpolator.
+ @deprecated Replace with Function1, 2, 3, etc and FunctionField & FieldFunction etc
  */
-public final class SmoothMaxFunction2 extends Function2TwoFunctionBase {
+public final class SmoothMaxField extends FieldWithTwoBaseFields {
 
     private Interpolator interpolator;
     private double threshold;
 
-    public SmoothMaxFunction2() {
+    public SmoothMaxField() {
         this(null, null);
     }
 
     /**
      * Uses cosine interpolation and a threshold of 1.
      */
-    public SmoothMaxFunction2(Function2 a, Function2 b) {
+    public SmoothMaxField(Field a, Field b) {
         this(CosineInterpolator.IN_OUT, a, b);
     }
 
@@ -29,7 +30,7 @@ public final class SmoothMaxFunction2 extends Function2TwoFunctionBase {
      * Takes the max of a and b, mixing them together with the interpolator if they are less than 1 apart.
      * @param interpolator interpolator to mix a and b with if they are closer to each other than the threshold.
      */
-    public SmoothMaxFunction2(Interpolator interpolator, Function2 a, Function2 b) {
+    public SmoothMaxField(Interpolator interpolator, Field a, Field b) {
         this(interpolator, 1, a, b);
     }
 
@@ -37,7 +38,7 @@ public final class SmoothMaxFunction2 extends Function2TwoFunctionBase {
      * @param interpolator interpolator to mix a and b with if they are closer to each other than the threshold.
      * @param threshold how much the difference between a and b should be to use only one of them.
      */
-    public SmoothMaxFunction2(Interpolator interpolator, double threshold, Function2 a, Function2 b) {
+    public SmoothMaxField(Interpolator interpolator, double threshold, Field a, Field b) {
         super(a, b);
 
         Check.positiveOrZero(threshold, "threshold");
@@ -63,7 +64,7 @@ public final class SmoothMaxFunction2 extends Function2TwoFunctionBase {
         this.threshold = threshold;
     }
 
-    @Override protected double combine(Function2 a, Function2 b, double x, double y) {
+    @Override protected double calculate(Field a, Field b, double x, double y) {
         final double aValue = a.get(x, y);
         final double bValue = b.get(x, y);
 

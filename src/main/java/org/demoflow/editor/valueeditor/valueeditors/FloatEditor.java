@@ -6,23 +6,23 @@ import org.demoflow.parameter.range.Range;
 import java.text.DecimalFormat;
 
 /**
- * Editor for double type values.
+ * Editor for float type values.
  */
-public final class DoubleEditor extends TextFieldEditorBase<Double> {
+public final class FloatEditor extends TextFieldEditorBase<Float> {
 
-    public DoubleEditor(Range<Double> range) {
+    public FloatEditor(Range<Float> range) {
         super(range);
     }
 
-    @Override protected Double parseValue(String text) {
-        return Double.parseDouble(text);
+    @Override protected Float parseValue(String text) {
+        return Float.parseFloat(text);
     }
 
     @Override protected DecimalFormat createTextFieldFormat() {
         return new DecimalFormat("#0.0###");
     }
 
-    @Override public Class<Double> getEditedType() {
-        return Double.class;
+    @Override public Class<Float> getEditedType() {
+        return Float.class;
     }
 }

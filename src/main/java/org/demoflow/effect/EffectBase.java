@@ -17,6 +17,7 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     private RandomSequence randomSequence;
     private boolean active = false;
     private boolean initialized = false;
+    private boolean shutdown = false;
 
     private P preCalculatedData = null;
 
@@ -25,7 +26,8 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
 
 
     @Override public final void setup(long randomSeed) {
-        if (initialized) throw new IllegalStateException("Setup can not be called if we are already initialized.  Call shutdown first.");
+        if (initialized) throw new IllegalStateException("Setup can not be called if we are already initialized.");
+        if (shutdown) throw new IllegalStateException("Setup can not be called after we have already called shutdown.");
 
         this.randomSequence = new XorShift(randomSeed);
 
@@ -138,7 +140,18 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
         }
     }
 
+    @Override public final void reset(long randomSeed) {
+        if (!initialized) throw new IllegalStateException("Can not reset before setup");
+        if (shutdown) throw new IllegalStateException("Can not reset after a shutdown");
+
+        deactivate();
+        doReset(randomSeed);
+    }
+
     @Override public final void shutdown() {
+        if (shutdown) throw new IllegalStateException("Can not call shutdown twice, shutdown already called.");
+        shutdown = true;
+
         if (initialized) {
             deactivate();
             doShutdown();
@@ -177,6 +190,11 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     // Override as needed
     protected void doSetup(P preCalculatedData, RandomSequence randomSequence) {
     }
+
+    /**
+     * Rewinds this effect to the start.
+     */
+    protected abstract void doReset(long randomSeed);
 
     // Override as needed
     protected void doActivate() {

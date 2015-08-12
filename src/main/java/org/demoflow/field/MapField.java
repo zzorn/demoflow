@@ -1,9 +1,10 @@
-package org.demoflow.functions;
+package org.demoflow.field;
 
 /**
  * Maps the inputs and outputs of the base function to ranges.
+ @deprecated Replace with Function1, 2, 3, etc and FunctionField & FieldFunction etc
  */
-public final class MapFunction2 extends Function2OneFunctionBase {
+public final class MapField extends FieldWithOneBaseField {
 
     private double startX;
     private double endX;
@@ -20,7 +21,7 @@ public final class MapFunction2 extends Function2OneFunctionBase {
      * Does not do any remapping of the inputs or the output.
      * Does not have any base function.
      */
-    public MapFunction2() {
+    public MapField() {
         this(null);
     }
 
@@ -30,7 +31,7 @@ public final class MapFunction2 extends Function2OneFunctionBase {
      *
      * @param base base function to map.
      */
-    public MapFunction2(Function2 base) {
+    public MapField(Field base) {
         this(1, base);
     }
 
@@ -41,8 +42,8 @@ public final class MapFunction2 extends Function2OneFunctionBase {
      * @param resultScale value to scale the result of the base function with.
      * @param base base function to map.
      */
-    public MapFunction2(double resultScale,
-                        Function2 base) {
+    public MapField(double resultScale,
+                    Field base) {
         this(-resultScale, resultScale, -1, 1, base);
     }
 
@@ -54,9 +55,9 @@ public final class MapFunction2 extends Function2OneFunctionBase {
      * @param endResult value to map 1 result to.
      * @param base base function to map.
      */
-    public MapFunction2(double startResult,
-                        double endResult,
-                        Function2 base) {
+    public MapField(double startResult,
+                    double endResult,
+                    Field base) {
         this(startResult, endResult, -1, 1, base);
     }
 
@@ -68,10 +69,10 @@ public final class MapFunction2 extends Function2OneFunctionBase {
      * @param yScale value to scale the second input with.
      * @param base base function to map.
      */
-    public MapFunction2(double resultScale,
-                        double xScale,
-                        double yScale,
-                        Function2 base) {
+    public MapField(double resultScale,
+                    double xScale,
+                    double yScale,
+                    Field base) {
         this(0, resultScale, 0, xScale, 0, yScale, false, false, false, base);
     }
 
@@ -83,11 +84,11 @@ public final class MapFunction2 extends Function2OneFunctionBase {
      * @param endInput value to map 1 x or y to.
      * @param base base function to map.
      */
-    public MapFunction2(double startResult,
-                        double endResult,
-                        double startInput,
-                        double endInput,
-                        Function2 base) {
+    public MapField(double startResult,
+                    double endResult,
+                    double startInput,
+                    double endInput,
+                    Field base) {
         this(startResult, endResult, startInput, endInput, startInput, endInput, false, false, false, base);
     }
 
@@ -102,13 +103,13 @@ public final class MapFunction2 extends Function2OneFunctionBase {
      * @param endY value to map 1 y to.
      * @param base base function to map.
      */
-    public MapFunction2(double startResult,
-                        double endResult,
-                        double startX,
-                        double endX,
-                        double startY,
-                        double endY,
-                        Function2 base) {
+    public MapField(double startResult,
+                    double endResult,
+                    double startX,
+                    double endX,
+                    double startY,
+                    double endY,
+                    Field base) {
         this(startResult, endResult, startX, endX, startY, endY, false, false, false, base);
     }
 
@@ -124,16 +125,16 @@ public final class MapFunction2 extends Function2OneFunctionBase {
      * @param clampResult  whether to clamp the result value to the startResult..endResult range.
      * @param base base function to map.
      */
-    public MapFunction2(double startResult,
-                        double endResult,
-                        double startX,
-                        double endX,
-                        double startY,
-                        double endY,
-                        boolean clampX,
-                        boolean clampY,
-                        boolean clampResult,
-                        Function2 base) {
+    public MapField(double startResult,
+                    double endResult,
+                    double startX,
+                    double endX,
+                    double startY,
+                    double endY,
+                    boolean clampX,
+                    boolean clampY,
+                    boolean clampResult,
+                    Field base) {
         super(base);
         this.startX = startX;
         this.endX = endX;
@@ -146,7 +147,7 @@ public final class MapFunction2 extends Function2OneFunctionBase {
         this.clampResult = clampResult;
     }
 
-    @Override protected double calculate(Function2 base, double x, double y) {
+    @Override protected double calculate(Field base, double x, double y) {
         final double mappedX = map(x, startX, endX, clampX);
         final double mappedY = map(y, startY, endY, clampY);
         return map(base.get(mappedX, mappedY), startResult, endResult, clampResult);

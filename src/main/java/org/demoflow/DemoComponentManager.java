@@ -3,26 +3,28 @@ package org.demoflow;
 import org.demoflow.effect.Effect;
 import org.demoflow.interpolator.Interpolator;
 import org.demoflow.parameter.calculator.Calculator;
-import org.reflections.Reflections;
+import org.demoflow.utils.ClassUtils;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.flowutils.Check.notNull;
 
 /**
  * Keeps track of available effect, calculator and interpolator types.
  */
+// IDEA: Support reloading the available effects, calculators and interpolators?  Will it work if an editor is running and the classes are recompiled?
 public final class DemoComponentManager {
 
-    private static final String PROJECT_ROOT_PATH = "org.demoflow";
-    private static final String DEFAULT_EFFECTS_PATH = "org.demoflow.effect.effects";
-    private static final String DEFAULT_CALCULATORS_PATH = "org.demoflow.parameter.calculator.calculators";
-    private static final String DEFAULT_INTERPOLATORS_PATH = "org.demoflow.interpolator.interpolators";
+    public static final String PROJECT_ROOT_PATH = "org.demoflow";
+    public static final List<String> DEFAULT_EFFECTS_PATHS = Arrays.asList("org.demoflow.effect.effects");
+    public static final List<String> DEFAULT_CALCULATORS_PATHS = Arrays.asList("org.demoflow.parameter.calculator.calculators",
+                                                                               "org.demoflow.field.fields",
+                                                                               "org.demoflow.field.colorfield.colorfields");
+    public static final List<String> DEFAULT_INTERPOLATORS_PATHS = Arrays.asList("org.demoflow.interpolator.interpolators");
 
-    private final String effectsPath;
-    private final String calculatorsPath;
-    private final String interpolatorsPath;
+    private final List<String> effectsPaths;
+    private final List<String> calculatorsPaths;
+    private final List<String> interpolatorsPaths;
 
     private final List<Class<? extends Effect>> effectTypes;
     private final List<Class<? extends Calculator>> calculatorTypes;
@@ -30,13 +32,11 @@ public final class DemoComponentManager {
 
     private final Map<Class, List<Class<? extends Calculator>>> calculatorTypesByReturnType = new LinkedHashMap<>();
 
-    // IDEA: Add constructor that takes list of paths, making it easier to use the demoflow framework with custom components-
-
     /**
      * Loads default effects, calculators, and interpolators.
      */
     public DemoComponentManager() {
-        this(PROJECT_ROOT_PATH, DEFAULT_EFFECTS_PATH, DEFAULT_CALCULATORS_PATH, DEFAULT_INTERPOLATORS_PATH);
+        this(PROJECT_ROOT_PATH, DEFAULT_EFFECTS_PATHS, DEFAULT_CALCULATORS_PATHS, DEFAULT_INTERPOLATORS_PATHS);
     }
 
     /**
@@ -48,18 +48,33 @@ public final class DemoComponentManager {
      * @param interpolatorsPath full name of package to load interpolators from.
      */
     public DemoComponentManager(String rootPath, String effectsPath, String calculatorsPath, String interpolatorsPath) {
+        this(rootPath,
+             Collections.singletonList(effectsPath),
+             Collections.singletonList(calculatorsPath),
+             Collections.singletonList(interpolatorsPath));
+    }
+
+    /**
+     * Loads the specified effects, calculators, and interpolators.
+     *
+     * @param rootPath project root package.
+     * @param effectsPaths full names of packages to load effects from.
+     * @param calculatorsPaths full names of packages to load calculators from.
+     * @param interpolatorsPaths full names of packages to load interpolators from.
+     */
+    public DemoComponentManager(String rootPath, List<String> effectsPaths, List<String> calculatorsPaths, List<String> interpolatorsPaths) {
         notNull(rootPath, "rootPath");
-        notNull(effectsPath, "effectsPath");
-        notNull(calculatorsPath, "calculatorsPath");
-        notNull(interpolatorsPath, "interpolatorsPath");
+        notNull(effectsPaths, "effectsPaths");
+        notNull(calculatorsPaths, "calculatorsPaths");
+        notNull(interpolatorsPaths, "interpolatorsPaths");
 
-        this.effectsPath = effectsPath;
-        this.calculatorsPath = calculatorsPath;
-        this.interpolatorsPath = interpolatorsPath;
+        this.effectsPaths = effectsPaths;
+        this.calculatorsPaths = calculatorsPaths;
+        this.interpolatorsPaths = interpolatorsPaths;
 
-        effectTypes = getClassesImplementing(rootPath, Effect.class, effectsPath);
-        calculatorTypes = getClassesImplementing(rootPath, Calculator.class, calculatorsPath);
-        interpolatorTypes = getClassesImplementing(rootPath, Interpolator.class, interpolatorsPath);
+        effectTypes = ClassUtils.getClassesImplementing(rootPath, Effect.class, this.effectsPaths);
+        calculatorTypes = ClassUtils.getClassesImplementing(rootPath, Calculator.class, this.calculatorsPaths);
+        interpolatorTypes = ClassUtils.getClassesImplementing(rootPath, Interpolator.class, this.interpolatorsPaths);
 
         // Organize calculator types by return type
         for (Class<? extends Calculator> calculatorType : calculatorTypes) {
@@ -116,7 +131,7 @@ public final class DemoComponentManager {
         try {
             return type.newInstance();
         } catch (Exception e) {
-            throw new IllegalStateException("Could not create a calculator of type " + type +": " + e.getMessage(), e);
+            throw new IllegalStateException("Could not create a calculator of type " + type +".  Ensure it has a public no-parameters constructor.  The error was: " + e.getMessage(), e);
         }
     }
 
@@ -125,24 +140,6 @@ public final class DemoComponentManager {
      */
     public List<Class<? extends Interpolator>> getInterpolatorTypes() {
         return interpolatorTypes;
-    }
-
-    /**
-     * @return all classes that implement or extend the specified type, and are located in the specified package.
-     */
-    private <T> List<Class<? extends T>> getClassesImplementing(String rootPath, final Class<T> type, String packageToGetClassesFrom) {
-        final List<Class<? extends T>> classes = new ArrayList<>();
-
-        Reflections reflections = new Reflections(rootPath);
-        final Set<Class<? extends T>> allSubTypes = reflections.getSubTypesOf(type);
-        for (Class<? extends T> component : allSubTypes) {
-            // Get the subtypes that are in the specified package
-            if (component.getPackage().getName().equals(packageToGetClassesFrom)) {
-                classes.add(component);
-            }
-        }
-
-        return classes;
     }
 
 }

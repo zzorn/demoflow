@@ -10,13 +10,19 @@ public interface Effect extends Parametrized {
 
     /**
      * Load needed resources and do other setup.
+     * This will only be called once.
      */
     // IDEA: Later listener system for progress?
     void setup(long randomSeed);
 
     /**
+     * Resets the position of this effect to the start.
+     */
+    void reset(long randomSeed);
+
+    /**
      * Releases any resources created by this effect in setup.
-     * The effect can be started again with setup after a shutdown.
+     * This will only be called once, the effect can not be restarted after this has been called.
      */
     void shutdown();
 

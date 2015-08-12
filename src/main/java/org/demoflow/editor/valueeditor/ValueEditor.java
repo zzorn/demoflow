@@ -25,6 +25,11 @@ public interface ValueEditor<T> {
     Range<T> getRange();
 
     /**
+     * @return the types of values that this value editor edits.
+     */
+    Class<T> getEditedType();
+
+    /**
      * @return editor UI component.
      */
     JComponent getEditorUi();

@@ -54,7 +54,9 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     private boolean effectSetupRequested = false;
     private boolean effectShutdownRequested = false;
+    private boolean effectRestartRequested = false;
     private boolean initialized = false;
+    private boolean shutdown = false;
 
     public DefaultDemo() {
         this("Demo");
@@ -174,30 +176,40 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     @Override public void setup() {
         if (view == null) throw new IllegalStateException("setView must be called before we can setup the demo");
+        if (shutdown) throw new IllegalStateException("We can't setup a demo after it has been shut down.");
 
         effectSetupRequested = true;
     }
 
+    @Override public final void reset() {
+        if (view == null) throw new IllegalStateException("setView must be called before we can reset the demo");
+        if (shutdown) throw new IllegalStateException("We can't restart a demo after it has been shut down.");
+
+        effectRestartRequested = true;
+    }
+
     @Override public void shutdown() {
+        if (shutdown) throw new IllegalStateException("The demo has already been shut down.");
         effectShutdownRequested = true;
     }
 
-    @Override public final void reset() {
-        shutdown();
-        setup();
-    }
-
     @Override public void update(double deltaTime_s) {
+        // Setup effects if necessary
+        if (effectSetupRequested) {
+            effectSetupRequested = false;
+            doSetup();
+        }
+
+        // Restart effects if necessary
+        if (effectRestartRequested) {
+            effectRestartRequested = false;
+            doRestart();
+        }
+
         // Shut down if requested
         if (effectShutdownRequested) {
             effectShutdownRequested = false;
             doShutdown();
-        }
-
-        // Restart effects if necessary
-        if (effectSetupRequested) {
-            effectSetupRequested = false;
-            doSetup();
         }
 
         // Update if we are initialized and the demo is ongoing
@@ -253,29 +265,42 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
         }
     }
 
-    private void doShutdown() {
-        // Shut down effects
-        effects.shutdown();
-
-        initialized = false;
-
-        // Notify listeners about shutdown
-        for (DemoListener listener : listeners) {
-            listener.onShutdown(this);
-        }
-    }
-
     private void doSetup() {
-        surplusTimeFromLastUpdate = 0;
-        calculationContext.init(durationSeconds);
-        undilatedTime.init(durationSeconds);
-
         effects.setup(randomSeed);
         initialized = true;
 
         // Notify listeners about setup
         for (DemoListener listener : listeners) {
             listener.onSetup(this);
+        }
+
+        // Reset demo state to beginning
+        doRestart();
+    }
+
+    private void doRestart() {
+        surplusTimeFromLastUpdate = 0;
+        calculationContext.init(durationSeconds);
+        undilatedTime.init(durationSeconds);
+
+        effects.reset(randomSeed);
+
+        // Notify listeners about restart
+        for (DemoListener listener : listeners) {
+            listener.onRestart(this);
+        }
+    }
+
+    private void doShutdown() {
+        // Shut down effects
+        effects.shutdown();
+
+        initialized = false;
+        shutdown = true;
+
+        // Notify listeners about shutdown
+        for (DemoListener listener : listeners) {
+            listener.onShutdown(this);
         }
     }
 

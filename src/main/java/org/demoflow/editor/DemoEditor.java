@@ -57,6 +57,10 @@ public final class DemoEditor {
             showStatus("Starting", 0);
         }
 
+        @Override public void onRestart(Demo demo) {
+            showStatus("Restarting", 0);
+        }
+
         @Override public void onShutdown(Demo demo) {
             showStatus("Stopped", 0);
         }

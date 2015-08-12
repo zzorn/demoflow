@@ -2,8 +2,11 @@ package org.demoflow.parameter;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import org.demoflow.field.Field;
+import org.demoflow.field.colorfield.ColorField;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeBase;
 import org.demoflow.parameter.calculator.CalculationContext;
@@ -88,13 +91,23 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
     }
 
     /**
-     * Convenience method to create a non-constant vector parameter with the full range and specified initial value.
+     * Convenience method to create a non-constant 3D vector parameter with the full range and specified initial value.
      * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
      * @param initialValue initial value for the parameter.
      * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
      */
     protected final Parameter<Vector3> addParameter(String id, Vector3 initialValue) {
         return addParameter(id, initialValue, Vector3Range.FULL);
+    }
+
+    /**
+     * Convenience method to create a non-constant 2D vector parameter with the full range and specified initial value.
+     * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
+     * @param initialValue initial value for the parameter.
+     * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
+     */
+    protected final Parameter<Vector2> addParameter(String id, Vector2 initialValue) {
+        return addParameter(id, initialValue, Vector2Range.FULL);
     }
 
     /**
@@ -105,6 +118,32 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
      */
     protected final Parameter<FileHandle> addParameter(String id, FileHandle initialValue) {
         return addParameter(id, initialValue, FileHandleRange.FULL, true);
+    }
+
+    /**
+     * Convenience method to create a constant field parameter.
+     * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
+     * @param initialValue initial value for the parameter.
+     * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
+     */
+    protected final Parameter<Field> addParameter(String id, Field initialValue) {
+        final Parameter<Field> fieldParameter = addParameter(id, initialValue, FieldRange.FULL, true);
+        // Field parameters are a special case as their calculators are also their values.
+        fieldParameter.setCalculator(initialValue);
+        return fieldParameter;
+    }
+
+    /**
+     * Convenience method to create a constant color field parameter.
+     * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
+     * @param initialValue initial value for the parameter.
+     * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
+     */
+    protected final Parameter<ColorField> addParameter(String id, ColorField initialValue) {
+        final Parameter<ColorField> fieldParameter = addParameter(id, initialValue, ColorFieldRange.FULL, true);
+        // Field parameters are a special case as their calculators are also their values.
+        fieldParameter.setCalculator(initialValue);
+        return fieldParameter;
     }
 
     /**

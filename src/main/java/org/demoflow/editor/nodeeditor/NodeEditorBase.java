@@ -73,6 +73,8 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     private final DemoNodeListener rootNodeListener = new DemoNodeListenerAdapter() {
         @Override public void onNodeMaxDepthChanged(DemoNode node, int newMaxDepth) {
             // Recalculate the indent
+            // DEBUG:
+            System.out.println("NodeEditorBase.onNodeMaxDepthChanged " + node.getName() + " " + newMaxDepth);
             updateIndent();
         }
     };
@@ -163,6 +165,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         debugBorderize(NodeEditorBase.this, Color.RED);
 
         updateNodeUi();
+        updateIndent();
     }
 
 
@@ -276,8 +279,8 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     }
 
     private void updateNodeUi() {
+        // NOTE: This is called quite often (when a parameter value is updated in a running demo)
         nameLabel.setText(StringUtils.capitalize(node.getName()));
-        updateIndent();
         expandToggle.setVisible(node.getChildCount() > 0);
         doUpdateNodeUi(node);
     }

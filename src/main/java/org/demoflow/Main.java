@@ -9,6 +9,7 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import org.demoflow.demo.DefaultDemo;
 import org.demoflow.demo.Demo;
 import org.demoflow.editor.DefaultEditorManager;
+import org.demoflow.effect.effects.CubeHeightFieldEffect;
 import org.demoflow.effect.effects.XMPlayerEffect;
 import org.demoflow.interpolator.interpolators.*;
 import org.demoflow.parameter.calculator.calculators.*;
@@ -17,6 +18,8 @@ import org.demoflow.effect.effects.CubeEffect;
 import org.demoflow.effect.effects.Plasma;
 import org.demoflow.view.View;
 import org.flowutils.LogUtils;
+
+import java.util.Arrays;
 
 /**
  * Creates an example demo and opens it in an editor and in a view.
@@ -47,6 +50,7 @@ public class Main {
 
         // Create asset managers
         DemoComponentManager demoComponentManager = new DemoComponentManager();
+
         DefaultEditorManager editorManager = new DefaultEditorManager();
 
         // Create view
@@ -115,8 +119,11 @@ public class Main {
         gapSize.addPoint(0, 10.0);
         gapSize.addPoint(0.2, 0.0, CubicInterpolator.IN_OUT);
 
+        // Add heightfield test
+        demo.addEffect(new CubeHeightFieldEffect());
+
         // Add music.
-        // NOTE: For now, XM playback doesn't support pausing or speed changes, so the editor is paused or speed changed, the music will go out of sync until demo is restarted
+        // NOTE: For now, XM playback doesn't support speed changes, so when the editor speed is changed, the music will go out of sync until demo is restarted
         demo.addEffect(new XMPlayerEffect("test.xm", 0.25, true));
 
         return demo;

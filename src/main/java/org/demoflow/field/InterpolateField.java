@@ -1,4 +1,4 @@
-package org.demoflow.functions;
+package org.demoflow.field;
 
 import org.demoflow.interpolator.Interpolator;
 import org.demoflow.interpolator.interpolators.CosineInterpolator;
@@ -7,8 +7,9 @@ import static org.flowutils.Check.notNull;
 
 /**
  * Scales the output of the function using the specified interpolator.
+ @deprecated Replace with Function1, 2, 3, etc and FunctionField & FieldFunction etc
  */
-public final class InterpolateFunction2 extends Function2OneFunctionBase {
+public final class InterpolateField extends FieldWithOneBaseField {
 
     private double inputStart;
     private double inputEnd;
@@ -17,7 +18,7 @@ public final class InterpolateFunction2 extends Function2OneFunctionBase {
     private boolean clampInput;
     private Interpolator interpolator;
 
-    public InterpolateFunction2() {
+    public InterpolateField() {
         this(null);
     }
 
@@ -26,7 +27,7 @@ public final class InterpolateFunction2 extends Function2OneFunctionBase {
      *
      * @param base base function to interpolate.
      */
-    public InterpolateFunction2(Function2 base) {
+    public InterpolateField(Field base) {
         this(CosineInterpolator.IN_OUT, base);
     }
 
@@ -36,8 +37,8 @@ public final class InterpolateFunction2 extends Function2OneFunctionBase {
      * @param interpolator interpolator to apply to the result of the base function.
      * @param base base function to interpolate.
      */
-    public InterpolateFunction2(Interpolator interpolator,
-                                Function2 base) {
+    public InterpolateField(Interpolator interpolator,
+                            Field base) {
         this(interpolator, 0, 1, 0, 1, false, base);
     }
 
@@ -49,10 +50,10 @@ public final class InterpolateFunction2 extends Function2OneFunctionBase {
      * @param inputEnd base function return value to map to the end of the interpolation range.
      * @param base base function to interpolate.
      */
-    public InterpolateFunction2(Interpolator interpolator,
-                                double inputStart,
-                                double inputEnd,
-                                Function2 base) {
+    public InterpolateField(Interpolator interpolator,
+                            double inputStart,
+                            double inputEnd,
+                            Field base) {
         this(interpolator, inputStart, inputEnd, 0, 1, false, base);
     }
 
@@ -64,12 +65,12 @@ public final class InterpolateFunction2 extends Function2OneFunctionBase {
      * @param resultEnd result value to map the end of the interpolation output to.
      * @param base base function to interpolate.
      */
-    public InterpolateFunction2(Interpolator interpolator,
-                                double inputStart,
-                                double inputEnd,
-                                double resultStart,
-                                double resultEnd,
-                                Function2 base) {
+    public InterpolateField(Interpolator interpolator,
+                            double inputStart,
+                            double inputEnd,
+                            double resultStart,
+                            double resultEnd,
+                            Field base) {
         this(interpolator, inputStart, inputEnd, resultStart, resultEnd, false, base);
     }
 
@@ -82,13 +83,13 @@ public final class InterpolateFunction2 extends Function2OneFunctionBase {
      * @param clampInput true if input values should be clamped to the inputStart..inputEnd range before interpolation.
      * @param base base function to interpolate.
      */
-    public InterpolateFunction2(Interpolator interpolator,
-                                double inputStart,
-                                double inputEnd,
-                                double resultStart,
-                                double resultEnd,
-                                boolean clampInput,
-                                Function2 base) {
+    public InterpolateField(Interpolator interpolator,
+                            double inputStart,
+                            double inputEnd,
+                            double resultStart,
+                            double resultEnd,
+                            boolean clampInput,
+                            Field base) {
         super(base);
 
         notNull(interpolator, "interpolator");
@@ -101,7 +102,7 @@ public final class InterpolateFunction2 extends Function2OneFunctionBase {
         this.interpolator = interpolator;
     }
 
-    @Override protected double calculate(Function2 base, double x, double y) {
+    @Override protected double calculate(Field base, double x, double y) {
         final double inputValue = inputEnd != inputStart ?
                                   (base.get(x, y) - inputStart) / (inputEnd - inputStart) :
                                   0.5;

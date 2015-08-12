@@ -1,19 +1,20 @@
-package org.demoflow.functions;
+package org.demoflow.field;
 
 /**
  * Returns the larger of the return values of two Function2:s.
  * If a function is not specified (null), zero is used for that function.
+ @deprecated Replace with Function1, 2, 3, etc and FunctionField & FieldFunction etc
  */
-public final class MaxFunction2 extends Function2TwoFunctionBase {
+public final class MaxField extends FieldWithTwoBaseFields {
 
-    public MaxFunction2() {
+    public MaxField() {
     }
 
-    public MaxFunction2(Function2 a, Function2 b) {
+    public MaxField(Field a, Field b) {
         super(a, b);
     }
 
-    @Override protected double combine(Function2 a, Function2 b, double x, double y) {
+    @Override protected double calculate(Field a, Field b, double x, double y) {
         final double aValue = a.get(x, y);
         final double bValue = b.get(x, y);
         return aValue >= bValue ? aValue : bValue;
