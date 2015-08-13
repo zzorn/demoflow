@@ -60,6 +60,7 @@ public class Main {
                               Main.TEXTURE_ATLAS_NAME);
 
         LogUtils.getLogger().debug("Textures updated.");
+
     }
 
 }
