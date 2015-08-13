@@ -6,7 +6,7 @@ import com.tanjent.tanjentxm.Player;
 import org.demoflow.effect.EffectBase;
 import org.demoflow.effect.RenderContext;
 import org.demoflow.parameter.Parameter;
-import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.calculator.CalculationContext;
 import org.demoflow.parameter.range.ranges.BooleanRange;
 import org.flowutils.random.RandomSequence;
 

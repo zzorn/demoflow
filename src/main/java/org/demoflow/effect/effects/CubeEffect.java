@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import org.demoflow.effect.RenderContext;
-import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.calculator.CalculationContext;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.effect.EffectBase;
 import org.demoflow.parameter.range.ranges.ColorRange;

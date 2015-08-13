@@ -1,6 +1,6 @@
 package org.demoflow.parameter.range.ranges;
 
-import org.demoflow.field.Field;
+import org.demoflow.calculator.function.Field;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.random.RandomSequence;
 

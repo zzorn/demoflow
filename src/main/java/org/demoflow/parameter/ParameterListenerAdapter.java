@@ -1,6 +1,6 @@
 package org.demoflow.parameter;
 
-import org.demoflow.parameter.calculator.Calculator;
+import org.demoflow.calculator.Calculator;
 
 /**
  *

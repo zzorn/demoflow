@@ -7,7 +7,7 @@ import org.demoflow.editor.valueeditor.ValueEditorListener;
 import org.demoflow.node.DemoNode;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.ParameterListenerAdapter;
-import org.demoflow.parameter.calculator.Calculator;
+import org.demoflow.calculator.Calculator;
 
 import javax.swing.*;
 import java.awt.*;

@@ -2,7 +2,7 @@ package org.demoflow.editor.nodeeditor;
 
 import org.demoflow.editor.DemoEditor;
 import org.demoflow.node.DemoNode;
-import org.demoflow.parameter.calculator.Calculator;
+import org.demoflow.calculator.Calculator;
 
 import javax.swing.*;
 

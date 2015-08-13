@@ -1,6 +1,6 @@
 package org.demoflow.parameter;
 
-import org.demoflow.parameter.calculator.Calculator;
+import org.demoflow.calculator.Calculator;
 
 /**
  * Listener that is notified when a parameter changes.

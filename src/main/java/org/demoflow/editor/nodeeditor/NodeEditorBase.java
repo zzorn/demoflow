@@ -9,7 +9,7 @@ import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeListener;
 import org.demoflow.node.DemoNodeListenerAdapter;
 import org.demoflow.parameter.Parameter;
-import org.demoflow.parameter.calculator.Calculator;
+import org.demoflow.calculator.Calculator;
 import org.flowutils.StringUtils;
 
 import javax.swing.*;

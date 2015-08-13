@@ -5,7 +5,7 @@ import java.awt.Color;
 import org.demoflow.effect.EffectBase;
 import org.demoflow.effect.RenderContext;
 import org.demoflow.parameter.Parameter;
-import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.calculator.CalculationContext;
 import org.demoflow.parameter.range.ranges.DoubleRange;
 import org.demoflow.parameter.range.ranges.IntRange;
 import org.flowutils.MathUtils;

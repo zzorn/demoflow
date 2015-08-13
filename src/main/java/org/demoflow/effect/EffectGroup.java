@@ -3,7 +3,7 @@ package org.demoflow.effect;
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.demo.Demo;
 import org.demoflow.node.DemoNode;
-import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.calculator.CalculationContext;
 import org.demoflow.utils.ArrayUtils;
 import org.flowutils.random.RandomSequence;
 

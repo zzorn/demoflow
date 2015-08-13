@@ -2,7 +2,7 @@ package org.demoflow.parameter;
 
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.node.DemoNode;
-import org.demoflow.parameter.calculator.CalculationContext;
+import org.demoflow.calculator.CalculationContext;
 import org.flowutils.Symbol;
 
 /**

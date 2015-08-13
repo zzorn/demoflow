@@ -12,14 +12,12 @@ import org.demoflow.editor.DefaultEditorManager;
 import org.demoflow.effect.effects.CubeHeightFieldEffect;
 import org.demoflow.effect.effects.XMPlayerEffect;
 import org.demoflow.interpolator.interpolators.*;
-import org.demoflow.parameter.calculator.calculators.*;
+import org.demoflow.calculator.calculators.*;
 import org.demoflow.editor.DemoEditor;
 import org.demoflow.effect.effects.CubeEffect;
 import org.demoflow.effect.effects.Plasma;
 import org.demoflow.view.View;
 import org.flowutils.LogUtils;
-
-import java.util.Arrays;
 
 /**
  * Creates an example demo and opens it in an editor and in a view.

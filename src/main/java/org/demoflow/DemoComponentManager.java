@@ -2,7 +2,7 @@ package org.demoflow;
 
 import org.demoflow.effect.Effect;
 import org.demoflow.interpolator.Interpolator;
-import org.demoflow.parameter.calculator.Calculator;
+import org.demoflow.calculator.Calculator;
 import org.demoflow.utils.ClassUtils;
 
 import java.util.*;
