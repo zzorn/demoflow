@@ -17,9 +17,8 @@ public final class DemoComponentManager {
 
     public static final String PROJECT_ROOT_PATH = "org.demoflow";
     public static final List<String> DEFAULT_EFFECTS_PATHS = Arrays.asList("org.demoflow.effect.effects");
-    public static final List<String> DEFAULT_CALCULATORS_PATHS = Arrays.asList("org.demoflow.parameter.calculator.calculators",
-                                                                               "org.demoflow.field.fields",
-                                                                               "org.demoflow.field.colorfield.colorfields");
+    public static final List<String> DEFAULT_CALCULATORS_PATHS = Arrays.asList("org.demoflow.calculator.calculators",
+                                                                               "org.demoflow.calculator.function.functions");
     public static final List<String> DEFAULT_INTERPOLATORS_PATHS = Arrays.asList("org.demoflow.interpolator.interpolators");
 
     private final List<String> effectsPaths;

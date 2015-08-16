@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.calculator.function.Field;
 import org.demoflow.calculator.function.ColorField;
+import org.demoflow.interpolator.Interpolator;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeBase;
 import org.demoflow.calculator.CalculationContext;
@@ -144,6 +145,16 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
         // Field parameters are a special case as their calculators are also their values.
         fieldParameter.setCalculator(initialValue);
         return fieldParameter;
+    }
+
+    /**
+     * Convenience method to create an interpolator parameter.
+     * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
+     * @param initialValue initial value for the parameter.
+     * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
+     */
+    protected final Parameter<Interpolator> addParameter(String id, Interpolator initialValue) {
+        return addParameter(id, initialValue, InterpolatorRange.FULL, false);
     }
 
     /**

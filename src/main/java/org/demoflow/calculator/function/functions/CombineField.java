@@ -11,6 +11,10 @@ import org.demoflow.parameter.Parameter;
  */
 public class CombineField extends FieldWithThreeBaseFields {
 
+    public CombineField() {
+        this(new AddFun(), null, null);
+    }
+
     public CombineField(Field combinator, Field a, Field b) {
         super("combinator", combinator, "a", a, "b", b);
     }

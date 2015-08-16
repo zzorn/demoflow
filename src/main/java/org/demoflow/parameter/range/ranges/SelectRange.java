@@ -83,7 +83,7 @@ public class SelectRange<T> extends RangeBase<T> {
     }
 
     @Override protected T doMutateValue(T value, float mutationAmount, RandomSequence randomSequence) {
-        if (mutationAmount > 0) {
+        if (randomSequence.nextBoolean(mutationAmount)) {
             return randomSequence.nextElement(allowedValues);
         }
         else return value;

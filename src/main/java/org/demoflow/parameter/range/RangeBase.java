@@ -30,7 +30,7 @@ public abstract class RangeBase<T> implements Range<T> {
     }
 
     @Override public final T copy(T source) {
-        return clampToRange(createCopy(source));
+        return clampToRange(source == null ? null : createCopy(source));
     }
 
     @Override public final T getDefaultValue() {

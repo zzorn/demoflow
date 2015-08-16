@@ -1,5 +1,6 @@
 package org.demoflow.calculator.function.functions;
 
+import com.badlogic.gdx.math.Vector2;
 import org.demoflow.calculator.function.FieldBase;
 import org.demoflow.parameter.Parameter;
 import org.flowutils.SimplexGradientNoise;
@@ -12,10 +13,8 @@ import org.flowutils.random.XorShift;
 public final class NoiseField extends FieldBase {
 
     public Parameter<Integer> seed;
-    public Parameter<Double> frequencyX;
-    public Parameter<Double> frequencyY;
-    public Parameter<Double> inputOffsetX;
-    public Parameter<Double> inputOffsetY;
+    public Parameter<Double> waveLength;
+    public Parameter<Vector2> inputOffset;
     public Parameter<Double> outputAmplitude;
     public Parameter<Double> outputOffset;
 
@@ -30,7 +29,7 @@ public final class NoiseField extends FieldBase {
 
     /**
      * Uses a seed that is randomized when the noise is created.
-     * The frequency will be 1.
+     * The wave length will be 1.
      * The output will be in the -1 to 1 range.
      */
     public NoiseField() {
@@ -40,38 +39,36 @@ public final class NoiseField extends FieldBase {
     /**
      * Uses a seed that is randomized when the noise is created.
      * The output will be in the -1 to 1 range.
+     *
+     * @param waveLength length of the noise features.
      */
-    public NoiseField(double frequency) {
-        this(frequency, 1.0, 0.0);
+    public NoiseField(double waveLength) {
+        this(waveLength, 1.0, 0.0);
     }
 
     /**
      * Uses a seed that is randomized when the noise is created.
      *
-     * @param frequency frequency of the noise along the x and y axis.
+     * @param waveLength length of the noise features.
      * @param outputAmplitude scaling for the output value.
      * @param outputOffset offset to add to the output value.
      */
-    public NoiseField(double frequency,
+    public NoiseField(double waveLength,
                       double outputAmplitude,
                       double outputOffset) {
-        this(UNINITIALIZED_SEED, frequency, frequency, 0, 0, outputAmplitude, outputOffset);
+        this(UNINITIALIZED_SEED, waveLength, null, outputAmplitude, outputOffset);
     }
 
     /**
      * @param seed seed used to calculate the sampling position of the noise.
-     * @param frequencyX frequency of the noise along the x axis.
-     * @param frequencyY frequency of the noise along the y axis.
-     * @param inputOffsetX x offset for sampling position of the noise.
-     * @param inputOffsetY y offset for sampling position of the noise.
+     * @param waveLength length of the noise features.
+     * @param inputOffset offset for sampling position of the noise.
      * @param outputAmplitude scaling for the output value.
      * @param outputOffset offset to add to the output value.
      */
     public NoiseField(int seed,
-                      double frequencyX,
-                      double frequencyY,
-                      double inputOffsetX,
-                      double inputOffsetY,
+                      double waveLength,
+                      Vector2 inputOffset,
                       double outputAmplitude,
                       double outputOffset) {
 
@@ -82,10 +79,8 @@ public final class NoiseField extends FieldBase {
         }
 
         this.seed = addParameter("seed", seed);
-        this.frequencyX = addParameter("frequencyX", frequencyX);
-        this.frequencyY = addParameter("frequencyY", frequencyY);
-        this.inputOffsetX = addParameter("inputOffsetX", inputOffsetX);
-        this.inputOffsetY = addParameter("inputOffsetY", inputOffsetY);
+        this.waveLength = addParameter("waveLength", waveLength);
+        this.inputOffset = addParameter("inputOffset", inputOffset != null ? inputOffset : new Vector2());
         this.outputAmplitude = addParameter("outputAmplitude", outputAmplitude);
         this.outputOffset = addParameter("outputOffset", outputOffset);
     }
@@ -102,8 +97,10 @@ public final class NoiseField extends FieldBase {
         }
 
         // Calculate noise value at the location
-        final double noiseX = cachedRandomXOffset + inputOffsetX.get() + x * frequencyX.get();
-        final double noiseY = cachedRandomYOffset + inputOffsetY.get() + y * frequencyY.get();
+        Vector2 inputOffset = this.inputOffset.get();
+
+        final double noiseX = x * waveLength.get() + cachedRandomXOffset + inputOffset.x;
+        final double noiseY = y * waveLength.get() + cachedRandomYOffset + inputOffset.y;
         return SimplexGradientNoise.sdnoise2(noiseX, noiseY) * outputAmplitude.get() + outputOffset.get();
     }
 }
