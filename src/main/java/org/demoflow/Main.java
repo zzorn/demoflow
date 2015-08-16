@@ -2,11 +2,25 @@ package org.demoflow;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+
+import org.demoflow.demo.DefaultDemo;
+import org.demoflow.demo.Demo;
+import org.demoflow.editor.DefaultEditorManager;
+import org.demoflow.effect.effects.CubeHeightFieldEffect;
+import org.demoflow.effect.effects.XMPlayerEffect;
+import org.demoflow.interpolator.interpolators.*;
+import org.demoflow.calculator.calculators.*;
+import org.demoflow.editor.DemoEditor;
+import org.demoflow.effect.effects.CubeEffect;
+import org.demoflow.effect.effects.Plasma;
+import org.demoflow.view.View;
 import org.flowutils.LogUtils;
 
 /**
- *
+ * Creates an example demo and opens it in an editor and in a view.
  */
 public class Main {
     public static final String TITLE = "Demoflow";
@@ -16,7 +30,6 @@ public class Main {
     public static final String SKINS_SUBDIR = "skins";
     public static final String TEXTURE_ATLAS_NAME = "TextureAtlas";
     public static final int MAX_TEXTURE_SIZE = 512;
-
 
     public static void main(String[] args) {
 
@@ -29,17 +42,35 @@ public class Main {
         configuration.width = 800;
         configuration.height = 600;
 
-        Viewer viewer = new Viewer();
-        new LwjglApplication(viewer, configuration);
+        // Fix broken defaults buffer sizes (at least on linux the small default buffers result in mangled sound)
+        configuration.audioDeviceBufferSize = 4*2048;
+        configuration.audioDeviceBufferCount = 6;
 
-        // Create editor
-        Editor editor = new Editor(viewer);
+        // Create asset managers
+        DemoComponentManager demoComponentManager = new DemoComponentManager();
 
-        // Start
-        editor.init();
+        DefaultEditorManager editorManager = new DefaultEditorManager();
 
+        // Create view
+        View view = new View();
+        new LwjglApplication(view, configuration);
+
+        // Create demo
+        Demo demo = createExampleDemo();
+
+        // Create editor (and show it)
+        DemoEditor demoEditor = new DemoEditor(view, demoComponentManager, editorManager, demo);
+
+        /*
+        // Edit demo (and view it)
+        editor.setDemo(demo);
+        */
+
+        /* The editor will already show the demo.
+        // Show demo
+        view.setDemo(demo);
+         */
     }
-
 
     /**
      * This will load textures from the asset-sources/textures directory and merge them into bigger textures
@@ -62,5 +93,75 @@ public class Main {
         LogUtils.getLogger().debug("Textures updated.");
 
     }
+
+    private static Demo createExampleDemo() {
+
+        Demo demo = new DefaultDemo("Example Demo", 60);
+
+        // Create some cubes, yay!
+        demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.53, 0.9));
+        demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1, 0.08, 0.936));
+        demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2, 0.3, 0.99));
+
+        // Add some plasma
+        final Plasma plasma = demo.addEffect(createPlasmaEffect(0, 0.99));
+        final InterpolatingCalculator<Double> squareSize = plasma.squareSize.setCalculator(new InterpolatingCalculator<Double>());
+        squareSize.addPoint(0, 0.0);
+        squareSize.addPoint(0.1, 0.01, CosineInterpolator.IN_OUT);
+        squareSize.addPoint(0.8, 0.01);
+        squareSize.addPoint(1.0, 1.0, QuadraticInterpolator.IN_OUT);
+        final InterpolatingCalculator<Double> squareAspect = plasma.squareAspect.setCalculator(new InterpolatingCalculator<Double>());
+        squareAspect.addPoint(0, 1.0);
+        squareAspect.addPoint(0.8, 1.0);
+        squareAspect.addPoint(0.92, 0.5, CubicInterpolator.IN_OUT);
+        final InterpolatingCalculator<Double> gapSize = plasma.gapSize.setCalculator(new InterpolatingCalculator<Double>());
+        gapSize.addPoint(0, 10.0);
+        gapSize.addPoint(0.2, 0.0, CubicInterpolator.IN_OUT);
+
+        // Add heightfield test
+        demo.addEffect(new CubeHeightFieldEffect());
+
+        // Add music.
+        // NOTE: For now, XM playback doesn't support speed changes, so when the editor speed is changed, the music will go out of sync until demo is restarted
+        demo.addEffect(new XMPlayerEffect("test.xm", 0.25, true));
+
+        return demo;
+    }
+    
+    private static Plasma createPlasmaEffect(final double relativeEntryTime, final double relativeExitTime){
+    	final Plasma p = new Plasma();
+    	p.setEffectTimePeriod(relativeEntryTime, relativeExitTime);
+		return p;
+    }
+
+    private static CubeEffect createCubeEffect(Color color, Vector3 position, final double phase, final double relativeEntryTime, final double relativeExitTime) {
+
+        // Example effect that just displays a cube
+        final CubeEffect cubeEffect = new CubeEffect(color, new Vector3(1, 1, 1), position);
+
+        // Create a noise wave whose frequency is modulated by a sine wave
+        final NoiseCalculator wobble = new NoiseCalculator(1, 2, 1, phase);
+        wobble.wavelength.setCalculator(new SineCalculator(8, 3.1, 3, 0.25));
+
+        // Scales a vector with the sine wobble
+        final Vector3ScaleCalculator scaleCalculator = new Vector3ScaleCalculator();
+        scaleCalculator.scale.setCalculator(wobble);
+
+        // Scale the cube with the scaled vector
+        cubeEffect.scale.setCalculator(scaleCalculator);
+
+        // Tune the color a bit as well
+        final ColorCalculator cubeColor = new ColorCalculator();
+        cubeColor.r.setCalculator(new NoiseCalculator(0.08, color.r-0.1, 0.1));
+        cubeColor.b.setCalculator(new NoiseCalculator(0.13, color.b-0.1, 0.1));
+        cubeEffect.color.setCalculator(cubeColor);
+
+
+        // Set the time that the effect is visible
+        cubeEffect.setEffectTimePeriod(relativeEntryTime, relativeExitTime);
+
+        return cubeEffect;
+    }
+
 
 }
