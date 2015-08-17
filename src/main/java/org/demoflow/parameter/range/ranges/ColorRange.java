@@ -51,7 +51,7 @@ public final class ColorRange extends RangeBase<Color> {
     }
 
     public ColorRange(float minR, float maxR, float minG, float maxG, float minB, float maxB, float minA, float maxA) {
-        super(Color.class);
+        super(Color.class, "Color");
 
         this.minR = minR;
         this.maxR = maxR;

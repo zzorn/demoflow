@@ -5,6 +5,7 @@ import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.util.Enumeration;
 
 /**
@@ -72,6 +73,12 @@ public final class UiUtils {
         BasicTreeUI basicTreeUI = (BasicTreeUI) tree.getUI();
         return basicTreeUI.getRightChildIndent() + basicTreeUI.getLeftChildIndent();
     }
+
+    public static ImageIcon loadIcon(String iconPath) {
+        final Image image = Toolkit.getDefaultToolkit().getImage(iconPath);
+        return new ImageIcon(image);
+    }
+
 
     private UiUtils() {
     }

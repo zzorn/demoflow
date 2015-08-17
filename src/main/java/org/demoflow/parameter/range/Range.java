@@ -3,9 +3,12 @@ package org.demoflow.parameter.range;
 import org.demoflow.utils.gradient.ValueInterpolator;
 import org.flowutils.random.RandomSequence;
 
+import javax.swing.*;
+
 /**
  * Represents a range for a parameter.
  * Used to get min, max values and to clamp the parameter.
+ * Also contains the type of the parameter.
  */
 public interface Range<T> extends ValueInterpolator<T> {
 
@@ -45,6 +48,21 @@ public interface Range<T> extends ValueInterpolator<T> {
      * @return the value as an user readable string.
      */
     String valueToString(T value);
+
+    /**
+     * @return human readable description of this range / type of value, or null if none provided.
+     */
+    String getDescription();
+
+    /**
+     * @return name of icon to use for this type of value, or null if there is no specific icon.
+     */
+    String getIconName();
+
+    /**
+     * @return an icon for this type of range / value, or null if no icon is available.
+     */
+    Icon getIcon();
 
     // TODO: Serialize / deserialize value from text/xml (or binary)
 }

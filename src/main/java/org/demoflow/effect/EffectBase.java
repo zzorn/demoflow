@@ -9,10 +9,14 @@ import org.flowutils.Symbol;
 import org.flowutils.random.RandomSequence;
 import org.flowutils.random.XorShift;
 
+import javax.swing.*;
+
 /**
  * Common functionality for effects.
  */
 public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
+
+    private static final String ICON_PATH = "assets/icons/effects/";
 
     private RandomSequence randomSequence;
     private boolean active = false;
@@ -225,5 +229,9 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     // Override if the effect needs to pause some ongoing thread or similar (e.g. music)
     @Override public void setPaused(boolean paused) {
         // Ignored for most effects
+    }
+
+    @Override protected String getIconPath() {
+        return ICON_PATH + getClass().getSimpleName() + ".png";
     }
 }

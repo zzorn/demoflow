@@ -3,7 +3,9 @@ package org.demoflow.node;
 import com.badlogic.gdx.utils.Array;
 import org.demoflow.utils.ArrayEnumeration;
 import org.demoflow.utils.EmptyEnumeration;
+import org.demoflow.utils.UiUtils;
 
+import javax.swing.*;
 import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
@@ -17,6 +19,8 @@ public abstract class DemoNodeBase implements DemoNode {
 
     private DemoNode parent = null;
     private int maxDepth = 0;
+
+    private ImageIcon cachedIcon;
 
     public DemoNodeBase() {
         this(null);
@@ -146,5 +150,21 @@ public abstract class DemoNodeBase implements DemoNode {
         return getName();
     }
 
+    /**
+     * @return filename of icon to use for this node, or null if no icon (or if getIcon is implemented separately).
+     */
+    protected String getIconPath() {
+        return null;
+    }
 
+    @Override public Icon getIcon() {
+        final String iconPath = getIconPath();
+        if (iconPath == null) return null;
+
+        if (cachedIcon == null) {
+            cachedIcon = UiUtils.loadIcon(iconPath);
+        }
+
+        return cachedIcon;
+    }
 }

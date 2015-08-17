@@ -23,7 +23,7 @@ public final class NoiseInterpolator extends InterpolatorBase {
      * Creates a new NoiseTween with random offset and a frequency of about four noise waves in the interpolate.
      */
     public NoiseInterpolator() {
-        this(4);
+        this(6);
     }
 
     /**

@@ -349,4 +349,5 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     @Override public Array<? extends DemoNode> getChildren() {
         return ArrayUtils.combineArrays(getParameters(), getEffects());
     }
+
 }

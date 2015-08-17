@@ -9,6 +9,7 @@ import org.demoflow.parameter.range.Range;
 import org.demoflow.utils.EmptyArray;
 import org.flowutils.Symbol;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 import static org.flowutils.Check.notNull;
@@ -165,6 +166,10 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
 
     @Override public Class<T> getType() {
         return range.getType();
+    }
+
+    @Override public Icon getIcon() {
+        return range.getIcon();
     }
 
     @Override public void recalculateParameter(CalculationContext calculationContext) {

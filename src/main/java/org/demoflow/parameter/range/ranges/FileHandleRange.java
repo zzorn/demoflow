@@ -13,7 +13,7 @@ public final class FileHandleRange extends RangeBase<FileHandle> {
     public static final FileHandleRange FULL = new FileHandleRange();
 
     public FileHandleRange() {
-        super(FileHandle.class);
+        super(FileHandle.class, "File handle");
     }
 
     @Override protected FileHandle createRandomValue(RandomSequence randomSequence) {

@@ -82,6 +82,16 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
     }
 
     /**
+     * Convenience method to create a non-constant string parameter with the full range and specified initial value.
+     * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
+     * @param initialValue initial value for the parameter.
+     * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
+     */
+    protected final Parameter<String> addParameter(String id, String initialValue) {
+        return addParameter(id, initialValue, StringRange.FULL);
+    }
+
+    /**
      * Convenience method to create a non-constant color parameter with the full range and specified initial value.
      * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
      * @param initialValue initial value for the parameter.

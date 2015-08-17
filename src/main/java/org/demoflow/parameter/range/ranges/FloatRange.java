@@ -35,7 +35,7 @@ public final class FloatRange extends RangeBase<Float> {
     }
 
     public FloatRange(float min, float max, float defaultValue, float standardDeviation) {
-        super(Float.class);
+        super(Float.class, "Float");
         Check.greater(max, "max", min, "min");
         Check.normalNumber(defaultValue, "defaultValue");
         Check.normalNumber(standardDeviation, "standardDeviation");

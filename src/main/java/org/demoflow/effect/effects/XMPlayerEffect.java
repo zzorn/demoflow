@@ -8,6 +8,7 @@ import org.demoflow.effect.RenderContext;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.parameter.range.ranges.BooleanRange;
+import org.flowutils.LogUtils;
 import org.flowutils.random.RandomSequence;
 
 /**
@@ -18,22 +19,23 @@ import org.flowutils.random.RandomSequence;
 public final class XMPlayerEffect extends EffectBase {
 
     public static final String DEFAULT_SONG_PATH = "assets/music/";
+    private static final int NO_MODULE_ID = -1;
 
-    public final Parameter<FileHandle> songFile;
+    public final Parameter<String> songName;
     public final Parameter<Double> volume;
     public final Parameter<Boolean> loop;
 
     private Player player;
 
     private double prevVolume = 0;
-    private int moduleId = -1;
+    private int moduleId = NO_MODULE_ID;
 
     public XMPlayerEffect() {
         this("song.xm", 1.0, false);
     }
 
     public XMPlayerEffect(final String songName, final double volume, final boolean loop) {
-        this.songFile = addParameter("module", Gdx.files.internal(DEFAULT_SONG_PATH + songName));
+        this.songName = addParameter("module", songName);
         this.volume = addParameter("volume", volume);
         this.loop = addParameter("loop", loop, BooleanRange.FULL, true);
     }
@@ -52,14 +54,19 @@ public final class XMPlayerEffect extends EffectBase {
         }
 
         // Reload the song (so we can edit and update it without relaunching the demo)
-        final FileHandle songFile = this.songFile.get();
+        final FileHandle songFile = Gdx.files.internal(DEFAULT_SONG_PATH + this.songName.get());
         if (songFile != null) {
-            moduleId = player.loadXM(songFile.readBytes(), -1);
+            try {
+                moduleId = player.loadXM(songFile.readBytes(), -1);
+            } catch (Exception e) {
+                LogUtils.getLogger().error("Could not load song file " + songFile + ": " + e.getMessage(), e);
+                moduleId = NO_MODULE_ID;
+            }
         }
     }
 
     @Override protected void doActivate() {
-        if (player != null) {
+        if (player != null && moduleId != NO_MODULE_ID) {
             // Start playing
             player.play(moduleId, true, loop.get(), -1, 1);
         }

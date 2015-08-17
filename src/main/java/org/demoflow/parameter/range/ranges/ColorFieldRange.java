@@ -12,7 +12,7 @@ public final class ColorFieldRange extends RangeBase<ColorField> {
     public static final ColorFieldRange FULL = new ColorFieldRange();
 
     public ColorFieldRange() {
-        super(ColorField.class);
+        super(ColorField.class, "2D field with colors (or function taking two doubles and returning a color)");
     }
 
     @Override protected ColorField createRandomValue(RandomSequence randomSequence) {

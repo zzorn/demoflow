@@ -40,7 +40,7 @@ public class SelectRange<T> extends RangeBase<T> {
      * Use the static getEnumRange method, or implement a subclass.
      */
     protected <I extends T> SelectRange(Class<T> type, I ... allowedValues) {
-        super(type);
+        super(type, type.getSimpleName());
         notNull(allowedValues, "allowedValues");
         Check.greater(allowedValues.length, "number of values", 1, "one");
 

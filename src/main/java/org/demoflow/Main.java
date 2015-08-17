@@ -105,16 +105,16 @@ public class Main {
 
         // Add some plasma
         final Plasma plasma = demo.addEffect(createPlasmaEffect(0, 0.99));
-        final InterpolatingCalculator<Double> squareSize = plasma.squareSize.setCalculator(new InterpolatingCalculator<Double>());
+        final TimeChangeCalculator<Double> squareSize = plasma.squareSize.setCalculator(new TimeChangeCalculator<Double>());
         squareSize.addPoint(0, 0.0);
         squareSize.addPoint(0.1, 0.01, CosineInterpolator.IN_OUT);
         squareSize.addPoint(0.8, 0.01);
         squareSize.addPoint(1.0, 1.0, QuadraticInterpolator.IN_OUT);
-        final InterpolatingCalculator<Double> squareAspect = plasma.squareAspect.setCalculator(new InterpolatingCalculator<Double>());
+        final TimeChangeCalculator<Double> squareAspect = plasma.squareAspect.setCalculator(new TimeChangeCalculator<Double>());
         squareAspect.addPoint(0, 1.0);
         squareAspect.addPoint(0.8, 1.0);
         squareAspect.addPoint(0.92, 0.5, CubicInterpolator.IN_OUT);
-        final InterpolatingCalculator<Double> gapSize = plasma.gapSize.setCalculator(new InterpolatingCalculator<Double>());
+        final TimeChangeCalculator<Double> gapSize = plasma.gapSize.setCalculator(new TimeChangeCalculator<Double>());
         gapSize.addPoint(0, 10.0);
         gapSize.addPoint(0.2, 0.0, CubicInterpolator.IN_OUT);
 

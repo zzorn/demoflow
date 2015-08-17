@@ -78,7 +78,7 @@ public final class Vector3Range extends RangeBase<Vector3> {
     }
 
     public Vector3Range(float minX, float maxX, float minY, float maxY, float minZ, float maxZ, float standardDeviation) {
-        super(Vector3.class);
+        super(Vector3.class, "3D Vector");
 
         this.minX = minX;
         this.maxX = maxX;

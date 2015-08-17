@@ -37,6 +37,6 @@ public final class SteppingInterpolator extends InterpolatorBase {
     @Override public double interpolate(double t) {
         final double stepSize = 1.0 / (steps + 1.0);
         final int step = MathUtils.fastFloor(t / stepSize);
-        return baseInterpolator.interpolate(step / steps);
+        return baseInterpolator.interpolate((double)step / steps);
     }
 }

@@ -12,7 +12,7 @@ public final class FieldRange extends RangeBase<Field> {
     public static final FieldRange FULL = new FieldRange();
 
     public FieldRange() {
-        super(Field.class);
+        super(Field.class, "2D Field with double values (or function taking two doubles and returning a double)");
     }
 
     @Override protected Field createRandomValue(RandomSequence randomSequence) {

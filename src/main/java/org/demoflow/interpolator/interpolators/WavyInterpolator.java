@@ -14,7 +14,7 @@ public final class WavyInterpolator extends InterpolatorBase {
     private final int waveCount;
 
     public WavyInterpolator() {
-        this(3);
+        this(6);
     }
 
     public WavyInterpolator(int waveCount) {

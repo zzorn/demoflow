@@ -32,7 +32,7 @@ public final class BooleanRange extends RangeBase<Boolean> {
     }
 
     public BooleanRange(boolean defaultValue, double probability) {
-        super(Boolean.class);
+        super(Boolean.class, "Boolean");
         Check.normalNumber(probability, "probability");
 
         this.probability = MathUtils.clamp0To1(probability);

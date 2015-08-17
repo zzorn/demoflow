@@ -126,8 +126,9 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
             }
         });
 
-        // Name of node
+        // Name and icon of node
         nameLabel = new JLabel(node.getName());
+        nameLabel.setIcon(node.getIcon());
         topBar.add(nameLabel, "align left");
         debugBorderize(nameLabel, Color.green);
 

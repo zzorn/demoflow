@@ -36,7 +36,7 @@ public final class DoubleRange extends RangeBase<Double> {
     }
 
     public DoubleRange(double min, double max, double defaultValue, double standardDeviation) {
-        super(Double.class);
+        super(Double.class, "Double");
         Check.greater(max, "max", min, "min");
         Check.normalNumber(defaultValue, "defaultValue");
         Check.normalNumber(standardDeviation, "standardDeviation");

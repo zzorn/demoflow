@@ -2,6 +2,7 @@ package org.demoflow.node;
 
 import com.badlogic.gdx.utils.Array;
 
+import javax.swing.*;
 import java.util.Enumeration;
 
 /**
@@ -67,4 +68,9 @@ public interface DemoNode {
     DemoNode getRootNode();
 
     int getTotalNumberOfDescendants();
+
+    /**
+     * @return icon for this node, or null if the node has no icon.
+     */
+    Icon getIcon();
 }

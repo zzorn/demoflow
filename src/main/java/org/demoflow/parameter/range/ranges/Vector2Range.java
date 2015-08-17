@@ -62,7 +62,7 @@ public final class Vector2Range extends RangeBase<Vector2> {
     public Vector2Range(float minX, float maxX,
                         float minY, float maxY,
                         float standardDeviation) {
-        super(Vector2.class);
+        super(Vector2.class, "2D Vector");
 
         this.minX = minX;
         this.maxX = maxX;

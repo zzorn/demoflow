@@ -1,57 +1,73 @@
 package org.demoflow.calculator.calculators;
 
-import org.demoflow.interpolator.Interpolator;
-import org.demoflow.parameter.Parameter;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.calculator.CalculatorBase;
-import org.demoflow.utils.gradient.Gradient;
-import org.demoflow.utils.gradient.GradientImpl;
+import org.demoflow.interpolator.Interpolator;
+import org.demoflow.interpolator.interpolators.LinearInterpolator;
+import org.demoflow.parameter.Parameter;
 
 /**
- * Uses a Gradient to store values at different relative time points over the duration of the effect (0..1),
- * and interpolates them to calculate the value at a specific time.
+ * Uses an interpolator to interpolate the source value.
  */
-public final class InterpolatingCalculator<T> extends CalculatorBase<T> {
+public final class InterpolatingCalculator extends CalculatorBase<Double> {
 
+    public final Parameter<Double> baseValue;
+    public final Parameter<Interpolator> interpolator;
+    public final Parameter<Boolean> clampToRange;
+    public final Parameter<Double> sourceStart;
+    public final Parameter<Double> sourceEnd;
+    public final Parameter<Double> targetStart;
+    public final Parameter<Double> targetEnd;
 
-    private final Gradient<T> gradient = new GradientImpl<>();
-
-    /**
-     * @return gradient with the changes to the parameter value over the duration of the effect.
-     *         A position of 0 refers to the start of the effect, and 1 to the end of the effect.
-     */
-    public Gradient<T> getGradient() {
-        return gradient;
+    public InterpolatingCalculator() {
+        this(LinearInterpolator.DEFAULT);
     }
 
-    /**
-     * Adds a value at a specified time with linear interpolation from the previous value.
-     * @param pos relative position on the timeline (0 = start of effect, 1 = end of effect).
-     * @param value value at the time
-     */
-    public void addPoint(double pos, T value) {
-        gradient.addPoint(pos, value);
+    public InterpolatingCalculator(Interpolator interpolator) {
+        this(interpolator, true);
     }
 
-    /**
-     * Adds a value at a specified time.
-     * @param pos relative position on the timeline (0 = start of effect, 1 = end of effect).
-     * @param value value at the time
-     * @param interpolator interpolation to use to interpolate from the previous value.
-     */
-    public void addPoint(double pos, T value, Interpolator interpolator) {
-        gradient.addPoint(pos, value, interpolator);
+    // TODO: Add direction
+    public InterpolatingCalculator(Interpolator interpolator,
+                                   boolean clampToRange) {
+        this(interpolator, clampToRange, 0, 1, 0, 1);
     }
 
-    @Override protected T doCalculate(CalculationContext calculationContext, T currentValue, Parameter<T> parameter) {
-        return gradient.getValueAt(calculationContext.getRelativeEffectPosition(), parameter.getRange());
+    // TODO: Add direction
+    public InterpolatingCalculator(Interpolator interpolator,
+                                   boolean clampToRange,
+                                   double sourceStart, double sourceEnd,
+                                   double targetStart, double targetEnd) {
+
+        this.baseValue = addParameter("baseValue", 0.0);
+
+        this.interpolator = addParameter("interpolator", interpolator);
+        this.clampToRange = addParameter("clampToRange", clampToRange);
+        this.sourceStart = addParameter("sourceStart", sourceStart);
+        this.sourceEnd = addParameter("sourceEnd", sourceEnd);
+        this.targetStart = addParameter("targetStart", targetStart);
+        this.targetEnd = addParameter("targetEnd", targetEnd);
+
+    }
+
+    @Override
+    protected Double doCalculate(CalculationContext calculationContext,
+                                 Double currentValue,
+                                 Parameter<Double> parameter) {
+
+        final Double baseValue = this.baseValue.get();
+        if (baseValue == null) return null;
+
+        return interpolator.get().interpolate(baseValue, sourceStart.get(),
+                                              sourceEnd.get(), targetStart.get(),
+                                              targetEnd.get(), clampToRange.get());
     }
 
     @Override protected void doResetState() {
-        // No changing state
+        // No state to reset
     }
 
-    @Override public Class<T> getReturnType() {
-        return null;
+    @Override public Class<Double> getReturnType() {
+        return Double.class;
     }
 }

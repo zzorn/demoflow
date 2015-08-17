@@ -36,7 +36,7 @@ public final class IntRange extends RangeBase<Integer> {
     }
 
     public IntRange(int min, int max, int defaultValue, float standardDeviation) {
-        super(Integer.class);
+        super(Integer.class, "Integer");
         Check.greater(max, "max", min, "min");
         Check.normalNumber(standardDeviation, "standardDeviation");
 
