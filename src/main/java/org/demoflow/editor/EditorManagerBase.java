@@ -78,7 +78,7 @@ public abstract class EditorManagerBase implements EditorManager {
             return constructor.newInstance(range);
 
         } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("The value editor class " + valueEditorType + " has no constructor that takes a single Range object, can not create editors of that type.");
+            throw new IllegalStateException("The value editor class " + valueEditorType + " has no constructor that takes a single Range object, can not create editors of that type. " + e.getMessage(), e);
         } catch (Exception e) {
             throw new IllegalStateException("Problem when invoking constructor for " + valueEditorType + ": " + e.getMessage(), e);
         }

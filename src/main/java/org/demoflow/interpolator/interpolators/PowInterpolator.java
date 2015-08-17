@@ -10,6 +10,13 @@ public final class PowInterpolator extends InterpolatorBase {
 
     private final double exponent;
 
+    /**
+     * Uses a 0.5 exponent.
+     */
+    public PowInterpolator() {
+        this(0.5);
+    }
+
     public PowInterpolator(double exponent) {
         Check.greaterOrEqual(exponent, "exponent", 0, "zero");
 

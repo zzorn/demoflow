@@ -14,6 +14,7 @@ public final class PartialInterpolator extends InterpolatorBase {
     private final Interpolator baseInterpolator;
     private final InterpolationDirection interpolationDirection;
 
+
     /**
      * Uses the IN direction of the underlying interpolator.
      * @param baseInterpolator the underlying interpolator to defer to.

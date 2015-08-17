@@ -2,7 +2,9 @@ package org.demoflow.parameter.range.ranges;
 
 import org.demoflow.interpolator.Interpolator;
 import org.demoflow.utils.ClassUtils;
+import org.flowutils.LogUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,18 +29,19 @@ public class InterpolatorRange extends SelectRange<Interpolator> {
                                                                                                     Interpolator.class,
                                                                                                     "org.demoflow.interpolator.interpolators");
 
-        // Create instances of each interpolator using default no-args constructor.
-        Interpolator[] interpolators = new Interpolator[interpolatorClasses.size()];
-        int index = 0;
+        // Create instances of each interpolator using default no-args constructor, if available.
+        List<Interpolator> interpolators = new ArrayList<>();
         for (Class<? extends Interpolator> interpolatorClass : interpolatorClasses) {
             try {
-                interpolators[index++] = interpolatorClass.newInstance();
+                final Interpolator interpolator = interpolatorClass.newInstance();
+                interpolators.add(interpolator);
             }
             catch (Exception e) {
-                throw new IllegalStateException("Could not create instance of interpolator " + interpolatorClass + ": " + e.getMessage(), e);
+                // If not suitable no args constructor is available, assume the interpolator isn't stand alone (e.g. a combine interpolator), and skip it.
+                LogUtils.getLogger().warn("Could not create instance of interpolator " + interpolatorClass + " (Check that it has a public zero parameter constructor if it's a simple interpolator that should be selectable in a combo-box).");
             }
         }
 
-        return interpolators;
+        return interpolators.toArray(new Interpolator[interpolators.size()]);
     }
 }
