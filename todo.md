@@ -55,7 +55,9 @@ Demo Editor
  1. Add oscillator function based on oscillator function code from soundrasp project (supported large variety of waveforms IIRC).
  1. Add color gradient / function type
  1. Implement and add Worley noise (1D, 2D, 3D versions, with lots of customizable parameters).
- 1. Implement splatter noise (splat some area of a field at specified coordinates with generated parameters/seed, generated using poisson sampling of a grid and combined with some interpolator). 
+ 1. Implement splatter noise (splat some area of a field at specified coordinates with generated parameters/seed, generated using poisson sampling of a grid and combined with some interpolator).
+ 1. Add support for multi-octave noises.
+ 1. Add gradient noises.
  1. Particle system effect     
  1. Star scroller effect? (Non physical particle system?)     
  1. Triangle heightfield effect.
