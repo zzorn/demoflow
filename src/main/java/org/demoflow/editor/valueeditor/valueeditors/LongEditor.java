@@ -14,10 +14,6 @@ public final class LongEditor extends TextFieldEditorBase<Long> {
         super(range);
     }
 
-    @Override protected Long parseValue(String text) {
-        return Long.parseLong(text);
-    }
-
     @Override protected DecimalFormat createTextFieldFormat() {
         return new DecimalFormat("#0");
     }

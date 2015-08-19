@@ -14,10 +14,6 @@ public final class IntEditor extends TextFieldEditorBase<Integer> {
         super(range);
     }
 
-    @Override protected Integer parseValue(String text) {
-        return Integer.parseInt(text);
-    }
-
     @Override protected DecimalFormat createTextFieldFormat() {
         return new DecimalFormat("#0");
     }

@@ -1,6 +1,7 @@
 package org.demoflow.editor.valueeditor;
 
 import org.demoflow.parameter.range.Range;
+import org.demoflow.utils.SimpleStringFormat;
 import org.uiflow.desktop.ColorUtils;
 
 import javax.swing.*;
@@ -30,7 +31,7 @@ public abstract class TextFieldEditorBase<T> extends ValueEditorBase<T> {
     private Color editedColor;
     private Color warningColor;
     private Color errorColor;
-    private T originalValue;
+    private String originalValueText;
 
     public TextFieldEditorBase(Range<T> range) {
         super(range);
@@ -38,7 +39,7 @@ public abstract class TextFieldEditorBase<T> extends ValueEditorBase<T> {
 
     @Override protected JComponent buildEditorUi(JPanel editorPanel, Range<T> range, T initialValue) {
         textField = new JFormattedTextField(createTextFieldFormat());
-        textField.setPreferredSize(new Dimension(100, 24));
+        textField.setPreferredSize(new Dimension(120, 24));
 
         defaultColor = editorPanel.getBackground();
         notNull(defaultColor, "defaultColor");
@@ -46,8 +47,6 @@ public abstract class TextFieldEditorBase<T> extends ValueEditorBase<T> {
         errorColor = ColorUtils.mixColors(0.4, defaultColor, DEFAULT_ERROR_COLOR);
         warningColor = ColorUtils.mixColors(0.4, defaultColor, DEFAULT_WARNING_COLOR);
         editedColor = ColorUtils.mixColors(0.2, defaultColor, DEFAULT_EDITED_COLOR);
-
-        originalValue = initialValue;
 
         textField.getDocument().addDocumentListener(new DocumentListener() {
             @Override public void insertUpdate(DocumentEvent e) {
@@ -83,19 +82,21 @@ public abstract class TextFieldEditorBase<T> extends ValueEditorBase<T> {
 
 
     private void handleUiValueUpdate() {
-        T newValue = parseValue();
+        final String text = textField.getText();
+        T newValue = parseValue(text);
         if (newValue != null) {
             onValueUpdatedInUi(newValue);
-            originalValue = newValue;
+            originalValueText = text;
             updateHighlightColor();
         }
     }
 
     private void updateHighlightColor() {
-        final T value = parseValue();
+        final String text = textField.getText();
+        final T value = parseValue(text);
         if (value == null) setHighlightColor(errorColor);
         else if (outOfRange(value)) setHighlightColor(warningColor);
-        else if (originalValue != value) setHighlightColor(editedColor);
+        else if (originalValueText != null && !originalValueText.equals(text)) setHighlightColor(editedColor);
         else setHighlightColor(defaultColor);
     }
 
@@ -109,32 +110,44 @@ public abstract class TextFieldEditorBase<T> extends ValueEditorBase<T> {
         return !Objects.equals(clamped, value);
     }
 
-    private T parseValue() {
-        T newValue;
+    private T parseValue(final String text) {
         try {
-            final String text = textField.getText();
-            newValue = parseValue(text);
-        } catch (Exception ex) {
-            newValue = null;
+            return stringToValue(text);
+        } catch (Exception e) {
+            return null;
         }
-        return newValue;
     }
 
     @Override protected final void onValueUpdatedToUi(T value) {
-        textField.setText(value.toString());
-        originalValue = value;
+        final String textValue = valueToString(value);
+        textField.setText(textValue);
+        originalValueText = textValue;
         updateHighlightColor();
     }
 
     /**
-     * @return format that should be used to format the displayed value with in the FormattedTextField.
+     * Convert the specified value to a string to be displayed in the editor.
+     * Uses the range to do this by default.  Override as needed.
      */
-    protected abstract Format createTextFieldFormat();
+    protected String valueToString(T value) {
+        return getRange().valueToString(value);
+    }
 
     /**
-     * @param text text the user entered in the text field.
-     * @return parse the value from the text.  Return null for invalid values.
+     * @return the value for the specified string, or null if it could not be parsed.
+     *         Uses the range to do this by default.  Override as needed.
      * @throws Exception can throw any exception, it will be caught and the entered value marked as invalid.
      */
-    protected abstract T parseValue(String text) throws Exception;
+    protected T stringToValue(String text) throws Exception {
+        return getRange().valueFromStringOrNull(text);
+    }
+
+    /**
+     * @return format that should be used to format the displayed value with in the FormattedTextField.
+     *         Uses a simple string format without any special formatting by default.  Override as needed.
+     */
+    protected Format createTextFieldFormat() {
+        return new SimpleStringFormat();
+    }
+
 }

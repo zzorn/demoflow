@@ -14,10 +14,6 @@ public final class FloatEditor extends TextFieldEditorBase<Float> {
         super(range);
     }
 
-    @Override protected Float parseValue(String text) {
-        return Float.parseFloat(text);
-    }
-
     @Override protected DecimalFormat createTextFieldFormat() {
         return new DecimalFormat("#0.0###");
     }

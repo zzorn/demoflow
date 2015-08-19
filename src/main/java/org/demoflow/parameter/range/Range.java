@@ -54,6 +54,16 @@ public interface Range<T> extends ValueInterpolator<T> {
     String valueToString(T value);
 
     /**
+     * @return the value parsed from the string, or default value if it could not be parsed.
+     */
+    T valueFromString(String text);
+
+    /**
+     * @return the value parsed from the string, or null if it could not be parsed.
+     */
+    T valueFromStringOrNull(String text);
+
+    /**
      * @return human readable description of this range / type of value, or null if none provided.
      */
     String getDescription();

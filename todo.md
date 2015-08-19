@@ -6,9 +6,9 @@ Demo Editor
 
 ### Bugs
  
- 1. Column width is not adjusted properly when the max node depth is changed. 
- 1. Double / float fields stay with edited background color even after editing complete. 
  1. UI sometimes freezes up while creating the editors for a demo.
+ 1. Column width is not adjusted properly when the max node depth is changed. 
+ 1. **FIXED**~~Double / float fields stay with edited background color even after editing complete.~~ 
 
 
 ### Refactorings
@@ -21,8 +21,8 @@ Demo Editor
  1. Maybe remove quad, cubic, quart and quint interpolators, or rename to pow2, pow3, pow4, pow5. 
  1. Add a calculator that takes a function and applies it to a parameter
  1. **DONE**~~Change noise to use Vector2:s for offsets~~
- 1. Change sine and noise to use min and max output value instead of amplitude and offset
- 1. Separate functions with two parameters and fields into two different Range objects, as they are conceptually different, although same in practice
+ 1. **DONE**~~Change sine and noise to use min and max output value instead of amplitude and offset~~
+ 1. Separate functions with two parameters and fields into two different Range objects, as they are conceptually different, although same in practice?
  1. Change demo editor to only repaint and revalidate UI after all editors for effects and parameters in a demo have been
     created, when changing the demo.
  1. Rename Range to Type or similar.
@@ -56,7 +56,7 @@ Demo Editor
  1. Add 3D noise, implementing field and providing the third dimension as an additional parameter, to allow easily animated noise.
  1. Add 1D noise.
  1. Add 2D noise implementing function, and providing additional dimension as parameter, for animated 1D noise.
- 1. Add oscillator function based on oscillator function code from soundrasp project (supported large variety of waveforms IIRC).
+ 1. **DONE**~~Add oscillator calculator based on oscillator function code from soundrasp project (supported large variety of waveforms IIRC).~~
  1. Add color gradient / function type
  1. Implement and add Worley noise (1D, 2D, 3D versions, with lots of customizable parameters).
  1. Implement splatter noise (splat some area of a field at specified coordinates with generated parameters/seed, generated using poisson sampling of a grid and combined with some interpolator).

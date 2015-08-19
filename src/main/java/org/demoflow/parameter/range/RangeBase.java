@@ -85,7 +85,7 @@ public abstract class RangeBase<T> implements Range<T> {
         else return value.toString();
     }
 
-    public final T valueFromString(String text) {
+    @Override public final T valueFromString(String text) {
         T value;
         try {
             value = doValueFromString(text);
@@ -95,6 +95,15 @@ public abstract class RangeBase<T> implements Range<T> {
         }
 
         return clampToRange(value);
+    }
+
+    @Override public final T valueFromStringOrNull(String text) {
+        try {
+            return doValueFromString(text);
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
     protected abstract T doValueFromString(String text) throws Exception;

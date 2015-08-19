@@ -15,14 +15,6 @@ public final class StringEditor extends TextFieldEditorBase<String> {
         super(range);
     }
 
-    @Override protected String parseValue(String text) {
-        return text;
-    }
-
-    @Override protected Format createTextFieldFormat() {
-        return new SimpleStringFormat();
-    }
-
     @Override public Class<String> getEditedType() {
         return String.class;
     }
