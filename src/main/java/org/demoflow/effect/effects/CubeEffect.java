@@ -40,7 +40,7 @@ public final class CubeEffect extends EffectBase<Object> {
         // IDEA: Add quaternion for current direction?
     }
 
-    @Override protected void doSetup(Object preCalculatedData, RandomSequence randomSequence) {
+    @Override protected void doSetup(Object preCalculatedData) {
         // Create cube model and material, then create an instance of the cube
         ModelBuilder modelBuilder = new ModelBuilder();
         material = new Material(ColorAttribute.createDiffuse(Color.GRAY));
@@ -51,7 +51,7 @@ public final class CubeEffect extends EffectBase<Object> {
         diffuseColor = (ColorAttribute) modelInstance.materials.get(0).get(ColorAttribute.Diffuse);
     }
 
-    @Override protected void doReset(long randomSeed) {
+    @Override protected void doReset() {
         // Nothing to reset
     }
 

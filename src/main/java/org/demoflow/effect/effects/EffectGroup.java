@@ -1,12 +1,17 @@
-package org.demoflow.effect;
+package org.demoflow.effect.effects;
 
 import com.badlogic.gdx.utils.Array;
 import nu.xom.Element;
 import org.demoflow.DemoComponentManager;
 import org.demoflow.demo.Demo;
+import org.demoflow.effect.Effect;
+import org.demoflow.effect.EffectBase;
+import org.demoflow.effect.EffectContainer;
+import org.demoflow.effect.RenderContext;
 import org.demoflow.node.DemoNode;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.utils.ArrayUtils;
+import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;
 
 import java.io.IOException;
@@ -23,6 +28,7 @@ import static org.flowutils.Check.notNull;
 public final class EffectGroup extends EffectBase<Object> implements EffectContainer {
 
     private final Array<Effect> effects = new Array<>();
+    private final Array<Effect> effectsToRemove = new Array<>();
 
     @Override public <E extends Effect> E addEffect(E effect) {
         notNull(effect, "effect");
@@ -38,16 +44,29 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
     }
 
     @Override public final void removeEffect(Effect effect) {
-        if (effect != null)
-        if (effects.removeValue(effect, true)) {
-            effect.setParent(null);
-
-            notifyChildNodeRemoved(effect);
+        if (effect != null && !effectsToRemove.contains(effect, true)) {
+            effectsToRemove.add(effect);
         }
     }
 
     @Override public final Array<Effect> getEffects() {
         return effects;
+    }
+
+    @Override public void moveEffect(Effect effect, int delta) {
+        final int currentIndex = effects.indexOf(effect, true);
+        if (currentIndex < 0) throw new IllegalArgumentException("No such effect found");
+
+        effects.removeIndex(currentIndex);
+        final int newIndex = MathUtils.clamp(currentIndex + delta, 0, effects.size);
+        effects.insert(newIndex, effect);
+
+        // TODO: Implement
+        // notifyNodeMoved();
+    }
+
+    @Override public int indexOf(Effect effect) {
+        return effects.indexOf(effect, true);
     }
 
     @Override public int getChildCount() {
@@ -58,9 +77,9 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         return ArrayUtils.combineArrays(getParameters(), getEffects());
     }
 
-    @Override protected void doSetup(Object preCalculatedData, RandomSequence randomSequence) {
+    @Override protected void doSetup(Object preCalculatedData) {
         for (int i = 0; i < effects.size; i++) {
-            effects.get(i).setup(randomSequence.nextLong());
+            effects.get(i).setup();
         }
     }
 
@@ -76,9 +95,9 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         }
     }
 
-    @Override protected void doReset(long randomSeed) {
+    @Override protected void doReset() {
         for (int i = 0; i < effects.size; i++) {
-            effects.get(i).reset(randomSeed);
+            effects.get(i).reset();
         }
     }
 
@@ -89,6 +108,17 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
     }
 
     @Override protected void doUpdate(CalculationContext calculationContext) {
+        if (effectsToRemove.size > 0) {
+            for (Effect effectToRemove : effectsToRemove) {
+                effectToRemove.deactivate();
+                effectToRemove.shutdown();
+                effectToRemove.setParent(null);
+                notifyChildNodeRemoved(effectToRemove);
+                effects.removeValue(effectToRemove, true);
+            }
+            effectsToRemove.clear();
+        }
+
         for (int i = 0; i < effects.size; i++) {
             effects.get(i).update(calculationContext);
         }

@@ -3,11 +3,13 @@ package org.demoflow.demo;
 import com.badlogic.gdx.utils.Array;
 import nu.xom.*;
 import org.demoflow.DemoComponentManager;
+import org.demoflow.effect.EffectContainer;
 import org.demoflow.effect.RenderContext;
 import org.demoflow.node.DemoNode;
+import org.demoflow.node.DemoNodeListenerAdapter;
 import org.demoflow.utils.ArrayUtils;
 import org.demoflow.view.View;
-import org.demoflow.effect.EffectGroup;
+import org.demoflow.effect.effects.EffectGroup;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.ParametrizedBase;
 import org.demoflow.calculator.CalculationContext;
@@ -16,8 +18,6 @@ import org.demoflow.effect.Effect;
 import org.demoflow.parameter.range.ranges.DoubleRange;
 import org.flowutils.Check;
 import org.flowutils.FileUtils;
-import org.flowutils.LogUtils;
-import org.flowutils.Symbol;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,7 +31,7 @@ import static org.flowutils.Check.notNull;
  * Default implementation of Demo.
  * Add and configure effects to create the demo.
  */
-public class DefaultDemo extends ParametrizedBase implements Demo {
+public class DefaultDemo extends ParametrizedBase implements Demo, EffectContainer {
 
     public static final double DEFAULT_DURATION_SECONDS = 60.0;
     private static final int DEFAULT_TIMESTEPS_PER_SECOND = 120;
@@ -82,6 +82,19 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
         effects = new EffectGroup();
         effects.setParent(this);
+        effects.addNodeListener(new DemoNodeListenerAdapter() {
+            @Override public void onChildAdded(DemoNode parent, DemoNode child) {
+                notifyChildNodeAdded(child);
+            }
+
+            @Override public void onChildRemoved(DemoNode parent, DemoNode child) {
+                notifyChildNodeRemoved(child);
+            }
+
+            @Override public void onNodeUpdated(DemoNode node) {
+                notifyNodeUpdated();
+            }
+        });
 
         setDurationSeconds(durationSeconds);
         timeDilation = addParameter("timeDilation", 1.0, DoubleRange.POSITIVE);
@@ -110,6 +123,14 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     @Override public final void removeEffect(Effect effect) {
         effects.removeEffect(effect);
+    }
+
+    @Override public void moveEffect(Effect effect, int delta) {
+        effects.moveEffect(effect, delta);
+    }
+
+    @Override public int indexOf(Effect effect) {
+        return effects.indexOf(effect);
     }
 
     @Override public final void setPaused(boolean paused) {
@@ -277,7 +298,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     }
 
     private void doSetup() {
-        effects.setup(randomSeed);
+        effects.setup();
         initialized = true;
 
         // Notify listeners about setup
@@ -294,7 +315,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
         calculationContext.init(durationSeconds);
         undilatedTime.init(durationSeconds);
 
-        effects.reset(randomSeed);
+        effects.reset();
 
         // Notify listeners about restart
         for (DemoListener listener : listeners) {
@@ -422,5 +443,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
         return demo;
     }
+
+
 
 }

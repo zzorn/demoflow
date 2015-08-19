@@ -40,14 +40,14 @@ public final class XMPlayerEffect extends EffectBase {
         this.loop = addParameter("loop", loop, BooleanRange.FULL, true);
     }
 
-    @Override protected void doSetup(Object preCalculatedData, RandomSequence randomSequence) {
+    @Override protected void doSetup(Object preCalculatedData) {
         // Create player
         player = new Player(44100, Player.INTERPOLATION_MODE_NONE);
         updateVolume(true);
 
     }
 
-    @Override protected void doReset(long randomSeed) {
+    @Override protected void doReset() {
         // Remove old song, if any
         if (moduleId >= 0) {
             player.removeXM(moduleId);

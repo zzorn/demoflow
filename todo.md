@@ -26,25 +26,26 @@ Demo Editor
  1. Change demo editor to only repaint and revalidate UI after all editors for effects and parameters in a demo have been
     created, when changing the demo.
  1. Rename Range to Type or similar.
+ 1. Add context menu support for nodes
  
  
 ### Features   
 
+ 1. **DONE** ~~Add support for adding and removing effects.~~
+ 1. Implement effect rearranging
+ 1. Select activation and deactivation times for effects (with sliders on time view)
+ 1. Add support for adding and removing variables (dynamically created parameters).
  1. **DONE** ~~Add save and load of demo as an xml file.~~
  1. Import demo as effect group feature
  1. Main time view bar for demo, with current visible area (drag to pan, wheel to zoom), showing currently edited time and current demo progress
- 1. Select activation and deactivation times for effects (with sliders on time view)
  1. Implement gradient editing with values at time positions and interpolators for interpolating between them.
- 1. Add support for adding and removing variables (dynamically created parameters).
-    Add button shown in context menu.
  1. Add context menu to node UIs, with cut, copy and paste (maybe have a paste buffer with last 4-8 entries or so).
     Also have paste as new variable.
- 1. Add support for adding and removing effects.
-    Both with buttons and from context menu.
  1. Add support for exporting and importing individual effects or calculators as libraries.
  1. Programmable Pixel shader, converts calculators to shader code?? (only supports some variable and calculator types - double, vector2, vector3, color, int, etc.)
  1. Expression function / calculator, that parses an expression and generates calculator / function / field based on that (compile to java bytecode, or use in shader).
  1. Add undo/redo support if feasible
+ 1. Add sliders to number value editors with finite ranges, and tweakers to ones with infinite ranges. 
 
   
 ### Content  

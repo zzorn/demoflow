@@ -1,6 +1,6 @@
 package org.demoflow.editor.nodeeditor;
 
-import org.demoflow.editor.CalculatorComboBoxRenderer;
+import org.demoflow.editor.ClassComboBoxRenderer;
 import org.demoflow.editor.DemoEditor;
 import org.demoflow.editor.valueeditor.ValueEditor;
 import org.demoflow.editor.valueeditor.ValueEditorListener;
@@ -43,7 +43,7 @@ public final class ParameterEditor<T extends DemoNode> extends NodeEditorBase<Pa
         // Create calculation type selection combo box
         final List<Class<? extends Calculator>> calculatorTypes = getDemoEditor().getComponentManager().getCalculatorTypes(node.getType());
         calculatorSelector = new JComboBox<>(new Vector<>(calculatorTypes));
-        calculatorSelector.setRenderer(new CalculatorComboBoxRenderer());
+        calculatorSelector.setRenderer(new ClassComboBoxRenderer("Constant", "Calculator"));
         calculatorSelector.setEnabled(true);
         calculatorSelector.setFocusable(false);
         calculatorSelector.setPreferredSize(new Dimension(SELECTOR_WIDTH, calculatorSelector.getHeight()));

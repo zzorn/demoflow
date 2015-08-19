@@ -22,4 +22,14 @@ public interface EffectContainer {
      * @return the effects in this effect container.
      */
     Array<Effect> getEffects();
+
+    /**
+     * Moves the specified effect up or down in the list of effects.
+     */
+    void moveEffect(Effect effect, int delta);
+
+    /**
+     * @return index of the effect in this container, or -1 if not found.
+     */
+    int indexOf(Effect effect);
 }

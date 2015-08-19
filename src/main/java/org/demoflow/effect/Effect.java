@@ -18,12 +18,12 @@ public interface Effect extends Parametrized {
      * This will only be called once.
      */
     // IDEA: Later listener system for progress?
-    void setup(long randomSeed);
+    void setup();
 
     /**
      * Resets the position of this effect to the start.
      */
-    void reset(long randomSeed);
+    void reset();
 
     /**
      * Releases any resources created by this effect in setup.

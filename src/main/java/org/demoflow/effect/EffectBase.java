@@ -39,25 +39,23 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
         this.name = getClass().getSimpleName().replace("Effect", "");
     }
 
-    @Override public final void setup(long randomSeed) {
+    @Override public final void setup() {
         if (initialized) throw new IllegalStateException("Setup can not be called if we are already initialized.");
         if (shutdown) throw new IllegalStateException("Setup can not be called after we have already called shutdown.");
-
-        this.randomSequence = new XorShift(randomSeed);
 
         // Reset parameter values to initial values
         resetParametersToInitialValues();
 
         // Pre-calculate if needed
         if (preCalculatedData == null) {
-            preCalculatedData = preCalculate(new XorShift(randomSeed % 21983)); // (Avoid passing same random sequence to pre-calculation)
+            preCalculatedData = preCalculate();
 
             // Reset parameter values to initial values again in case pre calculation messed with them
             resetParametersToInitialValues();
         }
 
         // Allow subclass to do setup
-        doSetup(preCalculatedData, randomSequence);
+        doSetup(preCalculatedData);
 
         initialized = true;
     }
@@ -132,6 +130,9 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     }
 
     @Override public final void update(CalculationContext calculationContext) {
+        // Initialize the effect if it has not yet been initialized
+        if (!initialized) setup();
+
         // Activate effect when effect start time passed, deactivate effect when stop time passed
         updateEffectActivationState(calculationContext);
 
@@ -159,12 +160,12 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
         }
     }
 
-    @Override public final void reset(long randomSeed) {
+    @Override public final void reset() {
         if (!initialized) throw new IllegalStateException("Can not reset before setup");
         if (shutdown) throw new IllegalStateException("Can not reset after a shutdown");
 
         deactivate();
-        doReset(randomSeed);
+        doReset();
     }
 
     @Override public final void shutdown() {
@@ -194,18 +195,18 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
      * Override if needed.
      * @return precalculated data to pass to setup, or null if no data is precalculated.
      */
-    protected P preCalculate(RandomSequence randomSequence) {
+    protected P preCalculate() {
         return null;
     }
 
     // Override as needed
-    protected void doSetup(P preCalculatedData, RandomSequence randomSequence) {
+    protected void doSetup(P preCalculatedData) {
     }
 
     /**
      * Rewinds this effect to the start.
      */
-    protected abstract void doReset(long randomSeed);
+    protected abstract void doReset();
 
     // Override as needed
     protected void doActivate() {

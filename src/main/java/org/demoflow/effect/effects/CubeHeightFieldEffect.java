@@ -97,14 +97,14 @@ public final class CubeHeightFieldEffect extends EffectBase<Object> {
         this.colorField = addParameter("colorField", colorField);
     }
 
-    @Override protected void doSetup(Object preCalculatedData, RandomSequence randomSequence) {
+    @Override protected void doSetup(Object preCalculatedData) {
         // Create cube model and material
         ModelBuilder modelBuilder = new ModelBuilder();
         material = new Material(ColorAttribute.createDiffuse(Color.GRAY));
         model = modelBuilder.createBox(1f, 1f, 1f, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
     }
 
-    @Override protected void doReset(long randomSeed) {
+    @Override protected void doReset() {
         // No state to reset
     }
 

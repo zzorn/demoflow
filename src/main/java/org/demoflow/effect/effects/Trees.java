@@ -30,10 +30,10 @@ public final class Trees extends EffectBase<Object> {
 		treeDepth = addParameter("treeDepth", 10, IntRange.POSITIVE);
 	}
 
-    @Override protected void doSetup(Object preCalculatedData, RandomSequence randomSequence) {
+    @Override protected void doSetup(Object preCalculatedData) {
     }
 
-	@Override protected void doReset(long randomSeed) {
+	@Override protected void doReset() {
 	}
 
 	@Override protected void doUpdate(CalculationContext calculationContext) {
