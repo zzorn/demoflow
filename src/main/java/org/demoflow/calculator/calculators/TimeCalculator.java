@@ -7,7 +7,7 @@ import org.demoflow.parameter.Parameter;
 /**
  * Returns relative position within the demo as a value from 0 to 1.
  */
-// TODO: Add enum parameter for selecting the type of time.
+// TODO: Add enum parameter for selecting the type of time (relative effect pos or demo pos, or absolute time, etc).
 public final class TimeCalculator extends CalculatorBase<Double> {
 
     @Override

@@ -1,21 +1,19 @@
 package org.demoflow.calculator.calculators;
 
+import org.demoflow.calculator.TimeVaryingCalculatorBase;
 import org.demoflow.parameter.Parameter;
-import org.demoflow.calculator.CalculationContext;
-import org.demoflow.calculator.CalculatorBase;
 import org.flowutils.SimplexGradientNoise;
+import org.flowutils.random.RandomSequence;
+import org.flowutils.random.XorShift;
 
 /**
- * Generates 1D noise that changes over time.
+ * Generates noise that changes over time.
  */
-public final class NoiseCalculator extends CalculatorBase<Double> {
+public final class NoiseCalculator extends TimeVaryingCalculatorBase {
 
-    public final Parameter<Double> amplitude;
-    public final Parameter<Double> offset;
-    public final Parameter<Double> wavelength;
-    public final Parameter<Double> phase;
+    private static final RandomSequence RANDOM_SEQUENCE = new XorShift();
 
-    private double currentPhase;
+    public final Parameter<Double> noiseY;
 
     /**
      * Generates random noise with a frequency of 1Hz and output values from -1 to 1.
@@ -25,67 +23,55 @@ public final class NoiseCalculator extends CalculatorBase<Double> {
     }
 
     /**
-     * By default generates random noise with a frequency of 1Hz and output values from -1 to 1.
+     * Generates random noise with the specified frequency and output values from -1 to 1.
      * @param wavelength wavelength of the noise in seconds.
      */
     public NoiseCalculator(double wavelength) {
-        this(wavelength, 0.0);
+        this(wavelength, -1, 1);
     }
 
     /**
-     * By default generates random noise with a frequency of 1Hz and output values from -1 to 1.
+     * Generates random noise with the specified frequency and min and max output values.
      * @param wavelength wavelength of the noise in seconds.
-     * @param offset offset to add to the result
+     * @param minOutput lowest output value
+     * @param maxOutput highest output value
      */
-    public NoiseCalculator(double wavelength, double offset) {
-        this(wavelength, offset, 1.0);
+    public NoiseCalculator(double wavelength, double minOutput, double maxOutput) {
+        this(wavelength, minOutput, maxOutput, 0.0);
     }
 
     /**
-     * By default generates random noise with a frequency of 1Hz and output values from -1 to 1.
+     * Generates random noise with the specified frequency and min and max output values.
      * @param wavelength wavelength of the noise in seconds.
-     * @param offset offset to add to the result
-     * @param amplitude scaling to multiply the result with
-     */
-    public NoiseCalculator(double wavelength, double offset, double amplitude) {
-        this(wavelength, offset, amplitude, 0.0);
-    }
-
-    /**
-     * By default generates random noise with a frequency of 1Hz and output values from -1 to 1.
-     * @param wavelength wavelength of the noise in seconds.
-     * @param offset offset to add to the result
-     * @param amplitude scaling to multiply the result with
+     * @param minOutput lowest output value
+     * @param maxOutput highest output value
      * @param phase can be used to phase shift the noise
      */
-    public NoiseCalculator(double wavelength, double offset, double amplitude, double phase) {
-        this.amplitude = addParameter("amplitude", amplitude);
-        this.offset    = addParameter("offset", offset);
-        this.wavelength = addParameter("wavelength", wavelength);
-        this.phase     = addParameter("phase", phase);
+    public NoiseCalculator(double wavelength, double minOutput, double maxOutput, double phase) {
+        this(wavelength, minOutput, maxOutput, phase, RANDOM_SEQUENCE.nextDouble(10000));
     }
 
-    @Override
-    protected Double doCalculate(CalculationContext calculationContext, Double currentValue, Parameter<Double> parameter) {
+    /**
+     * Generates random noise with the specified frequency and min and max output values.
+     * @param wavelength wavelength of the noise in seconds.
+     * @param minOutput lowest output value
+     * @param maxOutput highest output value
+     * @param phase can be used to phase shift the noise
+     * @param noiseY another coordinate on the generated noise, allows changing the shape of the noise generated.
+     *               Works a bit like a noise seed, except the change is continuous.
+     */
+    public NoiseCalculator(double wavelength, double minOutput, double maxOutput, double phase, double noiseY) {
+        super(wavelength, minOutput, maxOutput, phase);
 
-        // Update phase
-        final double wavelength = this.wavelength.get();
-        if (wavelength != 0) {
-            currentPhase += calculationContext.deltaTimeSeconds() / wavelength;
-        }
-
-        // Calculate value
-        double noise = SimplexGradientNoise.sdnoise1(currentPhase + phase.get());
-
-        // Apply amplitude and offset
-        return noise  * amplitude.get() + offset.get();
+        this.noiseY = addParameter("noiseY", noiseY);
     }
 
-    @Override protected void doResetState() {
-        currentPhase = 0;
+    protected double calculateValue(final double phase) {
+        return SimplexGradientNoise.sdnoise2(phase, noiseY.get());
     }
 
-    @Override public Class<Double> getReturnType() {
-        return Double.class;
+    @Override protected double wrapPhase(double phase) {
+        // No wrapping for noise, as it is not repeating
+        return phase;
     }
 }

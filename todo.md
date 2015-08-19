@@ -8,6 +8,7 @@ Demo Editor
  
  1. Column width is not adjusted properly when the max node depth is changed. 
  1. Double / float fields stay with edited background color even after editing complete. 
+ 1. UI sometimes freezes up while creating the editors for a demo.
 
 
 ### Refactorings
@@ -19,15 +20,17 @@ Demo Editor
      1. The aim is to unify interpolators and normal functions if possible.  
  1. Maybe remove quad, cubic, quart and quint interpolators, or rename to pow2, pow3, pow4, pow5. 
  1. Add a calculator that takes a function and applies it to a parameter
- 1. Change noise to use Vector2:s for offsets
+ 1. **DONE**~~Change noise to use Vector2:s for offsets~~
  1. Change sine and noise to use min and max output value instead of amplitude and offset
  1. Separate functions with two parameters and fields into two different Range objects, as they are conceptually different, although same in practice
+ 1. Change demo editor to only repaint and revalidate UI after all editors for effects and parameters in a demo have been
+    created, when changing the demo.
  1. Rename Range to Type or similar.
  
  
 ### Features   
 
- 1. Add save and load of demo as an xml file.
+ 1. **DONE** ~~Add save and load of demo as an xml file.~~
  1. Import demo as effect group feature
  1. Main time view bar for demo, with current visible area (drag to pan, wheel to zoom), showing currently edited time and current demo progress
  1. Select activation and deactivation times for effects (with sliders on time view)

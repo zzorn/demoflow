@@ -27,13 +27,13 @@ public final class InterpolatingCalculator extends CalculatorBase<Double> {
         this(interpolator, true);
     }
 
-    // TODO: Add direction
+    // TODO: Add interpolation direction
     public InterpolatingCalculator(Interpolator interpolator,
                                    boolean clampToRange) {
-        this(interpolator, clampToRange, 0, 1, 0, 1);
+        this(interpolator, clampToRange, -1, 1, -1, 1);
     }
 
-    // TODO: Add direction
+    // TODO: Add interpolation direction
     public InterpolatingCalculator(Interpolator interpolator,
                                    boolean clampToRange,
                                    double sourceStart, double sourceEnd,
