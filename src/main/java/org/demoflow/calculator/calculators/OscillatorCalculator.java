@@ -108,7 +108,7 @@ public final class OscillatorCalculator extends TimeVaryingCalculatorBase {
         if (phase < bottomLen) return -1;
         else if (phase < bottomLen + risingLen) return risingInterpolator.get().interpolate(phase, bottomLen, bottomLen + risingLen, -1, 1);
         else if (phase < bottomLen + risingLen + topLen) return 1;
-        else return droppingInterpolator.get().interpolate(phase, bottomLen + risingLen + topLen, 1.0, -1, 1);
+        else return droppingInterpolator.get().interpolate(phase, bottomLen + risingLen + topLen, 1.0, 1, -1);
     }
 }
 
