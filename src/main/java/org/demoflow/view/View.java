@@ -13,6 +13,8 @@ import org.demoflow.effect.DefaultRenderContext;
 import org.flowutils.time.RealTime;
 import org.flowutils.time.Time;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * Renders a demo to the screen.
  */
@@ -31,9 +33,8 @@ public final class View extends Game {
     private ModelBatch modelBatch;
 
     private Demo demo;
-    private Demo demoToShutDown;
+    private AtomicReference<Demo> demoToSwitchTo = new AtomicReference<>();
     public DefaultRenderContext renderContext;
-    private boolean initialized = false;
 
 
     public View() {
@@ -45,25 +46,7 @@ public final class View extends Game {
     }
 
     public void setDemo(Demo demo) {
-        if (this.demo != demo) {
-            if (this.demo != null) {
-                if (initialized) {
-                    this.demo.shutdown();
-                    demoToShutDown = this.demo;
-                }
-                this.demo.setView(null);
-            }
-
-            this.demo = demo;
-
-            if (this.demo != null) {
-                this.demo.setView(this);
-
-                if (initialized) {
-                    this.demo.setup();
-                }
-            }
-        }
+        demoToSwitchTo.set(demo);
     }
 
     public PerspectiveCamera getCamera() {
@@ -86,24 +69,16 @@ public final class View extends Game {
         modelBatch = new ModelBatch();
 
         renderContext = new DefaultRenderContext(this, modelBatch);
-
-        initialized = true;
-
-        if (demo != null) {
-            demo.setup();
-        }
     }
 
     @Override public void render() {
+
+        // Change the current demo as needed
+        switchDemoIfNeeded();
+
         time.nextStep();
 
         final float deltaTime = Gdx.graphics.getRawDeltaTime();
-
-        // Allow previous demo to shut down when demo is changed
-        if (demoToShutDown != null) {
-            demoToShutDown.update(deltaTime);
-            demoToShutDown = null;
-        }
 
         // Clear screen
         // IDEA: An effect could take care of this, so that we could adjust how much of the old view that is visible
@@ -125,14 +100,37 @@ public final class View extends Game {
 
 
     @Override public void dispose() {
-
-        initialized = false;
-
         if (demo != null) {
             demo.shutdown();
         }
 
         modelBatch.dispose();
+    }
+
+    private void switchDemoIfNeeded() {
+        final Demo newDemo = demoToSwitchTo.get();
+        if (demo != newDemo) {
+            if (demo != null) {
+
+                // Tell demo to shut down on next update
+                demo.shutdown();
+
+                // Allow the demo and its effects to shut down in its update methods
+                demo.update(0.001);
+
+                demo.setView(null);
+            }
+
+            demo = newDemo;
+
+            if (demo != null) {
+                demo.setView(this);
+
+                // Setup the demo
+                demo.setup();
+            }
+        }
+
     }
 
     private PerspectiveCamera createCamera() {

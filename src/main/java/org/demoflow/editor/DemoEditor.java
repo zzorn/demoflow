@@ -38,6 +38,7 @@ public final class DemoEditor {
     private final View view;
     private final DemoComponentManager demoComponentManager;
     private final EditorManager editorManager;
+    private final Object setDemoLock = new Object();
 
     private Demo demo;
 
@@ -112,25 +113,27 @@ public final class DemoEditor {
      * @param demo the demo to edit.
      */
     public void setDemo(Demo demo) {
-        if (demo != this.demo) {
-            if (this.demo != null) {
-                this.demo.removeListener(demoListener);
+        synchronized (setDemoLock) {
+            if (demo != this.demo) {
+                if (this.demo != null) {
+                    this.demo.removeListener(demoListener);
+                }
+
+                this.demo = demo;
+                view.setDemo(this.demo);
+
+                if (this.demo != null) {
+                    this.demo.addListener(demoListener);
+
+                    // Update auto-restart of the demo to correspond to the UI setting (as it is not saved with the demo)
+                    if (restartCheckBox != null) this.demo.setAutoRestart(restartCheckBox.isSelected());
+
+                    // Reset speed to default
+                    resetDemoSpeed();
+                }
+
+                setDemoToView(this.demo);
             }
-
-            this.demo = demo;
-            view.setDemo(this.demo);
-
-            if (this.demo != null) {
-                this.demo.addListener(demoListener);
-
-                // Update auto-restart of the demo to correspond to the UI setting (as it is not saved with the demo)
-                if (restartCheckBox != null) this.demo.setAutoRestart(restartCheckBox.isSelected());
-
-                // Reset speed to default
-                resetDemoSpeed();
-            }
-
-            setDemoToView(this.demo);
         }
     }
 
@@ -276,10 +279,10 @@ public final class DemoEditor {
             demoViewPanel.add(demoNodeEditor, "grow");
 
             moderateExpandTree();
-
-            demoViewPanel.revalidate();
-            demoViewPanel.repaint();
         }
+
+        demoViewPanel.revalidate();
+        demoViewPanel.repaint();
     }
 
     private void moderateExpandTree() {
@@ -291,6 +294,12 @@ public final class DemoEditor {
     private void expandAll() {
         if (demoNodeEditor != null) {
             demoNodeEditor.expandAll();
+        }
+    }
+
+    private void collapseAll() {
+        if (demoNodeEditor != null) {
+            demoNodeEditor.collapseAll();
         }
     }
 
@@ -347,21 +356,29 @@ public final class DemoEditor {
         final int response = fileChooser.showOpenDialog(rootFrame);
         if (response == JFileChooser.APPROVE_OPTION) {
             final File selectedFile = fileChooser.getSelectedFile();
-            try {
-                // Load new demo
-                Demo loadedDemo = new DefaultDemo();
-                loadedDemo.load(selectedFile, getComponentManager());
 
-                // Switch the current demo
-                setDemo(loadedDemo);
-            } catch (Exception e1) {
-                // Show error dialog if load failed
-                LogUtils.getLogger().warn("Could not open demo because: " + e1.getMessage(), e1);
-                JOptionPane.showMessageDialog(rootFrame,
-                                              "Problem opening '"+selectedFile.getName()+"': " + e1.getMessage(),
-                                              "Could not load demo",
-                                              JOptionPane.ERROR_MESSAGE);
-            }
+            setDemo(null);
+
+            // Load the demo in a separate thread, to allow UI to stay responsive
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    try {
+                        // Load new demo
+                        Demo loadedDemo = new DefaultDemo();
+                        loadedDemo.load(selectedFile, getComponentManager());
+
+                        // Switch the current demo
+                        setDemo(loadedDemo);
+                    } catch (Exception e1) {
+                        // Show error dialog if load failed
+                        LogUtils.getLogger().warn("Could not open demo because: " + e1.getMessage(), e1);
+                        JOptionPane.showMessageDialog(rootFrame,
+                                                      "Problem opening '"+selectedFile.getName()+"': " + e1.getMessage(),
+                                                      "Could not load demo",
+                                                      JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
         }
     }
 
