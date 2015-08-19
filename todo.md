@@ -28,6 +28,7 @@ Demo Editor
 ### Features   
 
  1. Add save and load of demo as an xml file.
+ 1. Import demo as effect group feature
  1. Main time view bar for demo, with current visible area (drag to pan, wheel to zoom), showing currently edited time and current demo progress
  1. Select activation and deactivation times for effects (with sliders on time view)
  1. Implement gradient editing with values at time positions and interpolators for interpolating between them.

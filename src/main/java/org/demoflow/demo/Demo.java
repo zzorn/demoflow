@@ -1,6 +1,7 @@
 package org.demoflow.demo;
 
 import com.badlogic.gdx.utils.Array;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.effect.EffectContainer;
 import org.demoflow.effect.RenderContext;
 import org.demoflow.view.View;
@@ -8,11 +9,13 @@ import org.demoflow.parameter.Parametrized;
 import org.demoflow.effect.Effect;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Contains effects with start and stop times spread out over the duration of the Demo.
  * Has a duration, effects are forced to stop before the duration ends and start after time 0.
  */
+// IDEA: Add method to load from a resource instead of a filesystem file
 public interface Demo extends Parametrized, EffectContainer {
 
     /**
@@ -139,14 +142,29 @@ public interface Demo extends Parametrized, EffectContainer {
     /**
      * Loads information on what effects to use and what parameters and parameter calculators to use for them.
      * @param demoFile file to load from.
+     * @param typeManager used to instantiate various types in the demo.
+     * @throws IOException if there was a problem loading the demo
      */
-    void load(File demoFile);
+    void load(File demoFile, DemoComponentManager typeManager) throws IOException;
 
     /**
      * Save information on what effects to use and what parameters and parameter calculators to use for them.
      * @param demoFile file to save to.
      */
-    void save(File demoFile);
+    void save(File demoFile) throws IOException;
+
+    /**
+     * Loads the demo from the specified input string.
+     * @param typeManager used to instantiate various types in the demo.
+     * @throws IOException if there was a problem parsing the xml.
+     */
+    void loadFromXml(String xmlText, DemoComponentManager typeManager) throws IOException;
+
+    /**
+     * @return serialized representation of the demo.
+     * @throws IOException if there was a problem generating the xml.
+     */
+    String generateXml() throws IOException;
 
     /**
      * @param listener listener that gets notified about demo progress and state changes.
@@ -167,4 +185,5 @@ public interface Demo extends Parametrized, EffectContainer {
      * @param autoRestart if true the demo will automatically restart when finished.
      */
     void setAutoRestart(boolean autoRestart);
+
 }

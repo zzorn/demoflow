@@ -26,6 +26,8 @@ public interface Parametrized extends DemoNode {
      */
     Array<Parameter> getParameters();
 
+    boolean hasParameter(Symbol id);
+
     /**
      * @return the parameter with the specified id.
      * @throws IllegalArgumentException if there is no parameter with that id.
@@ -49,15 +51,6 @@ public interface Parametrized extends DemoNode {
      * @param calculationContext context to pass to the calculators.
      */
     void recalculateParameters(CalculationContext calculationContext);
-
-    /**
-     * Called by contained Parameter classes when their values change.
-     *
-     * @param parameter all information about the parameter.
-     * @param id id of the parameter.
-     * @param value current (new) value of the parameter.
-     */
-    void onParameterChanged(Parameter parameter, Symbol id, Object value);
 
     /**
      * Resets current parameter values to the initial values.

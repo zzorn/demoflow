@@ -1,10 +1,13 @@
 package org.demoflow;
 
+import nu.xom.Element;
+import org.demoflow.calculator.function.Field;
 import org.demoflow.effect.Effect;
 import org.demoflow.interpolator.Interpolator;
 import org.demoflow.calculator.Calculator;
 import org.demoflow.utils.ClassUtils;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.flowutils.Check.notNull;
@@ -121,9 +124,36 @@ public final class DemoComponentManager {
     }
 
     /**
+     * @return an instance of the specified effect type, using the simple class name of the effect.
+     */
+    public Effect createEffect(String simpleTypeName) {
+        for (Class<? extends Effect> effectType : effectTypes) {
+            if (effectType.getSimpleName().equals(simpleTypeName)) {
+                return createEffect(effectType);
+            }
+        }
+
+        throw new IllegalStateException("Unknown effect type '" + simpleTypeName + "'");
+    }
+
+    /**
+     * @return an instance of the specified calculator type, using the simple class name of the calculator.
+     */
+    public Calculator createCalculator(String simpleTypeName) {
+        for (Class<? extends Calculator> calculatorType : calculatorTypes) {
+            if (calculatorType.getSimpleName().equals(simpleTypeName)) {
+                return createCalculator(calculatorType);
+            }
+        }
+
+        throw new IllegalStateException("Unknown calculator type '" + simpleTypeName + "'");
+    }
+
+
+    /**
      * @return an instance of the specified calculator type.
      */
-    public Calculator createCalculator(Class<? extends Calculator> type) {
+    public <T extends Calculator> T createCalculator(Class<T> type) {
         if (type == null) return null;
         if (!calculatorTypes.contains(type)) throw new IllegalStateException("Unknown calculator type " + type);
 
@@ -135,10 +165,50 @@ public final class DemoComponentManager {
     }
 
     /**
+     * @return an instance of the specified effect type.
+     */
+    public <T extends Effect> T createEffect(Class<T> type) {
+        if (type == null) return null;
+        if (!effectTypes.contains(type)) throw new IllegalStateException("Unknown effect type " + type);
+
+        try {
+            return type.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not create an effect of type " + type +".  Ensure it has a public no-parameters constructor.  The error was: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * @return all available interpolators.
      */
     public List<Class<? extends Interpolator>> getInterpolatorTypes() {
         return interpolatorTypes;
     }
 
+    public Calculator loadCalculator(Element element) throws IOException {
+        // Determine calculator type
+        final String type = element.getAttributeValue("type");
+        if (type == null) return null;
+
+        // Create calculator
+        final Calculator calculator = createCalculator(type);
+
+        // Load calculator content
+        calculator.fromXmlElement(element, this);
+
+        return calculator;
+    }
+
+    public Effect loadEffect(Element element) throws IOException {
+        // Determine effect type
+        final String type = element.getAttributeValue("type");
+
+        // Create effect
+        final Effect effect = createEffect(type);
+
+        // Load effect content
+        effect.fromXmlElement(element, this);
+
+        return effect;
+    }
 }

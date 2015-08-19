@@ -46,4 +46,8 @@ public final class FileHandleRange extends RangeBase<FileHandle> {
     @Override public FileHandle interpolate(double t, FileHandle a, FileHandle b, FileHandle out) {
         return t < 0.5 ? a : b;
     }
+
+    @Override protected FileHandle doValueFromString(String text) throws Exception {
+        return new FileHandle(text);
+    }
 }

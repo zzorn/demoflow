@@ -1,5 +1,7 @@
 package org.demoflow.parameter.range.ranges;
 
+import nu.xom.Node;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.Check;
 import org.flowutils.MathUtils;
@@ -82,5 +84,13 @@ public final class DoubleRange extends RangeBase<Double> {
 
     @Override public Double interpolate(double t, Double a, Double b, Double out) {
         return a + t * (b - a);
+    }
+
+    @Override protected Double doValueFromXml(Node element, String elementText, DemoComponentManager typeManager) {
+        return Double.parseDouble(elementText);
+    }
+
+    @Override protected Double doValueFromString(String text) throws Exception {
+        return Double.parseDouble(text.trim());
     }
 }

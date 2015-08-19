@@ -1,5 +1,8 @@
 package org.demoflow.parameter.range.ranges;
 
+import nu.xom.Node;
+import nu.xom.Text;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.Check;
 import org.flowutils.random.RandomSequence;
@@ -109,5 +112,13 @@ public class SelectRange<T> extends RangeBase<T> {
 
     @Override public T interpolate(double t, T a, T b, T out) {
         return t < 0.5 ? a : b;
+    }
+
+    @Override protected T doValueFromString(String text) throws Exception {
+        for (T allowedValue : allowedValues) {
+            if (allowedValue.toString().equals(text)) return allowedValue;
+        }
+
+        return createDefaultValue();
     }
 }

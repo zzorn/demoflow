@@ -1,5 +1,7 @@
 package org.demoflow.parameter.range.ranges;
 
+import nu.xom.Node;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.Check;
 import org.flowutils.MathUtils;
@@ -68,5 +70,9 @@ public final class BooleanRange extends RangeBase<Boolean> {
 
     @Override public Boolean interpolate(double t, Boolean a, Boolean b, Boolean out) {
         return t < 0.5 ? a : b;
+    }
+
+    @Override protected Boolean doValueFromString(String text) throws Exception {
+        return Boolean.parseBoolean(text.trim());
     }
 }

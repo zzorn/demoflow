@@ -1,9 +1,13 @@
 package org.demoflow.parameter.range;
 
+import nu.xom.Element;
+import nu.xom.Node;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.utils.gradient.ValueInterpolator;
 import org.flowutils.random.RandomSequence;
 
 import javax.swing.*;
+import java.io.IOException;
 
 /**
  * Represents a range for a parameter.
@@ -65,4 +69,15 @@ public interface Range<T> extends ValueInterpolator<T> {
     Icon getIcon();
 
     // TODO: Serialize / deserialize value from text/xml (or binary)
+
+    Node valueToXml(T value);
+
+    T valueFromXml(Node element, DemoComponentManager typeManager) throws IOException;
+
+    String rangeToXml();
+
+    /**
+     * @return true if the value of this range is a function (calculator).
+     */
+    boolean isParametrizedValue();
 }

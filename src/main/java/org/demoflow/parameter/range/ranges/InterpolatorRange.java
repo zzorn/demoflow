@@ -44,4 +44,5 @@ public class InterpolatorRange extends SelectRange<Interpolator> {
 
         return interpolators.toArray(new Interpolator[interpolators.size()]);
     }
+
 }

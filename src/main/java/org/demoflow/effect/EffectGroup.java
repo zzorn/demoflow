@@ -1,11 +1,16 @@
 package org.demoflow.effect;
 
 import com.badlogic.gdx.utils.Array;
+import nu.xom.Element;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.demo.Demo;
 import org.demoflow.node.DemoNode;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.utils.ArrayUtils;
 import org.flowutils.random.RandomSequence;
+
+import java.io.IOException;
+import java.util.List;
 
 import static org.flowutils.Check.notNull;
 
@@ -117,4 +122,27 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
         else return super.getDepth();
     }
 
+    @Override public Element toXmlElement() {
+        final Element element = super.toXmlElement();
+
+        // Create child elements for the effects of the demo
+        final Element effects = new Element("effects");
+        element.appendChild(effects);
+        for (Effect effect : getEffects()) {
+            effects.appendChild(effect.toXmlElement());
+        }
+
+        return element;
+    }
+
+    @Override public void fromXmlElement(Element element, DemoComponentManager typeManager) throws IOException {
+        // Read parameters
+        assignParameters(this, element, typeManager);
+
+        // Read effects
+        final List<Effect> effects = readEffects(element, typeManager);
+        for (Effect effect : effects) {
+            addEffect(effect);
+        }
+    }
 }

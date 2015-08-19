@@ -1,10 +1,18 @@
 package org.demoflow.parameter.range;
 
+import com.thoughtworks.xstream.XStream;
+import nu.xom.Attribute;
+import nu.xom.Element;
+import nu.xom.Node;
+import nu.xom.Text;
+import org.demoflow.DemoComponentManager;
+import org.demoflow.calculator.Calculator;
+import org.demoflow.node.DemoNode;
 import org.demoflow.utils.UiUtils;
 import org.flowutils.random.RandomSequence;
 
 import javax.swing.*;
-import java.awt.*;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -77,6 +85,21 @@ public abstract class RangeBase<T> implements Range<T> {
         else return value.toString();
     }
 
+    public final T valueFromString(String text) {
+        T value;
+        try {
+            value = doValueFromString(text);
+        }
+        catch (Exception e) {
+            value = createDefaultValue();
+        }
+
+        return clampToRange(value);
+    }
+
+    protected abstract T doValueFromString(String text) throws Exception;
+
+
     @Override public final T interpolate(double t, T a, T b) {
         return interpolate(t, a, b, createDefaultValue());
     }
@@ -102,5 +125,63 @@ public abstract class RangeBase<T> implements Range<T> {
         }
 
         return cachedIcon;
+    }
+
+    @Override public final Node valueToXml(T value) {
+        return value == null ? new Text("") : doValueToXml(value);
+    }
+
+    @Override public final T valueFromXml(Node element, DemoComponentManager typeManager) throws IOException {
+        if (element == null) return null;
+        else return clampToRange(doValueFromXml(element, element.getValue(), typeManager));
+    }
+
+    protected Node doValueToXml(T value) {
+        if (value instanceof Calculator) {
+            // Calculator type values are saved in the calculator field instead
+            return null;
+        }
+        else {
+            return new Text(valueToString(value));
+        }
+    }
+
+    protected T doValueFromXml(Node element, String elementText, DemoComponentManager typeManager) throws IOException {
+        if (Calculator.class.isAssignableFrom(getType())) {
+            // Calculator type values are saved in the calculator field instead
+            return null;
+        }
+        else {
+            return valueFromString(elementText);
+        }
+    }
+
+    @Override public String rangeToXml() {
+        return new XStream().toXML(this);
+    }
+
+    @Override public boolean isParametrizedValue() {
+        return Calculator.class.isAssignableFrom(type);
+    }
+
+    protected final void addAttribute(Element element, final String name, final Number value) {
+        addAttribute(element, name, value.toString());
+    }
+
+    protected final void addAttribute(Element element, final String name, final String value) {
+        element.addAttribute(new Attribute(name, value));
+    }
+
+    protected double getDoubleAttribute(Element element, String attributeName) {
+        return getDoubleAttribute(element, attributeName, 0.0);
+    }
+
+    private double getDoubleAttribute(Element element, String attributeName, final double defaultValue) {
+        try {
+            return Double.parseDouble(element.getAttributeValue(attributeName));
+        }
+        catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 }

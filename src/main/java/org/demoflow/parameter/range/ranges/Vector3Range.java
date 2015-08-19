@@ -1,6 +1,10 @@
 package org.demoflow.parameter.range.ranges;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import nu.xom.Element;
+import nu.xom.Node;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;
@@ -133,4 +137,21 @@ public final class Vector3Range extends RangeBase<Vector3> {
         out.lerp(b, (float) t);
         return out;
     }
+
+    @Override public String valueToString(Vector3 value) {
+        return value.x + ", " +
+               value.y + ", " +
+               value.z;
+    }
+
+    @Override protected Vector3 doValueFromString(String text) throws Exception {
+        final String[] coordinates = text.trim().split(",");
+        if (coordinates.length != 3) throw new IllegalArgumentException("Expected three comma separated coordinates");
+        return new Vector3(
+                Float.parseFloat(coordinates[0].trim()),
+                Float.parseFloat(coordinates[1].trim()),
+                Float.parseFloat(coordinates[2].trim())
+        );
+    }
+
 }

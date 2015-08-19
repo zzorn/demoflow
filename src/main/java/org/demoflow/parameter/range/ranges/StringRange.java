@@ -1,11 +1,10 @@
 package org.demoflow.parameter.range.ranges;
 
+import nu.xom.Node;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.Check;
-import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;
-
-import static org.flowutils.Check.notNull;
 
 /**
  * A range for a string value.
@@ -48,5 +47,9 @@ public final class StringRange extends RangeBase<String> {
 
     @Override public String interpolate(double t, String a, String b, String out) {
         return t >= 0 ? b : a;
+    }
+
+    @Override protected String doValueFromString(String text) throws Exception {
+        return text;
     }
 }

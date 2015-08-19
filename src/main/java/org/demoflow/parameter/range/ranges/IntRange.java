@@ -1,5 +1,7 @@
 package org.demoflow.parameter.range.ranges;
 
+import nu.xom.Node;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.Check;
 import org.flowutils.MathUtils;
@@ -83,4 +85,7 @@ public final class IntRange extends RangeBase<Integer> {
         return (int) (1.0*a + t * (1.0*b - 1.0*a));
     }
 
+    @Override protected Integer doValueFromString(String text) throws Exception {
+        return Integer.parseInt(text.trim());
+    }
 }

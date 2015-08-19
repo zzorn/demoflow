@@ -48,28 +48,20 @@ public class Main {
 
         // Create asset managers
         DemoComponentManager demoComponentManager = new DemoComponentManager();
-
         DefaultEditorManager editorManager = new DefaultEditorManager();
 
         // Create view
         View view = new View();
         new LwjglApplication(view, configuration);
 
+        // Create editor (and show it)
+        DemoEditor demoEditor = new DemoEditor(view, demoComponentManager, editorManager);
+
         // Create demo
         Demo demo = createExampleDemo();
 
-        // Create editor (and show it)
-        DemoEditor demoEditor = new DemoEditor(view, demoComponentManager, editorManager, demo);
-
-        /*
-        // Edit demo (and view it)
-        editor.setDemo(demo);
-        */
-
-        /* The editor will already show the demo.
-        // Show demo
-        view.setDemo(demo);
-         */
+        // Edit demo
+        demoEditor.setDemo(demo);
     }
 
     /**
@@ -105,6 +97,7 @@ public class Main {
 
         // Add some plasma
         final Plasma plasma = demo.addEffect(createPlasmaEffect(0, 0.99));
+        /*
         final TimeChangeCalculator<Double> squareSize = plasma.squareSize.setCalculator(new TimeChangeCalculator<Double>());
         squareSize.addPoint(0, 0.0);
         squareSize.addPoint(0.1, 0.01, CosineInterpolator.IN_OUT);
@@ -117,6 +110,7 @@ public class Main {
         final TimeChangeCalculator<Double> gapSize = plasma.gapSize.setCalculator(new TimeChangeCalculator<Double>());
         gapSize.addPoint(0, 10.0);
         gapSize.addPoint(0.2, 0.0, CubicInterpolator.IN_OUT);
+        */
 
         // Add heightfield test
         demo.addEffect(new CubeHeightFieldEffect());

@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.flowutils</groupId>
             <artifactId>flowutils</artifactId>
-            <version>0.1.87</version>
+            <version>0.1.90</version>
         </dependency>
 
         <!-- Swing utilities -->
@@ -124,6 +124,26 @@
             <scope>system</scope>
             <systemPath>${basedir}/libs/darcula_look_and_feel/darcula.jar</systemPath>
         </dependency>
+
+        <!-- Parsing and generating XML -->
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.io7m.xom</groupId>
+            <artifactId>xom</artifactId>
+            <version>1.2.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mycila</groupId>
+            <artifactId>mycila-xmltool</artifactId>
+            <version>4.0.ga</version>
+        </dependency>
+
     </dependencies>
 
 

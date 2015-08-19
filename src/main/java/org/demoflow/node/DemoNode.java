@@ -1,8 +1,11 @@
 package org.demoflow.node;
 
 import com.badlogic.gdx.utils.Array;
+import nu.xom.Element;
+import org.demoflow.DemoComponentManager;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.Enumeration;
 
 /**
@@ -73,4 +76,16 @@ public interface DemoNode {
      * @return icon for this node, or null if the node has no icon.
      */
     Icon getIcon();
+
+    /**
+     * @return an XML element describing this node.
+     */
+    Element toXmlElement();
+
+    /**
+     * Load the data for this node from the specified XMl element.
+     * @param element an XML element describing this node.
+     */
+    void fromXmlElement(Element element, DemoComponentManager typeManager) throws IOException;
+
 }

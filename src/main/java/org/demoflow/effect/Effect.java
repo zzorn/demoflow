@@ -9,6 +9,11 @@ import org.demoflow.parameter.Parametrized;
 public interface Effect extends Parametrized {
 
     /**
+     * @param name user readable name for this effect.  Does not need to be unique.
+     */
+    void setName(String name);
+
+    /**
      * Load needed resources and do other setup.
      * This will only be called once.
      */

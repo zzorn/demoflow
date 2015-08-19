@@ -1,18 +1,19 @@
 package org.demoflow.calculator;
 
+import nu.xom.Element;
+import org.demoflow.DemoComponentManager;
+import org.demoflow.effect.Effect;
 import org.demoflow.node.DemoNode;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.ParametrizedBase;
 import org.flowutils.Symbol;
 
+import java.io.IOException;
+
 /**
  * Common functionality for calculators.
  */
 public abstract class CalculatorBase<T> extends ParametrizedBase implements Calculator<T> {
-
-    // Override if needed
-    @Override public void onParameterChanged(Parameter parameter, Symbol id, Object value) {
-    }
 
     @Override public final T calculate(CalculationContext calculationContext, T currentValue, Parameter<T> parameter) {
 
@@ -55,4 +56,23 @@ public abstract class CalculatorBase<T> extends ParametrizedBase implements Calc
         return parent == null ? 0 : parent.getDepth();
     }
 
+    @Override public Element toXmlElement() {
+        // Header
+        final Element element = new Element("calculator");
+        addAttribute(element, "type", getClass().getSimpleName());
+
+        // Create child elements for the parameters of the calculator
+        final Element parameters = new Element("parameters");
+        element.appendChild(parameters);
+        for (Parameter parameter : getParameters()) {
+            parameters.appendChild(parameter.toXmlElement());
+        }
+
+        return element;
+    }
+
+    @Override public void fromXmlElement(Element element, DemoComponentManager typeManager) throws IOException {
+        // Read parameters
+        assignParameters(this, element, typeManager);
+    }
 }

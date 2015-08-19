@@ -1,6 +1,8 @@
 package org.demoflow.parameter;
 
 import com.badlogic.gdx.utils.Array;
+import nu.xom.Element;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeBase;
 import org.demoflow.calculator.CalculationContext;
@@ -10,6 +12,7 @@ import org.demoflow.utils.EmptyArray;
 import org.flowutils.Symbol;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.flowutils.Check.notNull;
@@ -83,9 +86,9 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
         this.id = id;
         this.constant = constant;
         this.range = range;
-        this.value = range.copy(value);
-        this.defaultValue = range.copy(value);
-        this.calculator = calculator;
+
+        set(range.copy(value), true);
+        setCalculator(calculator);
 
         if (listener != null) {
             addParameterListener(listener);
@@ -105,7 +108,8 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
     }
 
     @Override public T get() {
-        return value;
+        if (hasParametrizedValue()) return (T) calculator;
+        else return value;
     }
 
     @Override public void set(T newValue) {
@@ -113,15 +117,20 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
     }
 
     @Override public void set(T newValue, boolean alsoSetInitialValue) {
-        value = range.clampToRange(newValue);
+        if (hasParametrizedValue()) {
+            // Store the value in the calculator field
+            setCalculator((Calculator<T>) newValue);
+        }
+        else {
+            value = range.clampToRange(newValue);
 
-        // Update initial value as well if requested
-        if (alsoSetInitialValue) {
-            defaultValue = range.copy(value);
+            // Update initial value as well if requested
+            if (alsoSetInitialValue) {
+                defaultValue = range.copy(value);
+            }
         }
 
         // Notify listeners
-        getHost().onParameterChanged(this, id, value);
         notifyValueChanged(newValue);
         if (alsoSetInitialValue) notifyDefaultValueChanged(newValue);
         notifyNodeUpdated();
@@ -150,11 +159,15 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
             }
             else {
                 // Revert to previously manually set value when a calculator is removed
-                set(defaultValue, false);
+                if (!hasParametrizedValue()) set(defaultValue, false);
             }
 
             notifyNodeUpdated();
             notifyCalculatorChanged(this.calculator);
+
+            if (hasParametrizedValue()) {
+                notifyValueChanged((T) calculator);
+            }
         }
 
         return calculator;
@@ -174,14 +187,23 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
 
     @Override public void recalculateParameter(CalculationContext calculationContext) {
         if (calculator != null) {
-            // Set value without changing the initial value
-            set(calculator.calculate(calculationContext, value, this), false);
+            if (hasParametrizedValue()) {
+                // Recalculate
+                calculator.calculate(calculationContext, (T) calculator, this);
+            }
+            else {
+                // Set value without changing the initial value
+                set(calculator.calculate(calculationContext, value, this), false);
+            }
         }
     }
 
     @Override public void resetToInitialValue() {
-        // Revert to initial value (or manually specified value)
-        set(range.copy(defaultValue), false);
+
+        if (!hasParametrizedValue()) {
+            // Revert to initial value (or manually specified value)
+            set(range.copy(defaultValue), false);
+        }
 
         // Reset calculator state as well
         if (calculator != null) {
@@ -254,6 +276,47 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
                 listener.onCalculatorChanged(this, newValue);
             }
         }
+    }
+
+    @Override public Element toXmlElement() {
+        // Element
+        final Element element = new Element("parameter");
+        addAttribute(element, "id", getId().toString());
+
+        // Value
+        if (!hasParametrizedValue()) {
+            final Element valueElement = new Element("value");
+            valueElement.appendChild(getRange().valueToXml(getDefaultValue()));
+            element.appendChild(valueElement);
+        }
+
+        // Calculator
+        if (calculator != null) {
+            element.appendChild(calculator.toXmlElement());
+        }
+
+        return element;
+    }
+
+    @Override public void fromXmlElement(Element element, DemoComponentManager typeManager) throws IOException {
+        if (!hasParametrizedValue()) {
+            // Parse value of the element using the range of the parameter and set the value
+            final Element valueElement = element.getFirstChildElement("value");
+            if (valueElement != null) {
+                set(getRange().valueFromXml(valueElement, typeManager), true);
+            }
+        }
+
+        // Parse the calculator for the element
+        final Element calculatorElement = element.getFirstChildElement("calculator");
+        if (calculatorElement != null) {
+            setCalculator(typeManager.loadCalculator(calculatorElement));
+        }
+    }
+
+
+    private boolean hasParametrizedValue() {
+        return getRange().isParametrizedValue();
     }
 
 }

@@ -83,4 +83,7 @@ public final class FloatRange extends RangeBase<Float> {
         return (float) (a + t * (b - a));
     }
 
+    @Override protected Float doValueFromString(String text) throws Exception {
+        return Float.parseFloat(text.trim());
+    }
 }

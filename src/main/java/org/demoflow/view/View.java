@@ -31,6 +31,7 @@ public final class View extends Game {
     private ModelBatch modelBatch;
 
     private Demo demo;
+    private Demo demoToShutDown;
     public DefaultRenderContext renderContext;
     private boolean initialized = false;
 
@@ -48,6 +49,7 @@ public final class View extends Game {
             if (this.demo != null) {
                 if (initialized) {
                     this.demo.shutdown();
+                    demoToShutDown = this.demo;
                 }
                 this.demo.setView(null);
             }
@@ -95,6 +97,14 @@ public final class View extends Game {
     @Override public void render() {
         time.nextStep();
 
+        final float deltaTime = Gdx.graphics.getRawDeltaTime();
+
+        // Allow previous demo to shut down when demo is changed
+        if (demoToShutDown != null) {
+            demoToShutDown.update(deltaTime);
+            demoToShutDown = null;
+        }
+
         // Clear screen
         // IDEA: An effect could take care of this, so that we could adjust how much of the old view that is visible
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -104,7 +114,7 @@ public final class View extends Game {
 
         if (demo != null) {
             // Update demo
-            demo.update(Gdx.graphics.getRawDeltaTime());
+            demo.update(deltaTime);
 
             // Render demo
             demo.render(renderContext);

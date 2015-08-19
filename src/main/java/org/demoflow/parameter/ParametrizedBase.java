@@ -5,8 +5,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import nu.xom.Element;
+import nu.xom.Elements;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.calculator.function.Field;
 import org.demoflow.calculator.function.ColorField;
+import org.demoflow.effect.Effect;
 import org.demoflow.interpolator.Interpolator;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeBase;
@@ -15,6 +19,10 @@ import org.demoflow.calculator.Calculator;
 import org.demoflow.parameter.range.*;
 import org.demoflow.parameter.range.ranges.*;
 import org.flowutils.Symbol;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.flowutils.Check.nonEmptyString;
 import static org.flowutils.Check.notNull;
@@ -138,10 +146,7 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
      * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
      */
     protected final Parameter<Field> addParameter(String id, Field initialValue) {
-        final Parameter<Field> fieldParameter = addParameter(id, initialValue, FieldRange.FULL, true);
-        // Field parameters are a special case as their calculators are also their values.
-        fieldParameter.setCalculator(initialValue);
-        return fieldParameter;
+        return addParameter(id, initialValue, FieldRange.FULL, true);
     }
 
     /**
@@ -151,10 +156,7 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
      * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
      */
     protected final Parameter<ColorField> addParameter(String id, ColorField initialValue) {
-        final Parameter<ColorField> fieldParameter = addParameter(id, initialValue, ColorFieldRange.FULL, true);
-        // Field parameters are a special case as their calculators are also their values.
-        fieldParameter.setCalculator(initialValue);
-        return fieldParameter;
+        return addParameter(id, initialValue, ColorFieldRange.FULL, true);
     }
 
     /**
@@ -251,6 +253,10 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
         return null;
     }
 
+    @Override public final boolean hasParameter(Symbol id) {
+        return getParameterOrNull(id) != null;
+    }
+
     @Override public final Parameter getParameter(Symbol id) {
         final Parameter parameter = getParameterOrNull(id);
 
@@ -298,4 +304,43 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
     }
 
 
+    /**
+     * Assign parameter values from the specified xml element.
+     */
+    protected void assignParameters(Parametrized parametrized, Element element, DemoComponentManager typeManager) throws IOException {
+        final Element parametersElement = element.getFirstChildElement("parameters");
+        if (parametersElement != null) {
+            // Loop parameters
+            final Elements childElements = parametersElement.getChildElements();
+            for (int i = 0; i < childElements.size(); i++) {
+                final Element parameterElement = childElements.get(i);
+                final String parameterId = parameterElement.getAttributeValue("id");
+
+                // If we have a parameter with the specified id, assign it based on the value in the xml
+                final Parameter parameter = parametrized.getParameterOrNull(Symbol.get(parameterId));
+                if (parameter != null) {
+                    parameter.fromXmlElement(parameterElement, typeManager);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Load effects from the specified xml element.
+     */
+    protected List<Effect> readEffects(Element element, DemoComponentManager typeManager) throws IOException {
+        final ArrayList<Effect> effects = new ArrayList<>();
+
+        final Element effectsElement = element.getFirstChildElement("effects");
+        if (effectsElement != null) {
+            // Loop effects
+            final Elements childElements = effectsElement.getChildElements();
+            for (int i = 0; i < childElements.size(); i++) {
+                effects.add(typeManager.loadEffect(childElements.get(i)));
+            }
+        }
+
+        return effects;
+    }
 }

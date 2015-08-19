@@ -1,8 +1,16 @@
 package org.demoflow.parameter.range.ranges;
 
+import nu.xom.Element;
+import nu.xom.Node;
+import nu.xom.Text;
+import org.demoflow.DemoComponentManager;
+import org.demoflow.calculator.Calculator;
+import org.demoflow.calculator.function.ColorField;
 import org.demoflow.calculator.function.Field;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.random.RandomSequence;
+
+import java.io.IOException;
 
 /**
  *
@@ -39,5 +47,9 @@ public final class FieldRange extends RangeBase<Field> {
 
     @Override public Field interpolate(double t, Field a, Field b, Field out) {
         throw new UnsupportedOperationException("This operation is not supported for Fields");
+    }
+
+    @Override protected Field doValueFromString(String text) throws Exception {
+        return null;
     }
 }

@@ -1,9 +1,15 @@
 package org.demoflow.parameter.range.ranges;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector3;
+import nu.xom.Element;
+import nu.xom.Node;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;
+
+import java.io.IOException;
 
 /**
  * A range for colors.
@@ -101,4 +107,30 @@ public final class ColorRange extends RangeBase<Color> {
         out.lerp(b, (float) t);
         return out;
     }
+
+    @Override public String valueToString(Color value) {
+        return value.r + ", " +
+               value.g + ", " +
+               value.b + ", " +
+               value.a;
+    }
+
+    @Override protected Color doValueFromString(String text) throws Exception {
+        if (text.startsWith("#")) {
+            // Parse html color style string, add full alpha as alpha is not used in this format
+            return new Color(Integer.parseInt(text.substring(1).trim() + "FF", 16));
+        }
+        else {
+            // Parse comma separated rgb values
+            final String[] coordinates = text.trim().split(",");
+            if (coordinates.length < 3 || coordinates.length > 4) throw new IllegalArgumentException("Expected three or four comma separated color values");
+            return new Color(
+                    Float.parseFloat(coordinates[0].trim()),
+                    Float.parseFloat(coordinates[1].trim()),
+                    Float.parseFloat(coordinates[2].trim()),
+                    coordinates.length > 3 ? Float.parseFloat(coordinates[3].trim()) : 1.0f
+            );
+        }
+    }
+
 }

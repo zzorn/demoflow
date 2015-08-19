@@ -1,6 +1,8 @@
 package org.demoflow.demo;
 
 import com.badlogic.gdx.utils.Array;
+import nu.xom.*;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.effect.RenderContext;
 import org.demoflow.node.DemoNode;
 import org.demoflow.utils.ArrayUtils;
@@ -13,9 +15,15 @@ import org.demoflow.calculator.DefaultCalculationContext;
 import org.demoflow.effect.Effect;
 import org.demoflow.parameter.range.ranges.DoubleRange;
 import org.flowutils.Check;
+import org.flowutils.FileUtils;
+import org.flowutils.LogUtils;
 import org.flowutils.Symbol;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
 
 import static org.flowutils.Check.notNull;
 
@@ -26,6 +34,7 @@ import static org.flowutils.Check.notNull;
 public class DefaultDemo extends ParametrizedBase implements Demo {
 
     public static final double DEFAULT_DURATION_SECONDS = 60.0;
+    private static final int DEFAULT_TIMESTEPS_PER_SECOND = 120;
     public final Parameter<Double> timeDilation;
 
 
@@ -40,7 +49,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     private boolean paused = false;
     private double speed = 1.0;
     private double durationSeconds = DEFAULT_DURATION_SECONDS;
-    private double timeStepsPerSecond = 120;
+    private double timeStepsPerSecond = DEFAULT_TIMESTEPS_PER_SECOND;
 
     private boolean autoRestart = false;
 
@@ -83,6 +92,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     }
 
     public void setName(String name) {
+        notNull(name, "name");
         this.name = name;
     }
 
@@ -189,8 +199,9 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
     }
 
     @Override public void shutdown() {
-        if (shutdown) throw new IllegalStateException("The demo has already been shut down.");
-        effectShutdownRequested = true;
+        if (!shutdown) {
+            effectShutdownRequested = true;
+        }
     }
 
     @Override public void update(double deltaTime_s) {
@@ -311,19 +322,6 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
         }
     }
 
-    @Override public void load(File demoFile) {
-        // IMPLEMENT: Implement load
-        // TODO: Maybe custom xml format with generic demo parameters, and then effects with their type and their parameter values
-    }
-
-    @Override public void save(File demoFile) {
-        // IMPLEMENT: Implement save
-    }
-
-    @Override public void onParameterChanged(Parameter parameter, Symbol id, Object value) {
-        // Nothing to do.
-    }
-
     @Override public final void addListener(DemoListener listener) {
         notNull(listener, "listener");
 
@@ -348,6 +346,81 @@ public class DefaultDemo extends ParametrizedBase implements Demo {
 
     @Override public Array<? extends DemoNode> getChildren() {
         return ArrayUtils.combineArrays(getParameters(), getEffects());
+    }
+
+    @Override public void load(File demoFile, DemoComponentManager typeManager) throws IOException {
+        loadFromXml(FileUtils.readFile(demoFile), typeManager);
+    }
+
+    @Override public void save(File demoFile) throws IOException {
+        FileUtils.saveAndCheck(generateXml(), demoFile);
+    }
+
+    @Override public void loadFromXml(String xmlText, DemoComponentManager typeManager) throws IOException {
+        try {
+            Builder parser = new Builder();
+            Document document = parser.build(new StringReader(xmlText));
+            fromXmlElement(document.getRootElement(), typeManager);
+        } catch (ParsingException e) {
+            throw new IOException("Could not parse the demo: " + e.getMessage(), e);
+        }
+    }
+
+    @Override public String generateXml() throws IOException {
+        // Generate xml document
+        final Document document = new Document(toXmlElement());
+
+        // Pretty print the document with indent
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Serializer serializer = new Serializer(outputStream);
+        serializer.setIndent(4);
+        serializer.write(document);
+
+        return outputStream.toString();
+    }
+
+    @Override public void fromXmlElement(Element element, DemoComponentManager typeManager) throws IOException {
+        // Get attributes
+        setName(element.getAttributeValue("name"));
+        setRandomSeed(getLongAttribute(element, "randomSeed", 0));
+        setDurationSeconds(getDoubleAttribute(element, "duration", DEFAULT_DURATION_SECONDS));
+        setSpeed(getDoubleAttribute(element, "speed", 1.0));
+        setTimeStepsPerSecond(getDoubleAttribute(element, "timeStepsPerSecond", DEFAULT_TIMESTEPS_PER_SECOND));
+
+        // Assign parameter values
+        assignParameters(this, element, typeManager);
+
+        // Assign effects
+        final List<Effect> effects = readEffects(element, typeManager);
+        for (Effect effect : effects) {
+            addEffect(effect);
+        }
+    }
+
+    @Override public Element toXmlElement() {
+        // Create demo element and the attributes
+        Element demo = new Element("demo");
+        addAttribute(demo, "name", getName());
+        addAttribute(demo, "randomSeed", getRandomSeed());
+        addAttribute(demo, "duration", getDurationSeconds());
+        addAttribute(demo, "speed", getSpeed());
+        addAttribute(demo, "timeStepsPerSecond", getTimeStepsPerSecond());
+
+        // Create child elements for the parameters of the demo
+        final Element parameters = new Element("parameters");
+        demo.appendChild(parameters);
+        for (Parameter parameter : getParameters()) {
+            parameters.appendChild(parameter.toXmlElement());
+        }
+
+        // Create child elements for the effects of the demo
+        final Element effects = new Element("effects");
+        demo.appendChild(effects);
+        for (Effect effect : getEffects()) {
+            effects.appendChild(effect.toXmlElement());
+        }
+
+        return demo;
     }
 
 }

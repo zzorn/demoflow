@@ -1,5 +1,7 @@
 package org.demoflow.effect;
 
+import nu.xom.Element;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.Parametrized;
@@ -10,6 +12,9 @@ import org.flowutils.random.RandomSequence;
 import org.flowutils.random.XorShift;
 
 import javax.swing.*;
+import java.io.IOException;
+
+import static org.flowutils.Check.notNull;
 
 /**
  * Common functionality for effects.
@@ -17,6 +22,8 @@ import javax.swing.*;
 public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
 
     private static final String ICON_PATH = "assets/icons/effects/";
+
+    private String name;
 
     private RandomSequence randomSequence;
     private boolean active = false;
@@ -28,6 +35,9 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     private double relativeStartTime = 0.0;
     private double relativeEndTime = 1.0;
 
+    public EffectBase() {
+        this.name = getClass().getSimpleName().replace("Effect", "");
+    }
 
     @Override public final void setup(long randomSeed) {
         if (initialized) throw new IllegalStateException("Setup can not be called if we are already initialized.");
@@ -58,7 +68,12 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     }
 
     @Override public String getName() {
-        return getClass().getSimpleName().replace("Effect", "");
+        return name;
+    }
+
+    @Override public void setName(String name) {
+        notNull(name, "name");
+        this.name = name;
     }
 
     @Override public final double getRelativeStartTime() {
@@ -164,14 +179,6 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     }
 
     /**
-     * Called when a parameter is updated, can be used to listen to changes.
-     * Automatically called for all parameters after startup has been called, to allow initialization of the effect.
-     * Override if needed.
-     */
-    @Override public void onParameterChanged(Parameter parameter, Symbol id, Object value) {
-    }
-
-    /**
      * Do any logic updates here.
      */
     protected abstract void doUpdate(CalculationContext calculationContext);
@@ -233,5 +240,35 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
 
     @Override protected String getIconPath() {
         return ICON_PATH + getClass().getSimpleName() + ".png";
+    }
+
+    @Override public Element toXmlElement() {
+        // Create effect element and add the common attributes
+        Element effect = new Element("effect");
+        addAttribute(effect, "name", getName());
+        addAttribute(effect, "type", getClass().getSimpleName());
+        addAttribute(effect, "relativeStartTime", relativeStartTime);
+        addAttribute(effect, "relativeEndTime", relativeEndTime);
+
+        // Create child elements for the parameters of the effect
+        final Element parameters = new Element("parameters");
+        effect.appendChild(parameters);
+        for (Parameter parameter : getParameters()) {
+            parameters.appendChild(parameter.toXmlElement());
+        }
+
+        return effect;
+    }
+
+    @Override public void fromXmlElement(Element element, DemoComponentManager typeManager) throws IOException {
+        // Assign common attributes
+        setName(element.getAttributeValue("name"));
+        setEffectTimePeriod(
+                getDoubleAttribute(element, "relativeStartTime", 0.0),
+                getDoubleAttribute(element, "relativeEndTime", 1.0)
+        );
+
+        // Load effect parameters
+        assignParameters(this, element, typeManager);
     }
 }

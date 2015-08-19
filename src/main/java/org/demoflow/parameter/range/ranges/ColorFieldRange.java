@@ -1,5 +1,7 @@
 package org.demoflow.parameter.range.ranges;
 
+import nu.xom.Node;
+import org.demoflow.DemoComponentManager;
 import org.demoflow.calculator.function.ColorField;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.random.RandomSequence;
@@ -39,5 +41,9 @@ public final class ColorFieldRange extends RangeBase<ColorField> {
 
     @Override public ColorField interpolate(double t, ColorField a, ColorField b, ColorField out) {
         throw new UnsupportedOperationException("This operation is not supported for Fields");
+    }
+
+    @Override protected ColorField doValueFromString(String text) throws Exception {
+        return null;
     }
 }

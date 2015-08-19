@@ -1,11 +1,14 @@
 package org.demoflow.node;
 
 import com.badlogic.gdx.utils.Array;
+import nu.xom.Attribute;
+import nu.xom.Element;
 import org.demoflow.utils.ArrayEnumeration;
 import org.demoflow.utils.EmptyEnumeration;
 import org.demoflow.utils.UiUtils;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
@@ -166,5 +169,57 @@ public abstract class DemoNodeBase implements DemoNode {
         }
 
         return cachedIcon;
+    }
+
+    protected void addAttribute(Element element, final String name, final Number value) {
+        addAttribute(element, name, value.toString());
+    }
+
+    protected void addAttribute(Element element, final String name, final String value) {
+        element.addAttribute(new Attribute(name, value));
+    }
+
+    protected final boolean getBooleanAttribute(Element element, final String name, boolean defaultValue) throws IOException {
+        try {
+            if (hasAttribute(element, name)) return Boolean.parseBoolean(element.getAttributeValue(name));
+            else return defaultValue;
+        }
+        catch (NumberFormatException e) {
+            throw new IOException("Could not parse the boolean attribute " + name + " of xml element " + element + ": " + e.getMessage(), e);
+        }
+    }
+
+    protected final int getIntAttribute(Element element, final String name, int defaultValue) throws IOException {
+        try {
+            if (hasAttribute(element, name)) return Integer.parseInt(element.getAttributeValue(name));
+            else return defaultValue;
+        }
+        catch (NumberFormatException e) {
+            throw new IOException("Could not parse the integer attribute " + name + " of xml element " + element + ": " + e.getMessage(), e);
+        }
+    }
+
+    protected final long getLongAttribute(Element element, final String name, long defaultValue) throws IOException {
+        try {
+            if (hasAttribute(element, name)) return Long.parseLong(element.getAttributeValue(name));
+            else return defaultValue;
+        }
+        catch (NumberFormatException e) {
+            throw new IOException("Could not parse the long attribute " + name + " of xml element " + element + ": " + e.getMessage(), e);
+        }
+    }
+
+    protected final double getDoubleAttribute(Element element, final String name, double defaultValue) throws IOException {
+        try {
+            if (hasAttribute(element, name)) return Double.parseDouble(element.getAttributeValue(name));
+            else return defaultValue;
+        }
+        catch (NumberFormatException e) {
+            throw new IOException("Could not parse the double attribute " + name + " of xml element " + element + ": " + e.getMessage(), e);
+        }
+    }
+
+    protected final boolean hasAttribute(Element element, String name) {
+        return element.getAttribute(name) != null;
     }
 }
