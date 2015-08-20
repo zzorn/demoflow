@@ -25,7 +25,7 @@ public abstract class RangeBase<T> implements Range<T> {
     private static final String DEFAULT_TYPE_ICONS_PATH = "assets/icons/types/";
     private final Class<T> type;
 
-    private final NumberFormat numberFormat = new DecimalFormat("#0.0###");
+    protected final NumberFormat numberFormat = new DecimalFormat("#0.######");
 
     private final String iconName;
     private final String description;

@@ -1,15 +1,9 @@
 package org.demoflow.parameter.range.ranges;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector3;
-import nu.xom.Element;
-import nu.xom.Node;
-import org.demoflow.DemoComponentManager;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;
-
-import java.io.IOException;
 
 /**
  * A range for colors.
@@ -109,10 +103,10 @@ public final class ColorRange extends RangeBase<Color> {
     }
 
     @Override public String valueToString(Color value) {
-        return value.r + ", " +
-               value.g + ", " +
-               value.b + ", " +
-               value.a;
+        return numberFormat.format(value.r) + ", " +
+               numberFormat.format(value.g) + ", " +
+               numberFormat.format(value.b) + ", " +
+               numberFormat.format(value.a);
     }
 
     @Override protected Color doValueFromString(String text) throws Exception {

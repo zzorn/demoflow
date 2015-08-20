@@ -1,10 +1,6 @@
 package org.demoflow.parameter.range.ranges;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import nu.xom.Element;
-import nu.xom.Node;
-import org.demoflow.DemoComponentManager;
 import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.MathUtils;
 import org.flowutils.random.RandomSequence;
@@ -139,9 +135,9 @@ public final class Vector3Range extends RangeBase<Vector3> {
     }
 
     @Override public String valueToString(Vector3 value) {
-        return value.x + ", " +
-               value.y + ", " +
-               value.z;
+        return numberFormat.format(value.x) + ", " +
+               numberFormat.format(value.y) + ", " +
+               numberFormat.format(value.z);
     }
 
     @Override protected Vector3 doValueFromString(String text) throws Exception {

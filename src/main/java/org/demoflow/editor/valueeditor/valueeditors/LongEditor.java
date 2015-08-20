@@ -14,10 +14,6 @@ public final class LongEditor extends TextFieldEditorBase<Long> {
         super(range);
     }
 
-    @Override protected DecimalFormat createTextFieldFormat() {
-        return new DecimalFormat("#0");
-    }
-
     @Override public Class<Long> getEditedType() {
         return Long.class;
     }

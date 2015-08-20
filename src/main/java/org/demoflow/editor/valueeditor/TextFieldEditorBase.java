@@ -26,7 +26,7 @@ public abstract class TextFieldEditorBase<T> extends ValueEditorBase<T> {
     public static final Color DEFAULT_WARNING_COLOR = new Color(255,190,0);
     public static final Color DEFAULT_EDITED_COLOR = new Color(255,255,0);
 
-    private JFormattedTextField textField;
+    private JTextField textField;
     private Color defaultColor;
     private Color editedColor;
     private Color warningColor;
@@ -38,7 +38,7 @@ public abstract class TextFieldEditorBase<T> extends ValueEditorBase<T> {
     }
 
     @Override protected JComponent buildEditorUi(JPanel editorPanel, Range<T> range, T initialValue) {
-        textField = new JFormattedTextField(createTextFieldFormat());
+        textField = new JTextField();
         textField.setPreferredSize(new Dimension(120, 24));
 
         defaultColor = editorPanel.getBackground();
@@ -140,14 +140,6 @@ public abstract class TextFieldEditorBase<T> extends ValueEditorBase<T> {
      */
     protected T stringToValue(String text) throws Exception {
         return getRange().valueFromStringOrNull(text);
-    }
-
-    /**
-     * @return format that should be used to format the displayed value with in the FormattedTextField.
-     *         Uses a simple string format without any special formatting by default.  Override as needed.
-     */
-    protected Format createTextFieldFormat() {
-        return new SimpleStringFormat();
     }
 
 }

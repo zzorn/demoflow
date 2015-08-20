@@ -2,10 +2,7 @@ package org.demoflow.utils;
 
 import org.reflections.Reflections;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class related utility functions.
@@ -45,6 +42,13 @@ public final class ClassUtils {
                 }
             }
         }
+
+        // Sort classes by name
+        Collections.sort(classes, new Comparator<Class<? extends T>>() {
+            @Override public int compare(Class<? extends T> o1, Class<? extends T> o2) {
+                return o1.getSimpleName().compareToIgnoreCase(o2.getSimpleName());
+            }
+        });
 
         return classes;
     }

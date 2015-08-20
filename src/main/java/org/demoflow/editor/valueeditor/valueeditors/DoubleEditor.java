@@ -14,10 +14,6 @@ public final class DoubleEditor extends TextFieldEditorBase<Double> {
         super(range);
     }
 
-    @Override protected DecimalFormat createTextFieldFormat() {
-        return new DecimalFormat("#0.0###");
-    }
-
     @Override public Class<Double> getEditedType() {
         return Double.class;
     }

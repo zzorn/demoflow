@@ -14,10 +14,6 @@ public final class ShortEditor extends TextFieldEditorBase<Short> {
         super(range);
     }
 
-    @Override protected DecimalFormat createTextFieldFormat() {
-        return new DecimalFormat("#0");
-    }
-
     @Override public Class<Short> getEditedType() {
         return Short.class;
     }

@@ -63,10 +63,12 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     private final DemoNodeListener nodeListener = new DemoNodeListenerAdapter() {
         @Override public void onChildAdded(DemoNode parent, DemoNode child) {
             addChildUi(child);
+            updateNodeUi();
         }
 
         @Override public void onChildRemoved(DemoNode parent, DemoNode child) {
             removeChildUi(child);
+            updateNodeUi();
         }
 
         @Override public void onNodeUpdated(DemoNode node) {

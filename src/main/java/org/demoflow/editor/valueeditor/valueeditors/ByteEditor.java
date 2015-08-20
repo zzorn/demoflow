@@ -14,10 +14,6 @@ public final class ByteEditor extends TextFieldEditorBase<Byte> {
         super(range);
     }
 
-    @Override protected DecimalFormat createTextFieldFormat() {
-        return new DecimalFormat("#0");
-    }
-
     @Override public Class<Byte> getEditedType() {
         return Byte.class;
     }
