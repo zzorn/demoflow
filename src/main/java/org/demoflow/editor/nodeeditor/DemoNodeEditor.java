@@ -8,6 +8,7 @@ import org.demoflow.effect.EffectContainer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -26,12 +27,11 @@ public class DemoNodeEditor extends NodeEditorBase<Demo> {
 
     @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel valueEditorPanel, Demo node) {
         // Add add button
-        otherTopBarContentPanel.add(new JButton(new AbstractAction("Add Effect") {
+        addBarButton("Add Effect", "Adds a new effect", null, new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 createEffectDialog.openDialog(getNode());
             }
-        }), "pushx, right");
-
+        });
     }
 
     @Override protected void doUpdateNodeUi(Demo node) {

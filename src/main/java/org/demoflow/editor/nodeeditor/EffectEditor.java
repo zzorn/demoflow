@@ -9,6 +9,7 @@ import org.demoflow.node.DemoNode;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -29,11 +30,11 @@ public class EffectEditor<T extends DemoNode> extends NodeEditorBase<Effect> {
     @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel valueEditorPanel, Effect node) {
         // Add add button
         if (getNode() instanceof EffectContainer) {
-            otherTopBarContentPanel.add(new JButton(new AbstractAction("Add Effect") {
+            addBarButton("Add Effect", "Adds a new effect", null, new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
                     createEffectDialog.openDialog((EffectContainer) getNode());
                 }
-            }), "right");
+            });
         }
 
         /* TODO: Fix node place update in UI
@@ -64,13 +65,12 @@ public class EffectEditor<T extends DemoNode> extends NodeEditorBase<Effect> {
         */
 
         // Add delete button
-        otherTopBarContentPanel.add(new JButton(new AbstractAction("X") {
+        addBarButton("X", "Delete this effect", null, new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 EffectContainer container = (EffectContainer) getNode().getParent();
                 container.removeEffect(getNode());
             }
-        }), "pushx, right");
-
+        });
     }
 
     @Override protected void doUpdateNodeUi(Effect node) {

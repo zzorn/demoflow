@@ -1,6 +1,8 @@
 package org.demoflow.editor.nodeeditor;
 
 import com.badlogic.gdx.utils.Array;
+import net.miginfocom.layout.CC;
+import net.miginfocom.layout.LC;
 import net.miginfocom.swing.MigLayout;
 import org.demoflow.demo.Demo;
 import org.demoflow.editor.DemoEditor;
@@ -10,6 +12,7 @@ import org.demoflow.node.DemoNodeListener;
 import org.demoflow.node.DemoNodeListenerAdapter;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.calculator.Calculator;
+import org.demoflow.utils.uiutils.UiUtils;
 import org.flowutils.StringUtils;
 
 import javax.swing.*;
@@ -18,6 +21,7 @@ import javax.swing.border.MatteBorder;
 import javax.swing.event.MouseInputAdapter;
 
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -110,7 +114,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         // Add indenter
         indenter = new JPanel(new MigLayout("insets 0"));
         add(indenter, "align left");
-        forceHeight(indenter, barHeight);
+        UiUtils.forceHeight(indenter, barHeight);
         debugBorderize(indenter, Color.blue);
 
         topBar = new JPanel(new MigLayout("insets 0, gap 0"));
@@ -118,7 +122,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
 
         // Expand collapse button
         expandToggle = new JLabel(expanded ? arrowDownIcon : arrowRightIcon);
-        forceSize(expandToggle, barHeight, barHeight);
+        UiUtils.forceSize(expandToggle, barHeight, barHeight);
         topBar.add(expandToggle, "align left");
         topBar.addMouseListener(new MouseInputAdapter() {
             @Override public void mousePressed(MouseEvent e) {
@@ -133,9 +137,9 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         debugBorderize(nameLabel, Color.green);
 
         // Space for other things in top bar
-        otherTopBarContentPanel = new JPanel(new MigLayout("insets 0"));
-        topBar.add(otherTopBarContentPanel, "");
-        forceSize(otherTopBarContentPanel, OTHER_TOPBAR_WIDTH, barHeight);
+        otherTopBarContentPanel = new JPanel(new MigLayout(new LC().insets("0").alignX("right")));
+        topBar.add(otherTopBarContentPanel, "pushx");
+        UiUtils.forceSize(otherTopBarContentPanel, OTHER_TOPBAR_WIDTH, barHeight);
         debugBorderize(otherTopBarContentPanel, Color.YELLOW);
 
         // Time editor bar
@@ -169,6 +173,17 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         updateIndent();
     }
 
+    protected final JButton addBarButton(String name, String tooltip, String iconPath, ActionListener actionListener) {
+        return addBarButton(UiUtils.createAction(name, tooltip, iconPath, actionListener));
+    }
+
+    protected final JButton addBarButton(Action action) {
+        final JButton button = new JButton(action);
+        int buttonH = barHeight;
+        otherTopBarContentPanel.add(button, new CC().height("" + (buttonH) + "px!").alignX("right").alignY("center").pad("0"));
+        button.setBackground(otherTopBarContentPanel.getBackground());
+        return button;
+    }
 
 
     private void setExpanded(boolean expanded) {
@@ -204,24 +219,10 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         final int ownIndent = (node.getDepth()) * indentWidth;
         final int surplusIndent = maxIndent - ownIndent;
 
-        forceSize(indenter, ownIndent, barHeight);
-        forceSize(nameLabel, LABEL_WIDTH + surplusIndent, barHeight);
+        UiUtils.forceSize(indenter, ownIndent, barHeight);
+        UiUtils.forceSize(nameLabel, LABEL_WIDTH + surplusIndent, barHeight);
 
         refreshLayout();
-    }
-
-    private void forceSize(final JComponent component, int width, final int height) {
-        final Dimension size = new Dimension(width, height);
-        component.setMaximumSize(size);
-        component.setPreferredSize(size);
-        component.setMinimumSize(size);
-    }
-
-    private void forceHeight(final JComponent component, final int height) {
-        final Dimension size = new Dimension(component.getWidth(), height);
-        component.setMaximumSize(size);
-        component.setPreferredSize(size);
-        component.setMinimumSize(size);
     }
 
     private void addChildUi(DemoNode child) {

@@ -121,17 +121,24 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     }
 
     @Override public final void activate() {
-        if (!initialized) throw new IllegalStateException("Setup should be called before activate");
         if (active) throw new IllegalStateException(this + " is already started");
 
         active = true;
 
-        doActivate();
+        if (initialized) {
+            doActivate();
+        }
     }
 
     @Override public final void update(CalculationContext calculationContext) {
         // Initialize the effect if it has not yet been initialized
-        if (!initialized) setup();
+        if (!initialized) {
+            setup();
+
+            if (active) {
+                doActivate();
+            }
+        }
 
         // Activate effect when effect start time passed, deactivate effect when stop time passed
         updateEffectActivationState(calculationContext);
@@ -161,11 +168,12 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     }
 
     @Override public final void reset() {
-        if (!initialized) throw new IllegalStateException("Can not reset before setup");
         if (shutdown) throw new IllegalStateException("Can not reset after a shutdown");
 
-        deactivate();
-        doReset();
+        if (initialized) {
+            deactivate();
+            doReset();
+        }
     }
 
     @Override public final void shutdown() {

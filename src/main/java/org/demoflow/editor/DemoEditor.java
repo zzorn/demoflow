@@ -222,7 +222,7 @@ public final class DemoEditor {
                 demo.setAutoRestart(((JCheckBox) e.getSource()).isSelected());
             }
         });
-        restartCheckBox.setSelected(demo != null && demo.isAutoRestart());
+        restartCheckBox.setSelected(demo == null || demo.isAutoRestart());
         topRow.add(restartCheckBox);
 
         // Demo position indicator

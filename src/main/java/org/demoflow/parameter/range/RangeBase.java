@@ -7,8 +7,7 @@ import nu.xom.Node;
 import nu.xom.Text;
 import org.demoflow.DemoComponentManager;
 import org.demoflow.calculator.Calculator;
-import org.demoflow.node.DemoNode;
-import org.demoflow.utils.UiUtils;
+import org.demoflow.utils.uiutils.UiUtils;
 import org.flowutils.random.RandomSequence;
 
 import javax.swing.*;

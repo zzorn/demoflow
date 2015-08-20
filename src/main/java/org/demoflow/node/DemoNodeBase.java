@@ -3,13 +3,10 @@ package org.demoflow.node;
 import com.badlogic.gdx.utils.Array;
 import nu.xom.Attribute;
 import nu.xom.Element;
-import org.demoflow.utils.ArrayEnumeration;
-import org.demoflow.utils.EmptyEnumeration;
-import org.demoflow.utils.UiUtils;
+import org.demoflow.utils.uiutils.UiUtils;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.util.Enumeration;
 
 import static org.flowutils.Check.notNull;
 

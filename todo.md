@@ -6,9 +6,12 @@ Demo Editor
 
 ### Bugs
  
- 1. UI sometimes freezes up while creating the editors for a demo.
+ 1. UI sometimes freezes up while creating the editors for a demo (layout dimensions getting a nullpointer).
  1. Column width is not adjusted properly when the max node depth is changed. 
- 1. **FIXED**~~Double / float fields stay with edited background color even after editing complete.~~ 
+ 1. **FIXED**~~Double / float fields stay with edited background color even after editing complete.~~
+ 1. After the demo has stopped it is not possible to delete effects, as the deletion happens in the update call where we have an opengl context and can use dispose.
+    Maybe solve by having a separate manage call to effects from the opengl render call to handle initialization, setup, deletion, and maybe activation & deactivation.
+ 1. UI lags a lot and there is high CPU utilization after the demo has ended (something is busy looping, or generating a lot of updates?).   
 
 
 ### Refactorings
@@ -32,9 +35,10 @@ Demo Editor
 ### Features   
 
  1. **DONE** ~~Add support for adding and removing effects.~~
- 1. Implement effect rearranging
  1. Select activation and deactivation times for effects (with sliders on time view)
  1. Add support for adding and removing variables (dynamically created parameters).
+ 1. Implement effect rearranging
+ 1. Add sliders to number value editors with finite ranges, and tweakers to ones with infinite ranges. 
  1. **DONE** ~~Add save and load of demo as an xml file.~~
  1. Import demo as effect group feature
  1. Main time view bar for demo, with current visible area (drag to pan, wheel to zoom), showing currently edited time and current demo progress
@@ -42,10 +46,11 @@ Demo Editor
  1. Add context menu to node UIs, with cut, copy and paste (maybe have a paste buffer with last 4-8 entries or so).
     Also have paste as new variable.
  1. Add support for exporting and importing individual effects or calculators as libraries.
- 1. Programmable Pixel shader, converts calculators to shader code?? (only supports some variable and calculator types - double, vector2, vector3, color, int, etc.)
- 1. Expression function / calculator, that parses an expression and generates calculator / function / field based on that (compile to java bytecode, or use in shader).
  1. Add undo/redo support if feasible
- 1. Add sliders to number value editors with finite ranges, and tweakers to ones with infinite ranges. 
+ 1. Shader types
+ 1. Editable shaders (text area)
+ 1. Programmable Pixel (and vertex?) shader, converts calculators to shader code?? (only supports some variable and calculator types - double, vector2, vector3, color, int, etc.)
+ 1. Expression function / calculator, that parses an expression and generates calculator / function / field based on that (compile to java bytecode, or use in shader).
 
   
 ### Content  
@@ -54,7 +59,7 @@ Demo Editor
  1. Add comparison operations (1 or 2 doubles => boolean).  
  1. Add logic operations (1 or 2 booleans => boolean).  
  1. Add if calculator / function.  
- 1. Add 3D noise, implementing field and providing the third dimension as an additional parameter, to allow easily animated noise.
+ 1. **DONE**~~Add 3D noise, implementing field and providing the third dimension as an additional parameter, to allow easily animated noise.~~
  1. Add 1D noise.
  1. Add 2D noise implementing function, and providing additional dimension as parameter, for animated 1D noise.
  1. **DONE**~~Add oscillator calculator based on oscillator function code from soundrasp project (supported large variety of waveforms IIRC).~~
