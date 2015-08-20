@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class TimeBar extends JPanel {
 
     private static final int DRAG_BUTTON = MouseEvent.BUTTON1;
-    private static final double MOUSE_WHEEL_SCALING_FACTOR = 1.27;
+    private static final double MOUSE_WHEEL_SCALING_FACTOR = 1.3333;
     private static final Color BACKGROUND_COLOR = new Color(100, 100, 100);
     private static final Color CURRENT_TIME_COLOR = new Color(255, 243, 227, 255);
     private static final Color CURRENT_TIME_COLOR_BORDER1 = new Color(255, 219, 117, 94);
@@ -58,9 +58,11 @@ public class TimeBar extends JPanel {
 
                 final double areaSize = timeBarModel.getVisibleArea();
                 final double newAreaSize = zoomFactor * areaSize;
-                final double marginMove = 0.5 * (newAreaSize - areaSize);
-                timeBarModel.setVisibleArea(timeBarModel.getVisibleStartPos() - marginMove,
-                                            timeBarModel.getVisibleEndPos() + marginMove);
+                final double marginMove = (newAreaSize - areaSize);
+                final double relativeZoomLocation = MathUtils.relPosAndClamp(getTimeAtMouseLocation(e), timeBarModel.getVisibleStartPos(), timeBarModel.getVisibleEndPos());
+
+                timeBarModel.setVisibleArea(timeBarModel.getVisibleStartPos() - marginMove * (relativeZoomLocation),
+                                            timeBarModel.getVisibleEndPos() + marginMove * (1.0 - relativeZoomLocation));
                 repaint();
             }
         });
