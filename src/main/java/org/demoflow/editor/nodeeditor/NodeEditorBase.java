@@ -144,7 +144,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         UiUtils.forceSize(otherTopBarContentPanel, OTHER_TOPBAR_WIDTH, barHeight);
         debugBorderize(otherTopBarContentPanel, Color.YELLOW);
 
-        // Time editor bar
+        // Time / value editor bar
         timeEditorBar = new JPanel(new MigLayout("left, insets 0, gapy 0, fillx"));
         add(timeEditorBar, "growx, pushx, height " + barHeight);
 

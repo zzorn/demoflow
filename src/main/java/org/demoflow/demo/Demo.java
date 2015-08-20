@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import org.demoflow.DemoComponentManager;
 import org.demoflow.effect.EffectContainer;
 import org.demoflow.effect.RenderContext;
+import org.demoflow.utils.uiutils.timebar.TimeBarModel;
 import org.demoflow.view.View;
 import org.demoflow.parameter.Parametrized;
 import org.demoflow.effect.Effect;
@@ -121,6 +122,11 @@ public interface Demo extends Parametrized, EffectContainer {
      * Maybe restarted later.
      */
     void shutdown();
+
+    /**
+     * @return used by the demo editor to keep track of the currently visible edited area and the current time.
+     */
+    TimeBarModel getTimeBarModel();
 
     /**
      * Shuts resets the demo to the start state.

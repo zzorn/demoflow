@@ -8,6 +8,7 @@ import org.demoflow.effect.RenderContext;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeListenerAdapter;
 import org.demoflow.utils.ArrayUtils;
+import org.demoflow.utils.uiutils.timebar.TimeBarModel;
 import org.demoflow.view.View;
 import org.demoflow.effect.effects.EffectGroup;
 import org.demoflow.parameter.Parameter;
@@ -66,6 +67,8 @@ public class DefaultDemo extends ParametrizedBase implements Demo, EffectContain
     private boolean effectRestartRequested = false;
     private boolean initialized = false;
     private boolean shutdown = false;
+
+    private TimeBarModel timeBarModel = new TimeBarModel(1);
 
     public DefaultDemo() {
         this("Demo");
@@ -169,6 +172,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo, EffectContain
         Check.positive(durationSeconds, "durationSeconds");
 
         this.durationSeconds = durationSeconds;
+        timeBarModel.setEndTime(durationSeconds);
     }
 
     @Override public final long getRandomSeed() {
@@ -210,6 +214,10 @@ public class DefaultDemo extends ParametrizedBase implements Demo, EffectContain
         if (shutdown) throw new IllegalStateException("We can't setup a demo after it has been shut down.");
 
         effectSetupRequested = true;
+    }
+
+    @Override public TimeBarModel getTimeBarModel() {
+        return timeBarModel;
     }
 
     @Override public final void reset() {
@@ -264,6 +272,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo, EffectContain
 
                     // Update time
                     calculationContext.update(timeStepSizeSeconds);
+                    timeBarModel.setCurrentTime(calculationContext.getSecondsFromDemoStart());
 
                     // Update parameters in the demo itself
                     recalculateParameters(calculationContext);
@@ -314,6 +323,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo, EffectContain
         surplusTimeFromLastUpdate = 0;
         calculationContext.init(durationSeconds);
         undilatedTime.init(durationSeconds);
+        timeBarModel.setCurrentTime(calculationContext.getSecondsFromDemoStart());
 
         effects.reset();
 

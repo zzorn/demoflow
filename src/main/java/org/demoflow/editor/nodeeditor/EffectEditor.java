@@ -71,6 +71,9 @@ public class EffectEditor<T extends DemoNode> extends NodeEditorBase<Effect> {
                 container.removeEffect(getNode());
             }
         });
+
+
+
     }
 
     @Override protected void doUpdateNodeUi(Effect node) {
