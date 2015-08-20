@@ -172,7 +172,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo, EffectContain
         Check.positive(durationSeconds, "durationSeconds");
 
         this.durationSeconds = durationSeconds;
-        timeBarModel.setEndTime(durationSeconds);
+        timeBarModel.setDuration(durationSeconds);
     }
 
     @Override public final long getRandomSeed() {
@@ -272,7 +272,7 @@ public class DefaultDemo extends ParametrizedBase implements Demo, EffectContain
 
                     // Update time
                     calculationContext.update(timeStepSizeSeconds);
-                    timeBarModel.setCurrentTime(calculationContext.getSecondsFromDemoStart());
+                    timeBarModel.setCurrentTime(calculationContext.getRelativeDemoTime());
 
                     // Update parameters in the demo itself
                     recalculateParameters(calculationContext);

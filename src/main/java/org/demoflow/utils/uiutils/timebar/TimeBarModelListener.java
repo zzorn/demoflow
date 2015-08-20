@@ -9,6 +9,6 @@ public interface TimeBarModelListener {
 
     void onVisibleAreaChanged(TimeBarModel timeBar);
 
-    void onStartEndChanged(TimeBarModel timeBar);
+    void onDurationChanged(TimeBarModel timeBar);
 
 }

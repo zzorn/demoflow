@@ -17,15 +17,25 @@ import java.util.ArrayList;
 public class TimeBar extends JPanel {
 
     private static final int DRAG_BUTTON = MouseEvent.BUTTON1;
-    private static final double MOUSE_WHEEL_SCALING_FACTOR = 1.5;
+    private static final double MOUSE_WHEEL_SCALING_FACTOR = 1.27;
     private static final Color BACKGROUND_COLOR = new Color(100, 100, 100);
-    private static final Color CURRENT_TIME_COLOR = new Color(255, 0, 0);
+    private static final Color CURRENT_TIME_COLOR = new Color(255, 243, 227, 255);
+    private static final Color CURRENT_TIME_COLOR_BORDER1 = new Color(255, 219, 117, 94);
+    private static final Color CURRENT_TIME_COLOR_BORDER2 = new Color(242, 195, 91, 43);
+    private static final int CURRENT_TIME_RADIUS = 1;
+    private static final Color START_HANDLE_COLOR = new Color(210, 171, 75);
+    private static final Color END_HANDLE_COLOR = new Color(208, 126, 52);
+    private static final Color VISIBLE_HANDLE_COLOR = new Color(143, 124, 54);
+    private static final Color DEFAULT_HANDLE_COLOR = new Color(172, 100, 84);
 
     private final TimeBarModel timeBarModel;
 
     private ArrayList<Handle> handles = new ArrayList<>();
 
+    private Handle defaultDragHandle;
+
     private Handle draggedHandle;
+    private double dragOffset;
 
     public TimeBar(double duration) {
         this(new TimeBarModel(duration));
@@ -37,24 +47,27 @@ public class TimeBar extends JPanel {
 
         handles.add(new VisibleAreaStartHandle(timeBarModel));
         handles.add(new VisibleAreaEndHandle(timeBarModel));
-        handles.add(new VisibleAreaHandle(timeBarModel));
+        final VisibleAreaHandle visibleAreaHandle = new VisibleAreaHandle(timeBarModel);
+        handles.add(visibleAreaHandle);
+        defaultDragHandle = visibleAreaHandle;
 
         addMouseWheelListener(new MouseWheelListener() {
             @Override public void mouseWheelMoved(MouseWheelEvent e) {
                 final double scale = e.getPreciseWheelRotation();
                 double zoomFactor = Math.pow(MOUSE_WHEEL_SCALING_FACTOR, scale);
-                final double duration = timeBarModel.getVisibleDuration();
-                final double newDuration = zoomFactor * duration;
-                final double marginMove = 0.5 * (newDuration - duration);
-                timeBarModel.setVisibleArea(timeBarModel.getVisibleAreaStartTime() - marginMove,
-                                            timeBarModel.getVisibleAreaEndTime() + marginMove);
+
+                final double areaSize = timeBarModel.getVisibleArea();
+                final double newAreaSize = zoomFactor * areaSize;
+                final double marginMove = 0.5 * (newAreaSize - areaSize);
+                timeBarModel.setVisibleArea(timeBarModel.getVisibleStartPos() - marginMove,
+                                            timeBarModel.getVisibleEndPos() + marginMove);
                 repaint();
             }
         });
 
         addMouseListener(new MouseInputAdapter() {
             @Override public void mousePressed(MouseEvent e) {
-                if (e.getButton() == DRAG_BUTTON) {
+                if (e.getButton() == DRAG_BUTTON && draggedHandle == null) {
                     // Determine location of the press on the timebar
                     final double clickedTime = getTimeAtMouseLocation(e);
 
@@ -63,32 +76,35 @@ public class TimeBar extends JPanel {
                         if (handle.overlaps(clickedTime, getWidth())) {
                             // Start dragging this handle
                             draggedHandle = handle;
-                            break;
+                            dragOffset = clickedTime - handle.getStart();
+                            return;
                         }
+                    }
+
+                    // No handle found, grab the default handle and center it on the mouse
+                    draggedHandle = defaultDragHandle;
+                    if (draggedHandle != null) {
+                        dragOffset = draggedHandle.getLength() * 0.5;
+                        draggedHandle.moveTo(clickedTime - dragOffset);
+                        repaint();
                     }
                 }
             }
 
             @Override public void mouseReleased(MouseEvent e) {
                 if (e.getButton() == DRAG_BUTTON && draggedHandle != null) {
-                    draggedHandle.moveTo(getTimeAtMouseLocation(e));
+                    draggedHandle.moveTo(getTimeAtMouseLocation(e) - dragOffset);
                     draggedHandle = null;
                     repaint();
                 }
             }
 
-            @Override public void mouseDragged(MouseEvent e) {
-                if (e.getButton() == DRAG_BUTTON && draggedHandle != null) {
-                    draggedHandle.moveTo(getTimeAtMouseLocation(e));
-                    repaint();
-                }
-            }
         });
 
         addMouseMotionListener(new MouseInputAdapter() {
-            @Override public void mouseMoved(MouseEvent e) {
+            @Override public void mouseDragged(MouseEvent e) {
                 if (draggedHandle != null) {
-                    draggedHandle.moveTo(getTimeAtMouseLocation(e));
+                    draggedHandle.moveTo(getTimeAtMouseLocation(e) - dragOffset);
                     repaint();
                 }
             }
@@ -104,18 +120,14 @@ public class TimeBar extends JPanel {
                 repaint();
             }
 
-            @Override public void onStartEndChanged(TimeBarModel timeBar) {
+            @Override public void onDurationChanged(TimeBarModel timeBar) {
                 repaint();
             }
         });
     }
 
     private double getTimeAtMouseLocation(MouseEvent e) {
-        return MathUtils.map(e.getX(),
-                             0,
-                             getWidth(),
-                             timeBarModel.getStartTime(),
-                             timeBarModel.getEndTime());
+        return MathUtils.relPos(e.getX(), 0, getWidth());
     }
 
     public TimeBarModel getTimeBarModel() {
@@ -142,9 +154,11 @@ public class TimeBar extends JPanel {
         }
 
         // Draw current time
-        int currentTimeX = (int) MathUtils.map(timeBarModel.getCurrentTime(),
-                                               timeBarModel.getStartTime(), timeBarModel.getEndTime(),
-                                               0, getWidth());
+        int currentTimeX = (int) (timeBarModel.getCurrentTime() * getWidth());
+        g2.setColor(CURRENT_TIME_COLOR_BORDER2);
+        g2.fillRect(currentTimeX - CURRENT_TIME_RADIUS*2, 0, 1+4*CURRENT_TIME_RADIUS, getHeight());
+        g2.setColor(CURRENT_TIME_COLOR_BORDER1);
+        g2.fillRect(currentTimeX - CURRENT_TIME_RADIUS, 0, 1+2*CURRENT_TIME_RADIUS, getHeight());
         g2.setColor(CURRENT_TIME_COLOR);
         g2.drawLine(currentTimeX, 0, currentTimeX, getHeight());
     }
@@ -152,6 +166,7 @@ public class TimeBar extends JPanel {
     private interface Handle {
         double getStart();
         double getEnd();
+        double getLength();
 
         boolean overlaps(double location, int componentWidth);
 
@@ -167,15 +182,16 @@ public class TimeBar extends JPanel {
 
     private abstract class HandleBase implements Handle {
 
+        private static final int PIXEL_MARGIN = 4;
         private Color color;
         private int pixelMargin;
 
         public HandleBase() {
-            this(new Color(144, 58, 56));
+            this(DEFAULT_HANDLE_COLOR);
         }
 
         public HandleBase(Color color) {
-            this(color, 4);
+            this(color, PIXEL_MARGIN);
         }
 
         public HandleBase(Color color, int pixelMargin) {
@@ -187,9 +203,14 @@ public class TimeBar extends JPanel {
             return getStart();
         }
 
+        @Override public final double getLength() {
+            return getEnd() - getStart();
+        }
+
         @Override public final boolean overlaps(double location, int componentWidth) {
-            final double duration = timeBarModel.getEndTime() - timeBarModel.getStartTime();
-            double relativeMarginSize = MathUtils.map(getMarginInPixels(), 0, componentWidth, 0, duration);
+            if (componentWidth <= 0) return false;
+
+            double relativeMarginSize = (double) getMarginInPixels() / componentWidth;
             return (location >= getStart() - relativeMarginSize) && (location <= getEnd() + relativeMarginSize);
         }
 
@@ -202,15 +223,15 @@ public class TimeBar extends JPanel {
         }
 
         @Override public final int mapStartLocation(int targetStart, int targetEnd) {
-            return -pixelMargin + (int) MathUtils.map(getStart(), timeBarModel.getStartTime(), timeBarModel.getEndTime(), targetStart, targetEnd);
+            return -pixelMargin + (int) MathUtils.mix(getStart(), targetStart, targetEnd);
         }
 
         @Override public final int mapEndLocation(int targetStart, int targetEnd) {
-            return +pixelMargin + (int) MathUtils.map(getEnd(), timeBarModel.getStartTime(), timeBarModel.getEndTime(), targetStart, targetEnd);
+            return +pixelMargin + (int) MathUtils.mix(getEnd(), targetStart, targetEnd);
         }
 
         @Override public int mapDuration(int targetStart, int targetEnd) {
-            return pixelMargin * 2 + (int) MathUtils.map(getEnd() - getStart(), timeBarModel.getStartTime(), timeBarModel.getEndTime(), targetStart, targetEnd);
+            return pixelMargin * 2 + (int) MathUtils.mix(getEnd() - getStart(), targetStart, targetEnd);
         }
     }
 
@@ -218,22 +239,25 @@ public class TimeBar extends JPanel {
         private final TimeBarModel timeBarModel;
 
         public VisibleAreaHandle(TimeBarModel timeBarModel) {
-            super(new Color(159, 187, 217));
+            super(VISIBLE_HANDLE_COLOR);
             this.timeBarModel = timeBarModel;
         }
 
         @Override public double getStart() {
-            return timeBarModel.getVisibleAreaStartTime();
+            return timeBarModel.getVisibleStartPos();
         }
 
         @Override public double getEnd() {
-            return timeBarModel.getVisibleAreaEndTime();
+            return timeBarModel.getVisibleEndPos();
         }
 
         @Override public void moveTo(double newStart) {
-            final double visibleAreaLength = timeBarModel.getVisibleAreaEndTime() -
-                                             timeBarModel.getVisibleAreaStartTime();
-            timeBarModel.setVisibleArea(newStart, newStart + visibleAreaLength);
+            final double visibleArea = timeBarModel.getVisibleArea();
+
+            // Don't allow dragging so that the size changes when dragging the whole visible area
+            newStart = MathUtils.clamp(newStart, 0, 1.0 - visibleArea);
+
+            timeBarModel.setVisibleArea(newStart, newStart + visibleArea);
         }
     }
 
@@ -241,16 +265,16 @@ public class TimeBar extends JPanel {
         private final TimeBarModel timeBarModel;
 
         public VisibleAreaStartHandle(TimeBarModel timeBarModel) {
-            super(new Color(83, 166, 217));
+            super(START_HANDLE_COLOR);
             this.timeBarModel = timeBarModel;
         }
 
         @Override public double getStart() {
-            return timeBarModel.getVisibleAreaStartTime();
+            return timeBarModel.getVisibleStartPos();
         }
 
         @Override public void moveTo(double newStart) {
-            timeBarModel.setVisibleAreaStartTime(newStart);
+            timeBarModel.setVisibleStartPos(newStart);
         }
     }
 
@@ -258,16 +282,16 @@ public class TimeBar extends JPanel {
         private final TimeBarModel timeBarModel;
 
         public VisibleAreaEndHandle(TimeBarModel timeBarModel) {
-            super(new Color(83, 166, 217));
+            super(END_HANDLE_COLOR);
             this.timeBarModel = timeBarModel;
         }
 
         @Override public double getStart() {
-            return timeBarModel.getVisibleAreaEndTime();
+            return timeBarModel.getVisibleEndPos();
         }
 
         @Override public void moveTo(double newStart) {
-            timeBarModel.setVisibleAreaEndTime(newStart);
+            timeBarModel.setVisibleEndPos(newStart);
         }
     }
 

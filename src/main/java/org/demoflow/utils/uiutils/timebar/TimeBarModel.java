@@ -15,36 +15,29 @@ public class TimeBarModel {
 
     private final List<TimeBarModelListener> listeners = new ArrayList<>(4);
 
-    private double startTime;
-    private double endTime;
+    private static final double MIN_VISIBLE_AREA = 0.01;
+
+    private double duration;
     private double currentTime;
-    private double visibleAreaStartTime;
-    private double visibleAreaEndTime;
-    private double secondLength = 1;
+    private double visibleStartPos;
+    private double visibleEndPos;
 
     public TimeBarModel(double duration) {
-        this(0, duration);
+        setDuration(duration);
+        setCurrentTime(0);
+        setVisibleArea(0, 1);
     }
 
-    public TimeBarModel(double startTime, double endTime) {
-        setStartAndEndTime(startTime, endTime);
-        setCurrentTime(startTime);
-        setVisibleArea(startTime, endTime);
+    public double getDuration() {
+        return duration;
     }
 
-    public void setEndTime(double endTime) {
-        setStartAndEndTime(0, endTime);
-    }
+    public void setDuration(double duration) {
+        Check.positive(duration, "duration");
 
-    public void setStartAndEndTime(double startTime, double endTime) {
-        if (this.startTime != startTime ||
-            this.endTime != endTime) {
-
-            this.startTime = startTime;
-            this.endTime = endTime;
-            if (this.endTime < this.startTime) this.endTime = this.startTime;
-
-            notifyStartEndChanged();
+        if (this.duration != duration) {
+            this.duration = duration;
+            notifyDurationChanged();
         }
     }
 
@@ -55,54 +48,73 @@ public class TimeBarModel {
         }
     }
 
-    public void setVisibleArea(double visibleStartTime, double visibleEndTime) {
-        if (visibleAreaStartTime != visibleStartTime ||
-            visibleAreaEndTime != visibleEndTime) {
+    public void setVisibleArea(double visibleStartPos, double visibleEndPos) {
+        if (this.visibleStartPos != visibleStartPos ||
+            this.visibleEndPos != visibleEndPos) {
 
-            visibleAreaStartTime = MathUtils.clamp(visibleStartTime, startTime, endTime);
-            visibleAreaEndTime = MathUtils.clamp(visibleEndTime, visibleAreaStartTime, endTime);
+            this.visibleStartPos = visibleStartPos;
+            this.visibleEndPos = visibleEndPos;
+
+            // Clamp
+            this.visibleStartPos = MathUtils.clamp0To1(this.visibleStartPos);
+            this.visibleEndPos = MathUtils.clamp(this.visibleEndPos, this.visibleStartPos, 1);
+
+            // Ensure the visible are doesn't get empty
+            final double visibleArea = this.visibleEndPos - this.visibleStartPos;
+            double toExpand = MIN_VISIBLE_AREA - visibleArea;
+            if (toExpand > 0) {
+                this.visibleStartPos -= toExpand*0.5;
+                this.visibleEndPos += toExpand*0.5;
+
+                // Clamp expansion to start and end
+                if (this.visibleEndPos - MIN_VISIBLE_AREA < 0) {
+                    this.visibleStartPos = 0;
+                    this.visibleEndPos = MIN_VISIBLE_AREA;
+                }
+                else if (this.visibleStartPos + MIN_VISIBLE_AREA > 1.0) {
+                    this.visibleStartPos = 1.0 - MIN_VISIBLE_AREA;
+                    this.visibleEndPos = 1.0;
+                }
+            }
+
             notifyVisibleAreaChanged();
         }
     }
 
-    public void setVisibleAreaStartTime(double visibleAreaStartTime) {
-        setVisibleArea(visibleAreaStartTime, visibleAreaEndTime);
+    public void setVisibleStartPos(double visibleStartPos) {
+        setVisibleArea(visibleStartPos, visibleEndPos);
     }
 
-    public void setVisibleAreaEndTime(double visibleAreaEndTime) {
-        setVisibleArea(visibleAreaStartTime, visibleAreaEndTime);
-    }
-
-    public double getSecondLength() {
-        return secondLength;
-    }
-
-    public double getStartTime() {
-        return startTime;
-    }
-
-    public double getEndTime() {
-        return endTime;
+    public void setVisibleEndPos(double visibleEndPos) {
+        setVisibleArea(visibleStartPos, visibleEndPos);
     }
 
     public double getCurrentTime() {
         return currentTime;
     }
 
-    public double getDuration() {
-        return getEndTime() - getStartTime();
+    public double getVisibleArea() {
+        return getVisibleEndPos() - getVisibleStartPos();
     }
 
-    public double getVisibleDuration() {
-        return getVisibleAreaEndTime() - getVisibleAreaStartTime();
+    public double getVisibleTime() {
+        return getVisibleArea() * duration;
     }
 
-    public double getVisibleAreaStartTime() {
-        return visibleAreaStartTime;
+    public double getVisibleStartPos() {
+        return visibleStartPos;
     }
 
-    public double getVisibleAreaEndTime() {
-        return visibleAreaEndTime;
+    public double getVisibleEndPos() {
+        return visibleEndPos;
+    }
+
+    public double getVisibleStartTime() {
+        return visibleStartPos * duration;
+    }
+
+    public double getVisibleEndTime() {
+        return visibleEndPos * duration;
     }
 
     /**
@@ -134,9 +146,9 @@ public class TimeBarModel {
         }
     }
 
-    protected final void notifyStartEndChanged() {
+    protected final void notifyDurationChanged() {
         for (TimeBarModelListener listener : listeners) {
-            listener.onStartEndChanged(this);
+            listener.onDurationChanged(this);
         }
     }
 }
