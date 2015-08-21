@@ -1,7 +1,10 @@
 package org.demoflow.parameter;
 
 import com.badlogic.gdx.utils.Array;
+import nu.xom.Attribute;
 import nu.xom.Element;
+import nu.xom.Node;
+import nu.xom.Text;
 import org.demoflow.DemoComponentManager;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeBase;
@@ -280,28 +283,47 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
 
     @Override public Element toXmlElement() {
         // Element
-        final Element element = new Element("parameter");
-        addAttribute(element, "id", getId().toString());
+        final Element parameterElement = new Element("p"); // Use short name for parameter elements, to save space and visual clutter.  Comes at the cost of a little bit of clarity.
+        addAttribute(parameterElement, "id", getId().toString());
 
         // Value
         if (!hasParametrizedValue()) {
-            final Element valueElement = new Element("value");
-            valueElement.appendChild(getRange().valueToXml(getDefaultValue()));
-            element.appendChild(valueElement);
+            final Node valueNode = getRange().valueToXml(getDefaultValue());
+            if (valueNode instanceof Text) {
+                // If it's a text string, make it an attribute to produce more compact and easy to read xml (although harder to parse...)
+                addAttribute(parameterElement, "value", valueNode.getValue());
+            }
+            else {
+                // Add the value as a separate contained element
+                final Element valueElement = new Element("value");
+                valueElement.appendChild(valueNode);
+                parameterElement.appendChild(valueElement);
+            }
         }
 
         // Calculator
         if (calculator != null) {
-            element.appendChild(calculator.toXmlElement());
+            parameterElement.appendChild(calculator.toXmlElement());
         }
 
-        return element;
+        return parameterElement;
     }
 
     @Override public void fromXmlElement(Element element, DemoComponentManager typeManager) throws IOException {
+        // Parse value of the element using the range of the parameter and set the value if this is a non-functional parameter
         if (!hasParametrizedValue()) {
-            // Parse value of the element using the range of the parameter and set the value
-            final Element valueElement = element.getFirstChildElement("value");
+            final Node valueElement;
+            final Attribute valueAttribute = element.getAttribute("value");
+            if (valueAttribute != null) {
+                // First try to read the value from a value attribute
+                valueElement = new Text(valueAttribute.getValue());
+            }
+            else {
+                // Get value from contained child element if found
+                valueElement = element.getFirstChildElement("value");
+            }
+
+            // If we found a value, parse and set it
             if (valueElement != null) {
                 set(getRange().valueFromXml(valueElement, typeManager), true);
             }
