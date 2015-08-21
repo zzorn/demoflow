@@ -1,22 +1,19 @@
 package org.demoflow.calculator.calculators;
 
 import org.demoflow.calculator.TimeVaryingCalculatorBase;
-import org.demoflow.interpolator.Interpolator;
-import org.demoflow.interpolator.interpolators.CosineInterpolator;
-import org.demoflow.interpolator.interpolators.CubicInterpolator;
-import org.demoflow.interpolator.interpolators.QuadraticInterpolator;
+import org.demoflow.calculator.function.InterpolatorFun;
+import org.demoflow.calculator.function.functions.CosineInterpolation;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.range.ranges.DoubleRange;
 
-import static org.flowutils.MathUtils.Tau;
 
 /**
  * Time based oscillator with a configurable waveform.
  */
 public final class OscillatorCalculator extends TimeVaryingCalculatorBase {
 
-    public Parameter<Interpolator> risingInterpolator;
-    public Parameter<Interpolator> droppingInterpolator;
+    public Parameter<InterpolatorFun> risingInterpolator;
+    public Parameter<InterpolatorFun> droppingInterpolator;
     public Parameter<Double> dutyCycle;
     public Parameter<Double> risingSlopeAmount;
     public Parameter<Double> droppingSlopeAmount;
@@ -57,7 +54,7 @@ public final class OscillatorCalculator extends TimeVaryingCalculatorBase {
      * @param phase can be used to phase shift the oscillator
      */
     public OscillatorCalculator(double wavelength, double minOutput, double maxOutput, double phase) {
-        this(wavelength, minOutput, maxOutput, phase, QuadraticInterpolator.IN_OUT, QuadraticInterpolator.IN_OUT, 0.5, 0.5, 0.5);
+        this(wavelength, minOutput, maxOutput, phase, new CosineInterpolation(), new CosineInterpolation(), 0.5, 0.5, 0.5);
     }
 
     /**
@@ -77,8 +74,8 @@ public final class OscillatorCalculator extends TimeVaryingCalculatorBase {
                                 double minOutput,
                                 double maxOutput,
                                 double phase,
-                                Interpolator risingInterpolator,
-                                Interpolator droppingInterpolator,
+                                InterpolatorFun risingInterpolator,
+                                InterpolatorFun droppingInterpolator,
                                 double dutyCycle,
                                 double risingSlopeAmount,
                                 double droppingSlopeAmount) {
@@ -96,6 +93,10 @@ public final class OscillatorCalculator extends TimeVaryingCalculatorBase {
         // Bottom and top base length is determined by the duty cycle (1 = all top, 0 = all bottom).
         // Slopes eat space from the bottom and top proportionately.
 
+        final InterpolatorFun risingInterpolator = this.risingInterpolator.get();
+        final InterpolatorFun droppingInterpolator = this.droppingInterpolator.get();
+        if (risingInterpolator == null || droppingInterpolator == null) return 0;
+
         double risingLen = 0.5 * risingSlopeAmount.get();
         double droppingLen = 0.5 * droppingSlopeAmount.get();
 
@@ -106,9 +107,9 @@ public final class OscillatorCalculator extends TimeVaryingCalculatorBase {
 
         // Return top or bottom value, or rising or dropping interpolated value, based on the current phase.
         if (phase < bottomLen) return -1;
-        else if (phase < bottomLen + risingLen) return risingInterpolator.get().interpolate(phase, bottomLen, bottomLen + risingLen, -1, 1);
+        else if (phase < bottomLen + risingLen) return risingInterpolator.interpolate(phase, bottomLen, bottomLen + risingLen, -1, 1);
         else if (phase < bottomLen + risingLen + topLen) return 1;
-        else return droppingInterpolator.get().interpolate(phase, bottomLen + risingLen + topLen, 1.0, 1, -1);
+        else return droppingInterpolator.interpolate(phase, bottomLen + risingLen + topLen, 1.0, 1, -1);
     }
 }
 

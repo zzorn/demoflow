@@ -10,8 +10,9 @@ import nu.xom.Elements;
 import org.demoflow.DemoComponentManager;
 import org.demoflow.calculator.function.Field;
 import org.demoflow.calculator.function.ColorField;
+import org.demoflow.calculator.function.Fun;
+import org.demoflow.calculator.function.InterpolatorFun;
 import org.demoflow.effect.Effect;
-import org.demoflow.interpolator.Interpolator;
 import org.demoflow.node.DemoNode;
 import org.demoflow.node.DemoNodeBase;
 import org.demoflow.calculator.CalculationContext;
@@ -140,6 +141,26 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
     }
 
     /**
+     * Convenience method to create a constant function parameter.
+     * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
+     * @param initialValue initial value for the parameter.
+     * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
+     */
+    protected final Parameter<Fun> addParameter(String id, Fun initialValue) {
+            return addParameter(id, initialValue, FunRange.FULL, true);
+    }
+
+    /**
+     * Convenience method to create a constant InterpolatorFun parameter.
+     * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
+     * @param initialValue initial value for the parameter.
+     * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
+     */
+    protected final Parameter<InterpolatorFun> addParameter(String id, InterpolatorFun initialValue) {
+            return addParameter(id, initialValue, InterpolatorFunRange.FULL, true);
+    }
+
+    /**
      * Convenience method to create a constant field parameter.
      * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
      * @param initialValue initial value for the parameter.
@@ -157,16 +178,6 @@ public abstract class ParametrizedBase extends DemoNodeBase implements Parametri
      */
     protected final Parameter<ColorField> addParameter(String id, ColorField initialValue) {
         return addParameter(id, initialValue, ColorFieldRange.FULL, true);
-    }
-
-    /**
-     * Convenience method to create an interpolator parameter.
-     * @param id unique id of the parameter.  If a parameter with the same id already exists, an exception will be thrown.
-     * @param initialValue initial value for the parameter.
-     * @return the created parameter.  Can be cached by the Parametrized object to allow slightly faster access to getting the parameter value.
-     */
-    protected final Parameter<Interpolator> addParameter(String id, Interpolator initialValue) {
-        return addParameter(id, initialValue, InterpolatorRange.FULL, false);
     }
 
     /**

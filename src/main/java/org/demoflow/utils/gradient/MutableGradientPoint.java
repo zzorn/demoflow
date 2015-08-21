@@ -1,7 +1,7 @@
 package org.demoflow.utils.gradient;
 
-import org.demoflow.interpolator.Interpolator;
 import org.flowutils.Check;
+import org.flowutils.interpolator.Interpolator;
 
 import static org.flowutils.Check.notNull;
 

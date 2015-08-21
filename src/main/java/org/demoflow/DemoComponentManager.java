@@ -1,9 +1,7 @@
 package org.demoflow;
 
 import nu.xom.Element;
-import org.demoflow.calculator.function.Field;
 import org.demoflow.effect.Effect;
-import org.demoflow.interpolator.Interpolator;
 import org.demoflow.calculator.Calculator;
 import org.demoflow.utils.ClassUtils;
 
@@ -22,15 +20,12 @@ public final class DemoComponentManager {
     public static final List<String> DEFAULT_EFFECTS_PATHS = Arrays.asList("org.demoflow.effect.effects");
     public static final List<String> DEFAULT_CALCULATORS_PATHS = Arrays.asList("org.demoflow.calculator.calculators",
                                                                                "org.demoflow.calculator.function.functions");
-    public static final List<String> DEFAULT_INTERPOLATORS_PATHS = Arrays.asList("org.demoflow.interpolator.interpolators");
 
     private final List<String> effectsPaths;
     private final List<String> calculatorsPaths;
-    private final List<String> interpolatorsPaths;
 
     private final List<Class<? extends Effect>> effectTypes;
     private final List<Class<? extends Calculator>> calculatorTypes;
-    private final List<Class<? extends Interpolator>> interpolatorTypes;
 
     private final Map<Class, List<Class<? extends Calculator>>> calculatorTypesByReturnType = new LinkedHashMap<>();
 
@@ -38,7 +33,7 @@ public final class DemoComponentManager {
      * Loads default effects, calculators, and interpolators.
      */
     public DemoComponentManager() {
-        this(PROJECT_ROOT_PATH, DEFAULT_EFFECTS_PATHS, DEFAULT_CALCULATORS_PATHS, DEFAULT_INTERPOLATORS_PATHS);
+        this(PROJECT_ROOT_PATH, DEFAULT_EFFECTS_PATHS, DEFAULT_CALCULATORS_PATHS);
     }
 
     /**
@@ -47,13 +42,11 @@ public final class DemoComponentManager {
      * @param rootPath project root package.
      * @param effectsPath full name of package to load effects from.
      * @param calculatorsPath full name of package to load calculators from.
-     * @param interpolatorsPath full name of package to load interpolators from.
      */
-    public DemoComponentManager(String rootPath, String effectsPath, String calculatorsPath, String interpolatorsPath) {
+    public DemoComponentManager(String rootPath, String effectsPath, String calculatorsPath) {
         this(rootPath,
              Collections.singletonList(effectsPath),
-             Collections.singletonList(calculatorsPath),
-             Collections.singletonList(interpolatorsPath));
+             Collections.singletonList(calculatorsPath));
     }
 
     /**
@@ -62,28 +55,24 @@ public final class DemoComponentManager {
      * @param rootPath project root package.
      * @param effectsPaths full names of packages to load effects from.
      * @param calculatorsPaths full names of packages to load calculators from.
-     * @param interpolatorsPaths full names of packages to load interpolators from.
      */
-    public DemoComponentManager(String rootPath, List<String> effectsPaths, List<String> calculatorsPaths, List<String> interpolatorsPaths) {
+    public DemoComponentManager(String rootPath, List<String> effectsPaths, List<String> calculatorsPaths) {
         notNull(rootPath, "rootPath");
         notNull(effectsPaths, "effectsPaths");
         notNull(calculatorsPaths, "calculatorsPaths");
-        notNull(interpolatorsPaths, "interpolatorsPaths");
 
         this.effectsPaths = effectsPaths;
         this.calculatorsPaths = calculatorsPaths;
-        this.interpolatorsPaths = interpolatorsPaths;
 
         effectTypes = ClassUtils.getClassesImplementing(rootPath, Effect.class, this.effectsPaths);
         calculatorTypes = ClassUtils.getClassesImplementing(rootPath, Calculator.class, this.calculatorsPaths);
-        interpolatorTypes = ClassUtils.getClassesImplementing(rootPath, Interpolator.class, this.interpolatorsPaths);
 
         // Organize calculator types by return type
         for (Class<? extends Calculator> calculatorType : calculatorTypes) {
             // Determine return type by creating an instance of the calculator and querying the return type
             final Class returnType = createCalculator(calculatorType).getReturnType();
 
-            // Skip calculators with undefined return types (basically interpolating calculator)
+            // Skip calculators with undefined return types
             if (returnType != null) {
                 // Get list of calculators with this return type
                 List<Class<? extends Calculator>> calculatorsWithThisReturnType = calculatorTypesByReturnType.get(returnType);
@@ -117,10 +106,15 @@ public final class DemoComponentManager {
      * @return the calculators that calculate a value of the specified type, or an empty list if there are no such calculators.
      */
     public List<Class<? extends Calculator>> getCalculatorTypes(Class desiredResultType) {
-        List<Class<? extends Calculator>> calculatorTypes = calculatorTypesByReturnType.get(desiredResultType);
-        if (calculatorTypes == null) calculatorTypes = Collections.emptyList();
+        final ArrayList<Class<? extends Calculator>> types = new ArrayList<>();
 
-        return calculatorTypes;
+        for (Map.Entry<Class, List<Class<? extends Calculator>>> entry : calculatorTypesByReturnType.entrySet()) {
+            if (desiredResultType.isAssignableFrom(entry.getKey())) {
+                types.addAll(entry.getValue());
+            }
+        }
+
+        return types;
     }
 
     /**
@@ -176,13 +170,6 @@ public final class DemoComponentManager {
         } catch (Exception e) {
             throw new IllegalStateException("Could not create an effect of type " + type +".  Ensure it has a public no-parameters constructor.  The error was: " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * @return all available interpolators.
-     */
-    public List<Class<? extends Interpolator>> getInterpolatorTypes() {
-        return interpolatorTypes;
     }
 
     public Calculator loadCalculator(Element element) throws IOException {

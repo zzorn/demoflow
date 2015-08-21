@@ -1,8 +1,8 @@
 package org.demoflow.utils.gradient;
 
 import com.badlogic.gdx.utils.Array;
-import org.demoflow.interpolator.Interpolator;
-import org.demoflow.interpolator.interpolators.LinearInterpolator;
+import org.flowutils.interpolator.Interpolator;
+import org.flowutils.interpolator.interpolators.LinearInterpolator;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -43,7 +43,7 @@ public final class GradientImpl<T> implements Gradient<T> {
     }
 
     @Override public void addPoint(double pos, T value) {
-        addPoint(pos, value, LinearInterpolator.DEFAULT);
+        addPoint(pos, value, LinearInterpolator.IN_OUT);
     }
 
     @Override public void addPoint(double pos, T value, Interpolator interpolator) {

@@ -1,21 +1,20 @@
 package org.demoflow.calculator.calculators;
 
 import org.demoflow.calculator.TimeVaryingCalculatorBase;
-import org.demoflow.interpolator.Interpolator;
-import org.demoflow.interpolator.interpolators.QuadraticInterpolator;
+import org.demoflow.calculator.function.InterpolatorFun;
+import org.demoflow.calculator.function.functions.CosineInterpolation;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.range.ranges.IntRange;
 import org.flowutils.random.RandomSequence;
 import org.flowutils.random.XorShift;
 
-import static org.flowutils.MathUtils.Tau;
 
 /**
  * Creates random noise by selecting a random target value each time period and interpolating to it.
  */
 public final class RandomNoiseCalculator extends TimeVaryingCalculatorBase {
 
-    public Parameter<Interpolator> interpolator;
+    public Parameter<InterpolatorFun> interpolator;
     public Parameter<Integer> seed;
 
     private final RandomSequence randomSequence = new XorShift();
@@ -36,7 +35,7 @@ public final class RandomNoiseCalculator extends TimeVaryingCalculatorBase {
     }
 
     public RandomNoiseCalculator(double wavelength, double minOutput, double maxOutput, double phase) {
-        this(wavelength, minOutput, maxOutput, phase, (int) System.nanoTime(), QuadraticInterpolator.IN_OUT);
+        this(wavelength, minOutput, maxOutput, phase, (int) System.nanoTime(), new CosineInterpolation());
     }
 
     public RandomNoiseCalculator(double wavelength,
@@ -44,7 +43,7 @@ public final class RandomNoiseCalculator extends TimeVaryingCalculatorBase {
                                  double maxOutput,
                                  double phase,
                                  int seed,
-                                 Interpolator interpolator) {
+                                 InterpolatorFun interpolator) {
         super(wavelength, minOutput, maxOutput, phase);
 
         this.seed = addParameter("seed", seed, IntRange.FULL, true);

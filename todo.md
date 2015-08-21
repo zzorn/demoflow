@@ -15,16 +15,17 @@ Demo Editor
  1. **FIXED**~~Double / float fields stay with edited background color even after editing complete.~~
  1. After the demo has stopped (or before it has started) it is not possible to delete effects, as the deletion happens in the update call where we have an opengl context and can use dispose.
     Maybe solve by having a separate manage call to effects from the opengl render call to handle initialization, setup, deletion, and maybe activation & deactivation.
+ 1. The Out-In interpolation is broken.   
 
 
 ### Refactorings
 
- 1. Move interpolators to flowutils library. 
- 1. Create interpolator functions.
+ 1. **DONE**~~Move interpolators to flowutils library.~~ 
+ 1. **DONE**~~Create interpolator functions.
      1. Add parameters for the interpolators where they are relevant
      1. Create a separate Range type for Interpolators.
-     1. The aim is to unify interpolators and normal functions if possible.  
- 1. Maybe remove quad, cubic, quart and quint interpolators, or rename to pow2, pow3, pow4, pow5. 
+     1. The aim is to unify interpolators and normal functions if possible.~~  
+ 1. **DONE**~~Maybe remove quad, cubic, quart and quint interpolators, or rename to pow2, pow3, pow4, pow5.~~ 
  1. Add a calculator that takes a function and applies it to a parameter
  1. **DONE**~~Change noise to use Vector2:s for offsets~~
  1. **DONE**~~Change sine and noise to use min and max output value instead of amplitude and offset~~
@@ -33,6 +34,7 @@ Demo Editor
     created, when changing the demo.
  1. Rename Range to Type or similar.
  1. Add context menu support for nodes
+ 1. Change XML format to include value field in parameter tag as an attribute if it is non-null.
  
  
 ### Features   

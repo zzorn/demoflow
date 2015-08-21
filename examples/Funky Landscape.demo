@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<demo name="Example Demo" randomSeed="0" duration="60.0" speed="1.0" timeStepsPerSecond="120.0">
+    <parameters>
+        <parameter id="timeDilation">
+            <value>1</value>
+        </parameter>
+    </parameters>
+    <effects>
+        <effect name="CubeHeightField" type="CubeHeightFieldEffect" relativeStartTime="0.0" relativeEndTime="1.0">
+            <parameters>
+                <parameter id="color">
+                    <value>0.5, 0.5, 0.5, 1</value>
+                </parameter>
+                <parameter id="cubeScale">
+                    <value>0.2, 0.1, 0.2</value>
+                </parameter>
+                <parameter id="cubeCountX">
+                    <value>100</value>
+                </parameter>
+                <parameter id="cubeCountZ">
+                    <value>100</value>
+                </parameter>
+                <parameter id="fieldCenter">
+                    <value>0, 0, 0</value>
+                </parameter>
+                <parameter id="fieldScale">
+                    <value>20, 20, 20</value>
+                </parameter>
+                <parameter id="samplingCenter">
+                    <value>0, 0</value>
+                </parameter>
+                <parameter id="samplingScale">
+                    <value>1, 1</value>
+                </parameter>
+                <parameter id="heightfield">
+                    <calculator type="ModifiedField">
+                        <parameters>
+                            <parameter id="baseField">
+                                <calculator type="NoiseField">
+                                    <parameters>
+                                        <parameter id="seed">
+                                            <value>1363475275</value>
+                                        </parameter>
+                                        <parameter id="waveLength">
+                                            <value>1.5</value>
+                                        </parameter>
+                                        <parameter id="inputOffset">
+                                            <value>0, 0</value>
+                                        </parameter>
+                                        <parameter id="minOutput">
+                                            <value>0</value>
+                                        </parameter>
+                                        <parameter id="maxOutput">
+                                            <value>1</value>
+                                        </parameter>
+                                        <parameter id="noiseZ">
+                                            <value>0</value>
+                                            <calculator type="TimeCalculator">
+                                                <parameters>
+                                                    <parameter id="timeType">
+                                                        <value>TIME_FROM_DEMO_START</value>
+                                                    </parameter>
+                                                    <parameter id="scale">
+                                                        <value>0.3</value>
+                                                    </parameter>
+                                                    <parameter id="offset">
+                                                        <value>0</value>
+                                                    </parameter>
+                                                </parameters>
+                                            </calculator>
+                                        </parameter>
+                                    </parameters>
+                                </calculator>
+                            </parameter>
+                            <parameter id="function">
+                                <calculator type="MapInputsOutputsFun">
+                                    <parameters>
+                                        <parameter id="baseFunction">
+                                            <calculator type="NoiseInterpolation">
+                                                <parameters>
+                                                    <parameter id="direction">
+                                                        <value>OUT</value>
+                                                    </parameter>
+                                                    <parameter id="frequency">
+                                                        <value>10</value>
+                                                    </parameter>
+                                                    <parameter id="noiseAmplitude">
+                                                        <value>0.1</value>
+                                                    </parameter>
+                                                    <parameter id="noiseShape">
+                                                        <value>3287.083942</value>
+                                                        <calculator type="TimeCalculator">
+                                                            <parameters>
+                                                                <parameter id="timeType">
+                                                                    <value>TIME_FROM_DEMO_START</value>
+                                                                </parameter>
+                                                                <parameter id="scale">
+                                                                    <value>1</value>
+                                                                </parameter>
+                                                                <parameter id="offset">
+                                                                    <value>0</value>
+                                                                </parameter>
+                                                            </parameters>
+                                                        </calculator>
+                                                    </parameter>
+                                                </parameters>
+                                            </calculator>
+                                        </parameter>
+                                        <parameter id="sourceStart">
+                                            <value>0</value>
+                                        </parameter>
+                                        <parameter id="sourceEnd">
+                                            <value>1</value>
+                                        </parameter>
+                                        <parameter id="targetStart">
+                                            <value>0.5</value>
+                                        </parameter>
+                                        <parameter id="targetEnd">
+                                            <value>-0.5</value>
+                                        </parameter>
+                                        <parameter id="clampInputRange">
+                                            <value>false</value>
+                                        </parameter>
+                                        <parameter id="clampOutputRange">
+                                            <value>false</value>
+                                        </parameter>
+                                    </parameters>
+                                </calculator>
+                            </parameter>
+                        </parameters>
+                    </calculator>
+                </parameter>
+                <parameter id="sizeField">
+                    <calculator type="ModifiedField">
+                        <parameters>
+                            <parameter id="baseField">
+                                <calculator type="NoiseField">
+                                    <parameters>
+                                        <parameter id="seed">
+                                            <value>-14926709</value>
+                                        </parameter>
+                                        <parameter id="waveLength">
+                                            <value>1</value>
+                                        </parameter>
+                                        <parameter id="inputOffset">
+                                            <value>0, 0</value>
+                                        </parameter>
+                                        <parameter id="minOutput">
+                                            <value>-1</value>
+                                        </parameter>
+                                        <parameter id="maxOutput">
+                                            <value>1</value>
+                                        </parameter>
+                                        <parameter id="noiseZ">
+                                            <value>0</value>
+                                        </parameter>
+                                    </parameters>
+                                </calculator>
+                            </parameter>
+                            <parameter id="function">
+                                <calculator type="MapInputsOutputsFun">
+                                    <parameters>
+                                        <parameter id="baseFunction">
+                                            <calculator type="NoiseInterpolation">
+                                                <parameters>
+                                                    <parameter id="direction">
+                                                        <value>IN_OUT</value>
+                                                    </parameter>
+                                                    <parameter id="frequency">
+                                                        <value>40</value>
+                                                    </parameter>
+                                                    <parameter id="noiseAmplitude">
+                                                        <value>0.5</value>
+                                                    </parameter>
+                                                    <parameter id="noiseShape">
+                                                        <value>8791.282871</value>
+                                                        <calculator type="TimeCalculator">
+                                                            <parameters>
+                                                                <parameter id="timeType">
+                                                                    <value>TIME_FROM_DEMO_START</value>
+                                                                </parameter>
+                                                                <parameter id="scale">
+                                                                    <value>0.5</value>
+                                                                </parameter>
+                                                                <parameter id="offset">
+                                                                    <value>33</value>
+                                                                </parameter>
+                                                            </parameters>
+                                                        </calculator>
+                                                    </parameter>
+                                                </parameters>
+                                            </calculator>
+                                        </parameter>
+                                        <parameter id="sourceStart">
+                                            <value>-1</value>
+                                        </parameter>
+                                        <parameter id="sourceEnd">
+                                            <value>1</value>
+                                        </parameter>
+                                        <parameter id="targetStart">
+                                            <value>-1</value>
+                                        </parameter>
+                                        <parameter id="targetEnd">
+                                            <value>1.3</value>
+                                        </parameter>
+                                        <parameter id="clampInputRange">
+                                            <value>false</value>
+                                        </parameter>
+                                        <parameter id="clampOutputRange">
+                                            <value>false</value>
+                                        </parameter>
+                                    </parameters>
+                                </calculator>
+                            </parameter>
+                        </parameters>
+                    </calculator>
+                </parameter>
+                <parameter id="colorField">
+                    <calculator type="GreyscaleColorField">
+                        <parameters>
+                            <parameter id="baseColor">
+                                <value>1, 1, 1, 1</value>
+                            </parameter>
+                            <parameter id="luminance">
+                                <calculator type="CombineField">
+                                    <parameters>
+                                        <parameter id="combinator">
+                                            <calculator type="MulFun">
+                                                <parameters/>
+                                            </calculator>
+                                        </parameter>
+                                        <parameter id="a">
+                                            <calculator type="ModifiedField">
+                                                <parameters>
+                                                    <parameter id="baseField">
+                                                        <calculator type="NoiseField">
+                                                            <parameters>
+                                                                <parameter id="seed">
+                                                                    <value>-78686059</value>
+                                                                </parameter>
+                                                                <parameter id="waveLength">
+                                                                    <value>0.8</value>
+                                                                </parameter>
+                                                                <parameter id="inputOffset">
+                                                                    <value>0, 0</value>
+                                                                </parameter>
+                                                                <parameter id="minOutput">
+                                                                    <value>0</value>
+                                                                </parameter>
+                                                                <parameter id="maxOutput">
+                                                                    <value>1</value>
+                                                                </parameter>
+                                                                <parameter id="noiseZ">
+                                                                    <value>0</value>
+                                                                    <calculator type="TimeCalculator">
+                                                                        <parameters>
+                                                                            <parameter id="timeType">
+                                                                                <value>TIME_FROM_DEMO_START</value>
+                                                                            </parameter>
+                                                                            <parameter id="scale">
+                                                                                <value>0.3</value>
+                                                                            </parameter>
+                                                                            <parameter id="offset">
+                                                                                <value>0</value>
+                                                                            </parameter>
+                                                                        </parameters>
+                                                                    </calculator>
+                                                                </parameter>
+                                                            </parameters>
+                                                        </calculator>
+                                                    </parameter>
+                                                    <parameter id="function">
+                                                        <calculator type="SigmoidInterpolation">
+                                                            <parameters>
+                                                                <parameter id="direction">
+                                                                    <value>IN_OUT</value>
+                                                                </parameter>
+                                                                <parameter id="sharpness">
+                                                                    <value>0.5</value>
+                                                                </parameter>
+                                                            </parameters>
+                                                        </calculator>
+                                                    </parameter>
+                                                </parameters>
+                                            </calculator>
+                                        </parameter>
+                                        <parameter id="b">
+                                            <calculator type="ModifiedField">
+                                                <parameters>
+                                                    <parameter id="baseField">
+                                                        <calculator type="NoiseField">
+                                                            <parameters>
+                                                                <parameter id="seed">
+                                                                    <value>-124131158</value>
+                                                                </parameter>
+                                                                <parameter id="waveLength">
+                                                                    <value>2</value>
+                                                                </parameter>
+                                                                <parameter id="inputOffset">
+                                                                    <value>0, 0</value>
+                                                                </parameter>
+                                                                <parameter id="minOutput">
+                                                                    <value>0.1</value>
+                                                                </parameter>
+                                                                <parameter id="maxOutput">
+                                                                    <value>1</value>
+                                                                </parameter>
+                                                                <parameter id="noiseZ">
+                                                                    <value>0</value>
+                                                                    <calculator type="TimeCalculator">
+                                                                        <parameters>
+                                                                            <parameter id="timeType">
+                                                                                <value>TIME_FROM_DEMO_START</value>
+                                                                            </parameter>
+                                                                            <parameter id="scale">
+                                                                                <value>1</value>
+                                                                            </parameter>
+                                                                            <parameter id="offset">
+                                                                                <value>0</value>
+                                                                            </parameter>
+                                                                        </parameters>
+                                                                    </calculator>
+                                                                </parameter>
+                                                            </parameters>
+                                                        </calculator>
+                                                    </parameter>
+                                                    <parameter id="function">
+                                                        <calculator type="SigmoidInterpolation">
+                                                            <parameters>
+                                                                <parameter id="direction">
+                                                                    <value>IN_OUT</value>
+                                                                </parameter>
+                                                                <parameter id="sharpness">
+                                                                    <value>0.5</value>
+                                                                </parameter>
+                                                            </parameters>
+                                                        </calculator>
+                                                    </parameter>
+                                                </parameters>
+                                            </calculator>
+                                        </parameter>
+                                    </parameters>
+                                </calculator>
+                            </parameter>
+                        </parameters>
+                    </calculator>
+                </parameter>
+            </parameters>
+        </effect>
+    </effects>
+</demo>

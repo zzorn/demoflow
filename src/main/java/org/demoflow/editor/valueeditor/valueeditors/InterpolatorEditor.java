@@ -1,13 +1,14 @@
 package org.demoflow.editor.valueeditor.valueeditors;
 
 import org.demoflow.editor.valueeditor.ComboBoxEditorBase;
-import org.demoflow.interpolator.Interpolator;
 import org.demoflow.parameter.range.Range;
-import org.demoflow.parameter.range.ranges.InterpolatorRange;
 import org.demoflow.parameter.range.SelectRange;
+import org.demoflow.parameter.range.ranges.InterpolatorRange;
 import org.demoflow.utils.uiutils.TextComboBoxRenderer;
+import org.flowutils.interpolator.Interpolator;
 
 import javax.swing.*;
+
 
 /**
  * Selects one of the constant interpolators from a drop down list.
@@ -19,7 +20,7 @@ public final class InterpolatorEditor extends ComboBoxEditorBase<Interpolator> {
     }
 
     public InterpolatorEditor(Range<Interpolator> range) {
-        super((SelectRange<Interpolator>) range);
+        super(range);
     }
 
     @Override public Class<Interpolator> getEditedType() {

@@ -1,11 +1,11 @@
 package org.demoflow.calculator.calculators;
 
-import org.demoflow.interpolator.Interpolator;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.calculator.CalculationContext;
 import org.demoflow.calculator.CalculatorBase;
 import org.demoflow.utils.gradient.Gradient;
 import org.demoflow.utils.gradient.GradientImpl;
+import org.flowutils.interpolator.Interpolator;
 
 /**
  * Uses a Gradient to store values at different relative time points over the duration of the effect (0..1),

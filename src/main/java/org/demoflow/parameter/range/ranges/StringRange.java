@@ -46,7 +46,7 @@ public final class StringRange extends RangeBase<String> {
     }
 
     @Override public String interpolate(double t, String a, String b, String out) {
-        return t >= 0 ? b : a;
+        return t < 0.5 ? a : b;
     }
 
     @Override protected String doValueFromString(String text) throws Exception {

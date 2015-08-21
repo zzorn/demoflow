@@ -2,7 +2,6 @@ package org.demoflow.editor.valueeditor.valueeditors;
 
 import org.demoflow.calculator.TimeType;
 import org.demoflow.editor.valueeditor.ComboBoxEditorBase;
-import org.demoflow.interpolator.Interpolator;
 import org.demoflow.parameter.range.Range;
 import org.demoflow.parameter.range.ranges.InterpolatorRange;
 import org.demoflow.parameter.range.SelectRange;

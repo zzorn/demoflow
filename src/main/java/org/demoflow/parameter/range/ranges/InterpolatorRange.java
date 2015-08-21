@@ -1,15 +1,12 @@
 package org.demoflow.parameter.range.ranges;
 
-import org.demoflow.interpolator.Interpolator;
 import org.demoflow.parameter.range.SelectRange;
-import org.demoflow.utils.ClassUtils;
-import org.flowutils.LogUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.flowutils.interpolator.Interpolator;
+import org.flowutils.interpolator.interpolators.*;
 
 /**
- * Range with interpolators to choose from.
+ * Range with simple Interpolators to choose from.
+ * @deprecated Not sure if this will be used..
  */
 public class InterpolatorRange extends SelectRange<Interpolator> {
 
@@ -25,25 +22,17 @@ public class InterpolatorRange extends SelectRange<Interpolator> {
 
     private static Interpolator[] createInstances() {
 
-        // Get interpolator classes
-        List<Class<? extends Interpolator>> interpolatorClasses = ClassUtils.getClassesImplementing("org.demoflow",
-                                                                                                    Interpolator.class,
-                                                                                                    "org.demoflow.interpolator.interpolators");
-
-        // Create instances of each interpolator using default no-args constructor, if available.
-        List<Interpolator> interpolators = new ArrayList<>();
-        for (Class<? extends Interpolator> interpolatorClass : interpolatorClasses) {
-            try {
-                final Interpolator interpolator = interpolatorClass.newInstance();
-                interpolators.add(interpolator);
-            }
-            catch (Exception e) {
-                // If not suitable no args constructor is available, assume the interpolator isn't stand alone (e.g. a combine interpolator), and skip it.
-                LogUtils.getLogger().warn("Could not create instance of interpolator " + interpolatorClass + " (Check that it has a public zero parameter constructor if it's a simple interpolator that should be selectable in a combo-box).");
-            }
-        }
-
-        return interpolators.toArray(new Interpolator[interpolators.size()]);
+        // Create selection of common simple interpolators
+        return new Interpolator[] {
+                LinearInterpolator.IN_OUT,
+                SineInterpolator.IN_OUT,
+                new PowInterpolator(0.5),
+                Pow2Interpolator.IN_OUT,
+                Pow3Interpolator.IN_OUT,
+                Pow4Interpolator.IN_OUT,
+                Pow5Interpolator.IN_OUT,
+                new SigmoidInterpolator(),
+        };
     }
 
 }
