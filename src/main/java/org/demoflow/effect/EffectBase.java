@@ -182,6 +182,7 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
 
         if (initialized) {
             deactivate();
+            resetParametersToInitialValues();
             doReset();
         }
     }

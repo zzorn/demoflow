@@ -49,6 +49,7 @@ public class CreateEffectDialog {
         this.effectTypeSelector.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 nameField.setText(getSelectedEffectDefaultName());
+                nameField.selectAll();
             }
         });
         mainPanel.add(new JLabel("Effect name"), "newline");
@@ -94,6 +95,7 @@ public class CreateEffectDialog {
 
         // Reset to default name
         nameField.setText(getSelectedEffectDefaultName());
+        nameField.selectAll();
 
         dialog.setVisible(true);
     }

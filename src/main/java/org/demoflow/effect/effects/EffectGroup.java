@@ -131,6 +131,8 @@ public final class EffectGroup extends EffectBase<Object> implements EffectConta
     }
 
     @Override public void resetParametersToInitialValues() {
+        super.resetParametersToInitialValues();
+
         for (int i = 0; i < effects.size; i++) {
             effects.get(i).resetParametersToInitialValues();
         }
