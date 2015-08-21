@@ -21,10 +21,10 @@ Demo Editor
 ### Refactorings
 
  1. **DONE**~~Move interpolators to flowutils library.~~ 
- 1. **DONE**~~Create interpolator functions.
-     1. Add parameters for the interpolators where they are relevant
-     1. Create a separate Range type for Interpolators.
-     1. The aim is to unify interpolators and normal functions if possible.~~  
+ 1. **DONE**~~Create interpolator functions.~~
+     1. ~~Add parameters for the interpolators where they are relevant~~
+     1. ~~Create a separate Range type for Interpolators.~~
+     1. ~~The aim is to unify interpolators and normal functions if possible.~~  
  1. **DONE**~~Maybe remove quad, cubic, quart and quint interpolators, or rename to pow2, pow3, pow4, pow5.~~ 
  1. Add a calculator that takes a function and applies it to a parameter
  1. **DONE**~~Change noise to use Vector2:s for offsets~~
