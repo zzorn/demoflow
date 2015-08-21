@@ -7,6 +7,7 @@ import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.Parametrized;
 import org.demoflow.parameter.ParametrizedBase;
 import org.flowutils.Check;
+import org.flowutils.MathUtils;
 import org.flowutils.Symbol;
 import org.flowutils.random.RandomSequence;
 import org.flowutils.random.XorShift;
@@ -91,21 +92,18 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     }
 
     @Override public final void setEffectTimePeriod(double relativeStartTime, double relativeEndTime) {
-        //Check.greaterOrEqual(relativeEndTime, "relativeEndTime", relativeStartTime, "relativeStartTime");
-
-        this.relativeStartTime = relativeStartTime;
-        this.relativeEndTime = relativeEndTime;
+        this.relativeStartTime = MathUtils.clamp0To1(relativeStartTime);
+        this.relativeEndTime = MathUtils.clamp0To1(relativeEndTime);
+        if (this.relativeEndTime < this.relativeStartTime) this.relativeEndTime = this.relativeStartTime;
     }
 
     @Override public void setRelativeStartTime(double relativeStartTime) {
-        //Check.inRangeZeroToOne(relativeStartTime, "relativeStartTime");
-        this.relativeStartTime = relativeStartTime;
+        this.relativeStartTime = MathUtils.clamp0To1(relativeStartTime);
         if (this.relativeEndTime < this.relativeStartTime) this.relativeEndTime = this.relativeStartTime;
     }
 
     @Override public void setRelativeEndTime(double relativeEndTime) {
-        //Check.inRangeZeroToOne(relativeEndTime, "relativeEndTime");
-        this.relativeEndTime = relativeEndTime;
+        this.relativeEndTime = MathUtils.clamp0To1(relativeEndTime);
         if (this.relativeStartTime > this.relativeEndTime) this.relativeStartTime = this.relativeEndTime;
     }
 
