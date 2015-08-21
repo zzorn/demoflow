@@ -133,7 +133,7 @@ public final class ParameterImpl<T> extends DemoNodeBase implements Parameter<T>
         // Notify listeners
         notifyValueChanged(newValue);
         if (alsoSetInitialValue) notifyDefaultValueChanged(newValue);
-        notifyNodeUpdated();
+        // notifyNodeUpdated();
     }
 
     @Override public Range<T> getRange() {
