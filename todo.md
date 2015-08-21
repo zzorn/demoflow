@@ -10,6 +10,7 @@ Demo Editor
      * UI sometimes freezes up while creating the editors for a demo (layout dimensions getting a nullpointer).
      * Time bars 'wobble' a bit when resizing an effect so that it de-activates.   
      * UI lags a lot and there is high CPU utilization after the demo has ended (something is busy looping, or generating a lot of updates?).
+     * **It seems like this might be caused by miglayout**  Added task to write simpler layout managers and replace miglayout use. 
  1. [x] There's some issue with output scaling where a min output of 1 seems to actually translate to zero.
  1. [ ] Column width is not adjusted properly when the max node depth is changed. 
  1. [x] Double / float fields stay with edited background color even after editing complete.
@@ -26,15 +27,16 @@ Demo Editor
      1. Create a separate Range type for Interpolators.
      1. The aim is to unify interpolators and normal functions if possible.  
  1. [x] Maybe remove quad, cubic, quart and quint interpolators, or rename to pow2, pow3, pow4, pow5. 
- 1. [ ] Add a calculator that takes a function and applies it to a parameter
+ 1. [ ] Write own layout managers and replace miglayout use with them
+     * [ ] SequenceLayout - lay out components in a column or row, support alignment, grow weight, margins and padding. 
+ 1. [ ] Change demo editor to only repaint and revalidate UI after all editors for effects and parameters in a demo have been
+    created, when changing the demo.
  1. [x] Change noise to use Vector2:s for offsets
  1. [x] Change sine and noise to use min and max output value instead of amplitude and offset
  1. [ ] Separate functions with two parameters and fields into two different Range objects, as they are conceptually different, although same in practice?
- 1. [ ] Change demo editor to only repaint and revalidate UI after all editors for effects and parameters in a demo have been
-    created, when changing the demo.
  1. [ ] Rename Range to Type or similar.
  1. [ ] Add context menu support for nodes
- 1. [ ] Change XML format to include value field in parameter tag as an attribute if it is non-null.
+ 1. [x] Change XML format to include value field in parameter tag as an attribute if it is non-null and a simple string instead of an element
  
  
 ### Features   
@@ -60,6 +62,7 @@ Demo Editor
   
 ### Content  
   
+ 1. [ ] Add a calculator that takes a function and applies it to a parameter
  1. [ ] Add all basic common 1, 2 and 3 etc double => double math operations. (add, sub, mul, div, mod, round, floor, wrap, clamp, mix, map, ceil, min, max, pow, log, exp, fuzzy logic, etc)  
  1. [ ] Add comparison operations (1 or 2 doubles => boolean).  
  1. [ ] Add logic operations (1 or 2 booleans => boolean).  
@@ -86,6 +89,10 @@ Demo Editor
      * Use calculators to generate the shapes - add some kind of shape types.
  1. [ ] Genetic algorithm for evolving controllers for articulated skeletons / particle systems / shapes.   
  1. [ ] Real-time sound generation, based on soundrasp code?      
+ 1. [ ] Speech synthesis
+ 1. [ ] Markov chain based text generator
+       
+       
  
  
  
