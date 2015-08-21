@@ -5,6 +5,7 @@ import org.demoflow.calculator.function.InterpolatorFun;
 import org.demoflow.calculator.function.functions.CosineInterpolation;
 import org.demoflow.parameter.Parameter;
 import org.demoflow.parameter.range.ranges.IntRange;
+import org.flowutils.interpolator.interpolators.LinearInterpolator;
 import org.flowutils.random.RandomSequence;
 import org.flowutils.random.XorShift;
 
@@ -59,7 +60,12 @@ public final class RandomNoiseCalculator extends TimeVaryingCalculatorBase {
         previousPhase = phase;
 
         // Interpolate between start and the target
-        return interpolator.get().interpolate(phase, start, target);
+        final InterpolatorFun interpolatorFun = interpolator.get();
+        if (interpolatorFun != null) {
+            return interpolatorFun.interpolate(phase, start, target);
+        } else {
+            return LinearInterpolator.IN_OUT.interpolate(phase, start, target);
+        }
     }
 
     @Override protected void doResetState() {
