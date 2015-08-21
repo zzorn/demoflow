@@ -184,6 +184,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
         int buttonH = barHeight;
         otherTopBarContentPanel.add(button, new CC().height("" + (buttonH) + "px!").alignX("right").alignY("center").pad("0"));
         button.setBackground(otherTopBarContentPanel.getBackground());
+        button.setFocusable(false);
         return button;
     }
 

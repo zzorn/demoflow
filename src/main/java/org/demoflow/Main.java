@@ -9,9 +9,6 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import org.demoflow.demo.DefaultDemo;
 import org.demoflow.demo.Demo;
 import org.demoflow.editor.DefaultEditorManager;
-import org.demoflow.effect.effects.CubeHeightFieldEffect;
-import org.demoflow.effect.effects.XMPlayerEffect;
-import org.demoflow.interpolator.interpolators.*;
 import org.demoflow.calculator.calculators.*;
 import org.demoflow.editor.DemoEditor;
 import org.demoflow.effect.effects.CubeEffect;
@@ -57,8 +54,8 @@ public class Main {
         // Create editor (and show it)
         DemoEditor demoEditor = new DemoEditor(view, demoComponentManager, editorManager);
 
-        // Create demo
-        Demo demo = createExampleDemo();
+        // Create empty demo
+        Demo demo = new DefaultDemo("Example Demo", 60);
 
         // Edit demo
         demoEditor.setDemo(demo);
@@ -86,42 +83,6 @@ public class Main {
 
     }
 
-    private static Demo createExampleDemo() {
-
-        Demo demo = new DefaultDemo("Example Demo", 60);
-
-        // Create some cubes, yay!
-        demo.addEffect(createCubeEffect(new Color(1f, 0f, 0f, 1f),     new Vector3( 10, 0, 0), 0.0, 0.53, 0.9));
-        demo.addEffect(createCubeEffect(new Color(0.7f, 0f, 0.7f, 1f), new Vector3(  0, 0, 0), 0.1, 0.08, 0.936));
-        demo.addEffect(createCubeEffect(new Color(0f, 0f, 1f, 1f),     new Vector3(-10, 0, 0), 0.2, 0.3, 0.99));
-
-        // Add some plasma
-        final Plasma plasma = demo.addEffect(createPlasmaEffect(0, 0.99));
-        /*
-        final TimeChangeCalculator<Double> squareSize = plasma.squareSize.setCalculator(new TimeChangeCalculator<Double>());
-        squareSize.addPoint(0, 0.0);
-        squareSize.addPoint(0.1, 0.01, CosineInterpolator.IN_OUT);
-        squareSize.addPoint(0.8, 0.01);
-        squareSize.addPoint(1.0, 1.0, QuadraticInterpolator.IN_OUT);
-        final TimeChangeCalculator<Double> squareAspect = plasma.squareAspect.setCalculator(new TimeChangeCalculator<Double>());
-        squareAspect.addPoint(0, 1.0);
-        squareAspect.addPoint(0.8, 1.0);
-        squareAspect.addPoint(0.92, 0.5, CubicInterpolator.IN_OUT);
-        final TimeChangeCalculator<Double> gapSize = plasma.gapSize.setCalculator(new TimeChangeCalculator<Double>());
-        gapSize.addPoint(0, 10.0);
-        gapSize.addPoint(0.2, 0.0, CubicInterpolator.IN_OUT);
-        */
-
-        // Add heightfield test
-        demo.addEffect(new CubeHeightFieldEffect());
-
-        // Add music.
-        // NOTE: For now, XM playback doesn't support speed changes, so when the editor speed is changed, the music will go out of sync until demo is restarted
-        demo.addEffect(new XMPlayerEffect("test.xm", 0.25, true));
-
-        return demo;
-    }
-    
     private static Plasma createPlasmaEffect(final double relativeEntryTime, final double relativeExitTime){
     	final Plasma p = new Plasma();
     	p.setEffectTimePeriod(relativeEntryTime, relativeExitTime);

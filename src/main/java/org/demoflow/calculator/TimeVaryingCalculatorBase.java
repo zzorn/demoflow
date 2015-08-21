@@ -69,10 +69,7 @@ public abstract class TimeVaryingCalculatorBase extends CalculatorBase<Double> {
         double value = calculateValue(wrapPhase(currentPhase + phase.get()));
 
         // Apply output range
-        final double min = minOutput.get();
-        final double max = maxOutput.get();
-        if (min == max) return min;
-        else return value * (max - min) + min;
+        return MathUtils.map(value, -1, 1, minOutput.get(), maxOutput.get());
     }
 
     /**

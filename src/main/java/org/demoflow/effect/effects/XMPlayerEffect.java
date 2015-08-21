@@ -31,7 +31,7 @@ public final class XMPlayerEffect extends EffectBase {
     private int moduleId = NO_MODULE_ID;
 
     public XMPlayerEffect() {
-        this("song.xm", 1.0, false);
+        this("test.xm", 1.0, false);
     }
 
     public XMPlayerEffect(final String songName, final double volume, final boolean loop) {

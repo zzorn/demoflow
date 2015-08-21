@@ -6,13 +6,15 @@ Demo Editor
 
 ### Bugs
  
- 1. UI sometimes freezes up while creating the editors for a demo (layout dimensions getting a nullpointer).
+ 1. UI is very slow for some reason.  Investigate.  Maybe listeners triggering lots of re-layouts, or similar?
+     1. UI sometimes freezes up while creating the editors for a demo (layout dimensions getting a nullpointer).
+     1. Time bars 'wobble' a bit when resizing an effect so that it de-activates.   
+     1. UI lags a lot and there is high CPU utilization after the demo has ended (something is busy looping, or generating a lot of updates?).
+ 1. **FIXED**~~There's some issue with output scaling where a min output of 1 seems to actually translate to zero.~~
  1. Column width is not adjusted properly when the max node depth is changed. 
  1. **FIXED**~~Double / float fields stay with edited background color even after editing complete.~~
- 1. After the demo has stopped it is not possible to delete effects, as the deletion happens in the update call where we have an opengl context and can use dispose.
+ 1. After the demo has stopped (or before it has started) it is not possible to delete effects, as the deletion happens in the update call where we have an opengl context and can use dispose.
     Maybe solve by having a separate manage call to effects from the opengl render call to handle initialization, setup, deletion, and maybe activation & deactivation.
- 1. UI lags a lot and there is high CPU utilization after the demo has ended (something is busy looping, or generating a lot of updates?).
- 1. Time bars 'wobble' a bit when resizing an effect so that it de-activates.   
 
 
 ### Refactorings
@@ -37,13 +39,13 @@ Demo Editor
 
  1. **DONE** ~~Add support for adding and removing effects.~~
  1. **DONE**~~Select activation and deactivation times for effects (with sliders on time view)~~
- 1. Add support for adding and removing variables (dynamically created parameters).
+ 1. Add support for adding and removing variables, and referencing them from enclosed trees (dynamically created parameters).
+ 1. Implement gradient editing with values at time positions and interpolators for interpolating between them.
  1. Implement effect rearranging
  1. Add sliders to number value editors with finite ranges, and tweakers to ones with infinite ranges. 
  1. **DONE** ~~Add save and load of demo as an xml file.~~
  1. Import demo as effect group feature
  1. **DONE**~~Main time view bar for demo, with current visible area (drag to pan, wheel to zoom), showing currently edited time and current demo progress~~
- 1. Implement gradient editing with values at time positions and interpolators for interpolating between them.
  1. Add context menu to node UIs, with cut, copy and paste (maybe have a paste buffer with last 4-8 entries or so).
     Also have paste as new variable.
  1. Add support for exporting and importing individual effects or calculators as libraries.

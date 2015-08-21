@@ -3,6 +3,7 @@ package org.demoflow.calculator.function.functions;
 import com.badlogic.gdx.math.Vector2;
 import org.demoflow.calculator.function.FieldBase;
 import org.demoflow.parameter.Parameter;
+import org.flowutils.MathUtils;
 import org.flowutils.SimplexGradientNoise;
 import org.flowutils.random.XorShift;
 
@@ -111,6 +112,6 @@ public final class NoiseField extends FieldBase {
         final double noiseX = x * waveLength.get() + cachedRandomXOffset + inputOffset.x;
         final double noiseY = y * waveLength.get() + cachedRandomYOffset + inputOffset.y;
         final double noiseValue = SimplexGradientNoise.sdnoise3(noiseX, noiseY, noiseZ.get());
-        return noiseValue * (max - min) + min;
+        return MathUtils.map(noiseValue, -1, 1, min, max);
     }
 }
