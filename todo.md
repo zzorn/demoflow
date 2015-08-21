@@ -7,9 +7,9 @@ Demo Editor
 ### Bugs
  
  1. UI is very slow for some reason.  Investigate.  Maybe listeners triggering lots of re-layouts, or similar?
-     1. UI sometimes freezes up while creating the editors for a demo (layout dimensions getting a nullpointer).
-     1. Time bars 'wobble' a bit when resizing an effect so that it de-activates.   
-     1. UI lags a lot and there is high CPU utilization after the demo has ended (something is busy looping, or generating a lot of updates?).
+     * UI sometimes freezes up while creating the editors for a demo (layout dimensions getting a nullpointer).
+     * Time bars 'wobble' a bit when resizing an effect so that it de-activates.   
+     * UI lags a lot and there is high CPU utilization after the demo has ended (something is busy looping, or generating a lot of updates?).
  1. **FIXED**~~There's some issue with output scaling where a min output of 1 seems to actually translate to zero.~~
  1. Column width is not adjusted properly when the max node depth is changed. 
  1. **FIXED**~~Double / float fields stay with edited background color even after editing complete.~~
