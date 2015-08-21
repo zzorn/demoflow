@@ -1,9 +1,5 @@
-package org.demoflow.parameter.range.ranges;
+package org.demoflow.parameter.range;
 
-import nu.xom.Node;
-import nu.xom.Text;
-import org.demoflow.DemoComponentManager;
-import org.demoflow.parameter.range.RangeBase;
 import org.flowutils.Check;
 import org.flowutils.random.RandomSequence;
 
@@ -13,36 +9,16 @@ import static org.flowutils.Check.notNull;
 
 /**
  * A range that has a number of allowed values.
+ * Can be used as base class for enum type ranges.
  */
-public class SelectRange<T> extends RangeBase<T> {
-
-    // Static cache with Range objects, to avoid having to recreate them all the time.
-    private static final ConcurrentHashMap<Object[], SelectRange> cachedEnumRanges = new ConcurrentHashMap<>();
+public abstract class SelectRange<T> extends RangeBase<T> {
 
     private final T[] allowedValues;
 
-
     /**
      * @param allowedValues the allowed values as returned by Enum.values(), or a handpicked selection of allowed values.
-     * @return a range object for the specified allowed values.
      */
-    public static <E, I extends E> SelectRange<E> get(Class<E> enumType, I ... allowedValues) {
-        notNull(enumType, "enumType");
-
-        SelectRange<E> selectRange = cachedEnumRanges.get(allowedValues);
-        if (selectRange == null) {
-            cachedEnumRanges.putIfAbsent(allowedValues, new SelectRange(enumType, allowedValues));
-            selectRange = cachedEnumRanges.get(allowedValues);
-        }
-
-        return selectRange;
-    }
-
-
-    /**
-     * Use the static getEnumRange method, or implement a subclass.
-     */
-    protected <I extends T> SelectRange(Class<T> type, I ... allowedValues) {
+    public <I extends T> SelectRange(Class<T> type, I ... allowedValues) {
         super(type, type.getSimpleName());
         notNull(allowedValues, "allowedValues");
         Check.greater(allowedValues.length, "number of values", 1, "one");

@@ -1,7 +1,7 @@
 package org.demoflow.editor.valueeditor;
 
 import org.demoflow.parameter.range.Range;
-import org.demoflow.parameter.range.ranges.SelectRange;
+import org.demoflow.parameter.range.SelectRange;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +14,7 @@ public abstract class ComboBoxEditorBase<T> extends ValueEditorBase<T> {
 
     private JComboBox<T> selectCombo;
 
-    public ComboBoxEditorBase(SelectRange<T> range) {
+    public ComboBoxEditorBase(Range<T> range) {
         super(range);
     }
 

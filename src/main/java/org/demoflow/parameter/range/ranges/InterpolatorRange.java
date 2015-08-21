@@ -1,6 +1,7 @@
 package org.demoflow.parameter.range.ranges;
 
 import org.demoflow.interpolator.Interpolator;
+import org.demoflow.parameter.range.SelectRange;
 import org.demoflow.utils.ClassUtils;
 import org.flowutils.LogUtils;
 

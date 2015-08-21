@@ -4,11 +4,10 @@ import org.demoflow.editor.valueeditor.ComboBoxEditorBase;
 import org.demoflow.interpolator.Interpolator;
 import org.demoflow.parameter.range.Range;
 import org.demoflow.parameter.range.ranges.InterpolatorRange;
-import org.demoflow.parameter.range.ranges.SelectRange;
+import org.demoflow.parameter.range.SelectRange;
 import org.demoflow.utils.uiutils.TextComboBoxRenderer;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 /**
  * Selects one of the constant interpolators from a drop down list.
