@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import org.demoflow.DemoServices;
 import org.demoflow.Main;
 import org.demoflow.demo.Demo;
 import org.demoflow.effect.DefaultRenderContext;
@@ -35,9 +36,12 @@ public final class View extends Game {
     private Demo demo;
     private AtomicReference<Demo> demoToSwitchTo = new AtomicReference<>();
     public DefaultRenderContext renderContext;
+    public DemoServices demoServices;
 
 
     public View() {
+        demoServices = new DemoServices();
+        demoServices.init();
 
     }
 
@@ -68,7 +72,7 @@ public final class View extends Game {
 
         modelBatch = new ModelBatch();
 
-        renderContext = new DefaultRenderContext(this, modelBatch);
+        renderContext = new DefaultRenderContext(this, modelBatch, demoServices);
     }
 
     @Override public void render() {

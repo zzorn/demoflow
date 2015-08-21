@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<demo name="Example Demo" randomSeed="0" duration="60.0" speed="1.0" timeStepsPerSecond="120.0">
+    <parameters>
+        <p id="timeDilation" value="1"/>
+    </parameters>
+    <effects>
+        <effect name="Speech" type="SpeechEffect" relativeStartTime="0.23338485316846985" relativeEndTime="0.8176197836166924">
+            <parameters>
+                <p id="trigger" value="0">
+                    <calculator type="SineCalculator">
+                        <parameters>
+                            <p id="wavelength" value="10"/>
+                            <p id="minOutput" value="-1"/>
+                            <p id="maxOutput" value="1"/>
+                            <p id="phase" value="0"/>
+                        </parameters>
+                    </calculator>
+                </p>
+                <p id="triggerThreshold" value="0.7"/>
+                <p id="speech" value="LOOK AT THAT PLASMA!"/>
+            </parameters>
+        </effect>
+        <effect name="Plasma" type="Plasma" relativeStartTime="0.0" relativeEndTime="1.0">
+            <parameters>
+                <p id="squareSize" value="0.01"/>
+                <p id="squareAspect" value="1"/>
+                <p id="gapSize" value="0"/>
+                <p id="squareCountX" value="100"/>
+                <p id="squareCountY" value="100"/>
+            </parameters>
+        </effect>
+        <effect name="XMPlayer" type="XMPlayerEffect" relativeStartTime="0.0" relativeEndTime="1.0">
+            <parameters>
+                <p id="module" value="test.xm"/>
+                <p id="volume" value="1"/>
+                <p id="loop" value="true"/>
+            </parameters>
+        </effect>
+        <effect name="Speech" type="SpeechEffect" relativeStartTime="0.0" relativeEndTime="1.0">
+            <parameters>
+                <p id="trigger" value="0">
+                    <calculator type="TimeCalculator">
+                        <parameters>
+                            <p id="timeType" value="RELATIVE_DEMO_POSITION"/>
+                            <p id="scale" value="1"/>
+                            <p id="offset" value="0"/>
+                        </parameters>
+                    </calculator>
+                </p>
+                <p id="triggerThreshold" value="0.85"/>
+                <p id="speech" value="Good bye. Greetings go to all the other speaking demos out there! "/>
+            </parameters>
+        </effect>
+        <effect name="Greet" type="SpeechEffect" relativeStartTime="0.0" relativeEndTime="1.0">
+            <parameters>
+                <p id="trigger" value="0">
+                    <calculator type="TimeCalculator">
+                        <parameters>
+                            <p id="timeType" value="RELATIVE_DEMO_POSITION"/>
+                            <p id="scale" value="1"/>
+                            <p id="offset" value="0"/>
+                        </parameters>
+                    </calculator>
+                </p>
+                <p id="triggerThreshold" value="0.1"/>
+                <p id="speech" value="Welcome to the speaking demo! Prepare to groove out with my smooth voice and plasma."/>
+            </parameters>
+        </effect>
+    </effects>
+</demo>

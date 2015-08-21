@@ -1,6 +1,7 @@
 package org.demoflow.effect;
 
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import org.demoflow.DemoServices;
 import org.demoflow.view.View;
 
 /**
@@ -18,4 +19,5 @@ public interface RenderContext {
      */
     View getView();
 
+    DemoServices getDemoServices();
 }

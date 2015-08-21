@@ -37,6 +37,7 @@ Demo Editor
  1. [ ] Rename Range to Type or similar.
  1. [ ] Add context menu support for nodes
  1. [x] Change XML format to include value field in parameter tag as an attribute if it is non-null and a simple string instead of an element
+ 1. [ ] Refactor so that common services are in a context class and pass it around, make DemoComponentManager a service?
  
  
 ### Features   

@@ -4,6 +4,7 @@ import nu.xom.Element;
 import org.demoflow.effect.Effect;
 import org.demoflow.calculator.Calculator;
 import org.demoflow.utils.ClassUtils;
+import org.demoflow.utils.SpeechService;
 
 import java.io.IOException;
 import java.util.*;
@@ -29,6 +30,8 @@ public final class DemoComponentManager {
 
     private final Map<Class, List<Class<? extends Calculator>>> calculatorTypesByReturnType = new LinkedHashMap<>();
 
+
+
     /**
      * Loads default effects, calculators, and interpolators.
      */
@@ -47,6 +50,7 @@ public final class DemoComponentManager {
         this(rootPath,
              Collections.singletonList(effectsPath),
              Collections.singletonList(calculatorsPath));
+
     }
 
     /**
@@ -198,4 +202,6 @@ public final class DemoComponentManager {
 
         return effect;
     }
+
+
 }
