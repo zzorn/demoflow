@@ -1,13 +1,10 @@
 package org.demoflow.editor.nodeeditor;
 
 import net.miginfocom.layout.CC;
-import net.miginfocom.swing.MigLayout;
 import org.demoflow.demo.Demo;
 import org.demoflow.editor.CreateEffectDialog;
 import org.demoflow.editor.DemoEditor;
-import org.demoflow.effect.EffectContainer;
-import org.demoflow.utils.uiutils.timebar.TimeBar;
-import org.demoflow.utils.uiutils.timebar.TimeBarModel;
+import org.demoflow.utils.uiutils.timebar.OverViewTimeBar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +35,7 @@ public class DemoNodeEditor extends NodeEditorBase<Demo> {
         });
 
         // Create time preview ui
-        timeEditorBar.add(new TimeBar(node.getTimeBarModel()), new CC().pad("0").grow().gap("0").push());
+        timeEditorBar.add(new OverViewTimeBar(node.getTimeBarModel()), new CC().pad("0").grow().gap("0").push());
     }
 
     @Override protected void doUpdateNodeUi(Demo node) {

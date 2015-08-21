@@ -91,10 +91,22 @@ public abstract class EffectBase<P> extends ParametrizedBase implements Effect {
     }
 
     @Override public final void setEffectTimePeriod(double relativeStartTime, double relativeEndTime) {
-        Check.greaterOrEqual(relativeEndTime, "relativeEndTime", relativeStartTime, "relativeStartTime");
+        //Check.greaterOrEqual(relativeEndTime, "relativeEndTime", relativeStartTime, "relativeStartTime");
 
         this.relativeStartTime = relativeStartTime;
         this.relativeEndTime = relativeEndTime;
+    }
+
+    @Override public void setRelativeStartTime(double relativeStartTime) {
+        //Check.inRangeZeroToOne(relativeStartTime, "relativeStartTime");
+        this.relativeStartTime = relativeStartTime;
+        if (this.relativeEndTime < this.relativeStartTime) this.relativeEndTime = this.relativeStartTime;
+    }
+
+    @Override public void setRelativeEndTime(double relativeEndTime) {
+        //Check.inRangeZeroToOne(relativeEndTime, "relativeEndTime");
+        this.relativeEndTime = relativeEndTime;
+        if (this.relativeStartTime > this.relativeEndTime) this.relativeStartTime = this.relativeEndTime;
     }
 
     @Override public final void setEffectTimePeriod(double startTime_s,

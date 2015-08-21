@@ -1,10 +1,13 @@
 package org.demoflow.editor.nodeeditor;
 
+import net.miginfocom.layout.CC;
 import org.demoflow.editor.CreateEffectDialog;
 import org.demoflow.editor.DemoEditor;
 import org.demoflow.effect.Effect;
 import org.demoflow.effect.EffectContainer;
 import org.demoflow.node.DemoNode;
+import org.demoflow.utils.uiutils.timebar.EffectTimeBar;
+import org.demoflow.utils.uiutils.timebar.OverViewTimeBar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +30,7 @@ public class EffectEditor<T extends DemoNode> extends NodeEditorBase<Effect> {
         createEffectDialog = new CreateEffectDialog(demoEditor.getRootFrame(), demoEditor.getComponentManager());
     }
 
-    @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel valueEditorPanel, Effect node) {
+    @Override protected void buildUi(JPanel otherTopBarContentPanel, JPanel timeEditorBar, Effect node) {
         // Add add button
         if (getNode() instanceof EffectContainer) {
             addBarButton("Add Effect", "Adds a new effect", null, new ActionListener() {
@@ -73,7 +76,8 @@ public class EffectEditor<T extends DemoNode> extends NodeEditorBase<Effect> {
         });
 
 
-
+        // Create effect time bar
+        timeEditorBar.add(new EffectTimeBar(getDemoEditor().getDemo().getTimeBarModel(), node), new CC().pad("0").grow().gap("0").push());
     }
 
     @Override protected void doUpdateNodeUi(Effect node) {

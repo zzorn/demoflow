@@ -92,6 +92,10 @@ public interface Effect extends Parametrized {
      */
     void setEffectTimePeriod(double relativeStartTime, double relativeEndTime);
 
+    void setRelativeStartTime(double relativeStartTime);
+
+    void setRelativeEndTime(double relativeEndTime);
+
     /**
      * Sets the time period of the effect within the demo with absolute times.
      *
