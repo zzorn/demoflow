@@ -307,6 +307,7 @@ public abstract class NodeEditorBase<T extends DemoNode> extends JPanel {
     }
 
     private void refreshLayout() {
+        System.out.println("NodeEditorBase.refreshLayout " + this);
         childPanel.revalidate();
         childPanel.repaint();
     }
