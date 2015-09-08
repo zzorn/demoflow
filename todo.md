@@ -45,16 +45,16 @@ Demo Editor
  1. [x] Add support for adding and removing effects.
  1. [x] Select activation and deactivation times for effects (with sliders on time view)
  1. [ ] Add support for adding and removing variables, and referencing them from enclosed trees (dynamically created parameters).
+ 1. [ ] Add context menu to node UIs, with cut, copy and paste (maybe have a paste buffer with last 4-8 entries or so).
+    Also have paste as new variable.
  1. [ ] Implement gradient editing with values at time positions and interpolators for interpolating between them.
  1. [ ] Implement effect rearranging
  1. [ ] Add sliders to number value editors with finite ranges, and tweakers to ones with infinite ranges. 
  1. [x] Add save and load of demo as an xml file.
  1. [ ] Import demo as effect group feature
  1. [x] Main time view bar for demo, with current visible area (drag to pan, wheel to zoom), showing currently edited time and current demo progress
- 1. [ ] Add context menu to node UIs, with cut, copy and paste (maybe have a paste buffer with last 4-8 entries or so).
-    Also have paste as new variable.
  1. [ ] Add support for exporting and importing individual effects or calculators as libraries.
- 1. [ ] Add undo/redo support if feasible
+ 1. [ ] Add undo/redo support if feasible (store the edit operation, use xml format to store added or removed values)                                 
  1. [ ] Shader types
  1. [ ] Editable shaders (text area)
  1. [ ] Programmable Pixel (and vertex?) shader, converts calculators to shader code?? (only supports some variable and calculator types - double, vector2, vector3, color, int, etc.)
@@ -82,6 +82,7 @@ Demo Editor
  1. [ ] Triangle heightfield effect.
      * Line graphics or filled triangles.
      * A number of ecotypes/textures for each corner, blend between them based on weight.
+     * [ ] Add support for a vector field that modifies the placement of the vertices in the heightfield 
  1. [ ] Grid based liquid simulation.
  1. [ ] Item distribution on heightfield.
  1. [ ] Whole screen shader effect (e.g. atmosphere, etc). 
@@ -92,8 +93,30 @@ Demo Editor
  1. [ ] Real-time sound generation, based on soundrasp code?      
  1. [ ] Speech synthesis
  1. [ ] Markov chain based text generator
+ 1. [ ] Mixed voxel / heightfield?
        
        
+### Evolving 
  
+ * Could this editor be used as a game editor as well?  
+     * Would change the demo to not have a fixed end, 
+     * Support for configuring entity generators, 
+     * editing game HUDs/menus, 
+     * maybe level concept or similar.
+     * Editing AIs and other in game settings could be done with (possibly nested) entities with components
+     * Save format could be a bit more generic in naming.
+     * Editor would not feature a timeline so centrally (except for cut-scenes maybe?)
+     * Would probably need a good support for editing more tabular data, e.g:
+         * Enemy / monster lists 
+         * Loots / powerups
+         * Game objects / items in general
+         * levels
+         * places / props / background items
+         * All of the above are basically generators for said things, in this case generating by using a prototype.  
+           Variation, randomness, provided situational parameters (e.g. terrain information when generating a tree), 
+           and use of various generation functions would be useful.
+         * Default keyboard bindings / controls
+     
+      
  
  
