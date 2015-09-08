@@ -147,27 +147,27 @@
         </dependency>
 
 
-        <!-- For speech synthesis -->
+        <!-- For speech synthesis.  Located as local libraries, as the maven import didn't seem to fully work for all their dependencies. -->
         <dependency>
             <groupId>de.dfki.mary</groupId>
             <artifactId>marytts-runtime</artifactId>
             <version>${marytts.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/marytts/marytts-runtime-5.1.2-jar-with-dependencies.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>de.dfki.mary</groupId>
             <artifactId>marytts-lang-en</artifactId>
             <version>${marytts.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/marytts/marytts-lang-en-5.1.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>de.dfki.mary</groupId>
             <artifactId>voice-cmu-slt-hsmm</artifactId>
             <version>${marytts.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.sf.sociaal</groupId>
-            <artifactId>freetts</artifactId>
-            <version>1.2.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/marytts/voice-cmu-slt-hsmm-5.1.2.jar</systemPath>
         </dependency>
 
     </dependencies>
